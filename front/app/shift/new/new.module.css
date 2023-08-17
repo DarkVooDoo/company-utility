@@ -1,0 +1,155 @@
+.dropdown{
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shift_name{
+    display: flex;
+    justify-content: space-between;
+    margin: var(--Row-Margin) 0;
+}
+
+.shift_name_option{
+    width: 30ch;
+}
+
+.shift_time{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: .5rem;
+    margin-bottom: var(--Row-Margin);
+}
+
+.shift_time_t{
+    width: 100%;
+}
+
+.shift_time_t_input{
+    width: 100%;
+    height: 2.5rem;
+    border: 1px solid black;
+}
+
+.shift_right{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.shift_addBtn{
+    height: 2.5rem;
+    padding: 0 1rem;
+    border-radius: 5px;
+    background-color: var(--Primary-Color);
+}
+
+.shift_worker{
+    display: grid;
+    row-gap: .5rem;
+    grid-template-areas: 
+                            "name name name name name"
+                            "date start end pause delete";
+    margin-bottom: var(--Row-Margin);
+    padding: .5rem;
+    border-radius: 10px;
+    border: 2px solid lightgray; 
+}
+
+.shift_worker_photo{
+    grid-area: photo;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.shift_worker_photo_content{
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+}
+
+.shift_worker_photo_content_tag{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+.shift_worker_label{
+    color: rgb(190, 190, 190);
+    font-weight: bold;
+}
+
+.shift_worker_name{
+    grid-area: name;
+    font-size: 1.1rem;
+}
+
+.shift_worker_date{
+    grid-area: date;
+}
+
+.shift_worker_pause{
+    grid-area: pause;
+}
+
+.shift_worker_date_display{
+    position: relative;
+}
+
+.shift_worker_date_display_first::after{
+    content: "";
+    display: inline-block;
+    margin-left: 12px;
+    width: 4px;
+    height: 4px;
+    border: 2px solid black;
+    border-left: 2px solid transparent;
+    border-bottom: 2px solid transparent;
+    transform: rotate(135deg) translateY(6px);
+}
+
+.shift_worker_date_display_all{
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: lightgray;
+    display: none;
+    z-index: 10;
+}
+
+.shift_worker_date_display:hover > .shift_worker_date_display_all{
+    display: block;
+}
+
+.shift_worker_start{
+    grid-area: start;
+}
+
+.shift_worker_end{
+    grid-area: end;
+}
+
+.shift_worker_deleteBtn{
+    grid-area: delete;
+    height: 2.5rem;
+    width: 2.5rem;
+    padding: 0 1rem;
+    background-color: rgb(219, 219, 219);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shift_worker_deleteBtn_icon{
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.shift_saveBtn{
+    width: 100%;
+    height: 2.5rem;
+    border-radius: 5px;
+    background-color: var(--Primary-Color);
+}

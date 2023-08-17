@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="9.6133575mm"
+   height="16.933334mm"
+   viewBox="0 0 9.6133573 16.933334"
+   version="1.1"
+   id="svg5"
+   inkscape:export-filename="exit.svg"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-7.629892,-105.63313)">
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:2.94777px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#d7d7d7;fill-opacity:1;stroke-width:0.0288578;stroke-linecap:round;stroke-linejoin:round"
+       x="7.4730039"
+       y="107.87275"
+       id="text4244"><tspan
+         sodipodi:role="line"
+         id="tspan4242"
+         style="font-size:2.94777px;fill:#d7d7d7;fill-opacity:1;stroke-width:0.0288578"
+         x="7.4730039"
+         y="107.87275">Sortie</tspan></text>
+    <path
+       id="rect5243"
+       style="opacity:1;fill:#d7d7d7;fill-opacity:1;stroke-width:0.17629;stroke-linecap:round;stroke-linejoin:round"
+       d="m 8.3345419,108.72223 v 13.84424 h 7.7532871 v -13.84424 z m 0.7051575,0.70517 h 6.3429736 v 12.43391 H 9.0396994 Z" />
+    <circle
+       style="opacity:1;fill:#d7d7d7;fill-opacity:1;stroke-width:0.17629;stroke-linecap:round;stroke-linejoin:round"
+       id="path5248"
+       cx="14.272528"
+       cy="116.16866"
+       r="0.64609039" />
+  </g>
+</svg>

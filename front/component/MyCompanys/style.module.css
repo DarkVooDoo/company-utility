@@ -1,0 +1,61 @@
+.shift_company{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 17vh;
+    overflow-x: scroll;
+}
+
+.shift_company::-webkit-scrollbar{
+    display: none;
+}
+
+.shift_company_inner{
+    display: flex;
+    gap: 2rem;
+    margin: 0 .5rem;
+    width: fit-content;
+}
+
+.shift_company_box{
+    width: 60vw;
+    height: 15vh;
+    background-color: var(--Primary-Color);
+    border-radius: 10px;
+    -webkit-box-shadow: 0px 0px 10px 0px #000000; 
+    box-shadow: 0px 0px 10px 0px #000000;
+}
+
+.shift > *{
+    margin-bottom: var(--Row-Margin);
+}
+
+.shift_company{
+    width: 100%;
+    overflow-x: scroll;
+}
+
+.shift_company::-webkit-scrollbar{
+    display: none;
+}
+
+.shift_company_inner{
+    display: flex;
+    gap: 2rem;
+    width: fit-content;
+}
+
+.shift_company_box{
+    width: 60vw;
+    height: 15vh;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.shift_company_box_icon{
+    height: 3rem;
+    width: 3rem;
+}

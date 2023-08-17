@@ -1,0 +1,115 @@
+.profile{
+    margin-top: var(--Row-Margin);
+}
+
+.profile > *{
+    margin-bottom: var(--Row-Margin);
+}
+
+.profile_name{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.profile_name_photo{
+    height: 6rem;
+    width: 6rem;
+    border-radius: 50%;
+    outline: 2px solid var(--Primary-Color);
+}
+
+.profile_navigation{
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.profile_navigation_link{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 3rem;
+}
+
+.profile_navigation_link_icon{
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+.profile_navigation_link_text{
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.profile_header{
+    font-size: 1.2rem;
+    margin-bottom: var(--Row-Margin);
+}
+
+.profile_input{
+    margin-bottom: var(--Row-Margin);
+}
+
+.profile_input_ele{
+    height: 2.5rem;
+    width: 100%;
+    border-radius: .5rem;
+    border: 1px solid black;
+}
+
+.profile_input_label{
+    font-weight: bold;
+}
+
+
+.company_box{
+    padding: .5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: .3rem;
+    height: 5rem;
+    border-radius: 10px;
+    border: 2px solid var(--Primary-Color);
+    margin-bottom: var(--Row-Margin);
+}
+
+.company_box_icon{
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.input{
+    position: relative;
+    height: 2.5rem;
+    margin-bottom: var(--Row-Margin);
+}
+
+.input_ele{
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+    border: 1px solid black;
+}
+
+.input_label{
+    position: absolute;
+    left: .5rem;
+    top: calc(2.5rem / 2 - .6rem);
+    transition: all .4s linear;
+}
+
+.input_ele:focus + .input_label, .input_ele:valid + .input_label {
+    top: 0;
+    font-size: .6rem;
+}
+
+.button{
+    height: 2rem;
+    padding: 0 .5rem;
+    background-color: var(--Primary-Color);
+    border-radius: 5px;
+    margin-bottom: var(--Row-Margin);
+}

@@ -1,0 +1,62 @@
+/*!******************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[4].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[4].oneOf[7].use[3]!./app/sign/Sign.module.css ***!
+  \******************************************************************************************************************************************************************************************************************************************************************/
+.Sign_sign__DQ8hl{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.Sign_sign_form__uvqdU{
+    width: 80vw;
+}
+
+.Sign_sign_form__uvqdU > *{
+    margin-bottom: var(--Row-Margin);
+}
+
+.Sign_sign_form_newBtn__igUEq{
+    background-color: transparent;
+    border: none;
+    color: blue;
+}
+
+.Sign_sign_input__WJN_y{
+    width: 100%;
+}
+
+.Sign_sign_input_label__rJIP2{
+    display: block;
+}
+
+.Sign_sign_input_field__6LaF5{
+    width: 100%;
+    height: 2rem;
+    border-radius: 5px;
+    border: 1px solid black;
+}
+
+
+.Sign_sign_company__XsLO7{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.Sign_sign_button__xHE0R{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.Sign_sign_button_sign__vXeB_{
+    height: 2rem;
+    padding: 0 .5rem;
+    background-color: var(--Primary-Color);
+    border-radius: 5px;
+}
+
+.Sign_hidden__6csfP{
+    display: none;
+}

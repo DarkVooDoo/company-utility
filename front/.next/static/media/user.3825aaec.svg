@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="64.000008"
+   height="63.999989"
+   viewBox="0 0 16.933335 16.933331"
+   version="1.1"
+   id="svg5"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-67.231555,-114.14549)">
+    <path
+       id="path1967"
+       style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.898457;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
+       d="m 74.657425,124.24709 a 7.0979017,7.0979017 0 0 0 -5.680299,2.8491 8.8244628,9.9201161 0 0 0 6.755401,3.54729 8.8244628,9.9201161 0 0 0 6.801725,-3.60747 7.2755752,7.2755752 0 0 0 -5.726623,-2.78892 z" />
+    <path
+       id="path184"
+       style="fill:#000000;stroke-width:0.898457;stroke-linecap:round;stroke-linejoin:round"
+       d="m 75.698135,114.14549 a 8.4666843,8.4666843 0 0 0 -8.46658,8.46675 8.4666843,8.4666843 0 0 0 8.46658,8.46658 8.4666843,8.4666843 0 0 0 8.466755,-8.46658 8.4666843,8.4666843 0 0 0 -8.466755,-8.46675 z m 0,0.68994 a 7.7768062,7.7768062 0 0 1 7.776811,7.77681 7.7768062,7.7768062 0 0 1 -7.776811,7.77681 7.7768062,7.7768062 0 0 1 -7.776809,-7.77681 7.7768062,7.7768062 0 0 1 7.776809,-7.77681 z" />
+    <path
+       id="path954"
+       style="opacity:1;stroke:none;stroke-width:0.898457;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
+       d="m 79.210328,120.10353 a 3.5121058,3.5121058 0 0 1 -3.512106,3.51211 3.5121058,3.5121058 0 0 1 -3.512105,-3.51211 3.5121058,3.5121058 0 0 1 3.512105,-3.5121 3.5121058,3.5121058 0 0 1 3.512106,3.5121 z" />
+  </g>
+</svg>

@@ -1,0 +1,106 @@
+.shift > *{
+    margin-bottom: var(--Row-Margin);
+}
+
+.shift_company{
+    width: 100%;
+    overflow-x: scroll;
+}
+
+.shift_company::-webkit-scrollbar{
+    display: none;
+}
+
+.shift_company_inner{
+    display: flex;
+    gap: 2rem;
+    width: fit-content;
+}
+
+.shift_company_box{
+    width: 60vw;
+    height: 15vh;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+/*********** use client shift  ************/
+
+.header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: var(--Row-Margin) 0;
+}
+
+.header_name{
+    font-size: 1.2rem;
+}
+
+.header_action{
+    display: none;
+}
+
+.header_m_action{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--Row-Margin);
+}
+
+.header_month_list_month{
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shiftRow{
+    height: 4.5rem;
+    width: 100%;
+    display: grid;
+    grid-template-areas: 
+                        "name name name"
+                        "day time pause";
+    align-items: center;
+    padding: 0 .3rem;
+    margin-bottom: var(--Row-Margin);
+    border-radius: 5px;
+    background-color: rgb(220, 220, 220);
+}
+
+.shift_m{
+    display: none;
+}
+
+.shift_name{
+    grid-area: name;
+}
+
+.shift_action{
+    float: right;
+}
+
+.shift_day{
+    grid-area: day;
+}
+
+.shift_time{
+    grid-area: time;
+}
+
+.shift_pause{
+    grid-area: pause;
+}
+
+.shift_label{
+    color: rgb(91, 91, 91);
+} 
+
+/* .shiftContent{
+
+} */
+
+/* .shift:nth-child(even){
+    background-color: lightgray;
+} */
+

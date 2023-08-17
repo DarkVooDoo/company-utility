@@ -1,0 +1,46 @@
+.navbar{
+    padding: 0 var(--Mobile-Padding);
+    height: var(--Navbar-Height);
+    background-color: var(--Primary-Color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar_navigation{
+    display: flex;
+    gap: .5rem;
+}
+
+.navbar_logBtn{
+    height: calc(var(--Navbar-Height) - 1rem);
+    width: calc(var(--Navbar-Height) - 1rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid black;
+}
+
+.navbar_logBtn_icon{
+    height: 100%;
+    width: 100%;
+}
+
+.navbar_logBtn_content{
+    width: 20ch;
+    height: 100%;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: calc(100vw - 20ch);
+    border: none;
+    height: 100%;
+    max-height: 100%;
+}
+
+.navbar_logBtn_content_link{
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
