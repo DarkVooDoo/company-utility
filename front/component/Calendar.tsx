@@ -38,10 +38,14 @@ const Calendar:React.FC<CalendarProps> = ({onChange, currentUser, currentCompany
                 setShift({shift: shifts.shift})
             }
         })()
-    },[date.month, currentUser])
+    },[date.month])
+
+    useEffect(()=>{
+        seletedDays.clear()
+    }, [currentUser])
 
     const days = calendar.map((day,index)=>{
-        const isDayDisable = day.isCurrentMonth && shift && shift.shift.findIndex(myShift=>myShift.shift_day === day.dayNumber) === -1 ? false : true
+        const isDayDisable = day.isCurrentMonth && shift && shift.shift.findIndex(myShift=>myShift.shift_day === day.dayNumber && myShift.user_id === currentUser) === -1 ? false : true
         return (
             <button disabled={isDayDisable} type="button" key={index} className={`${style.calendar_day} ${seletedDays.has(day.dayNumber) && day.isCurrentMonth ? style.active : ""}`} onClick={(e)=>{
                 seletedDays.has(day.dayNumber) ? seletedDays.delete(day.dayNumber) : seletedDays.add(day.dayNumber)

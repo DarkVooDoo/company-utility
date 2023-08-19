@@ -72,8 +72,10 @@ const Shift:React.FC<Props> = ({companys})=>{
         (async ()=>{
             const token = GetCookie("auth-token")
             const companyId = GetCookie("company-id")
+            console.log("Enter")
+            const currentMonth = GetMonthArray(new Date().getFullYear(), MONTH.findIndex(month=>month===date.month))
+            setShift(currentMonth.calendar)
             if (companyId && token){
-                const currentMonth = GetMonthArray(new Date().getFullYear(), MONTH.findIndex(month=>month===date.month))
                 const fetchShift = await fetch(`http://localhost:5000/api/shift?companyId=${companyId}&from=${currentMonth.from}&to=${currentMonth.to}`,{
                     headers: [["Authorization", token]]
                 }) 
@@ -82,16 +84,19 @@ const Shift:React.FC<Props> = ({companys})=>{
                     return 
                 }
                 const shift = await fetchShift.json() as {role: string, shift: ShiftTypes[]}
-                setShift(currentMonth.calendar)
                 if(shift){
                     setUserShift(shift)
                     initialShifts = [...shift.shift]
                 }
-                setSelectedCell(currentMonth.calendar.findIndex(calendar=> calendar.isCurrentMonth && calendar.dayNumber === new Date().getDate()))
+                const calendarMonth = currentMonth.calendar[currentMonth.calendar.findIndex(calendar=>calendar.isCurrentMonth)]
+                console.log(calendarMonth.month, new Date().getMonth())
+                if (calendarMonth.month === new Date().getMonth()){
+                    setSelectedCell(currentMonth.calendar.findIndex(calendar=> calendar.isCurrentMonth && calendar.dayNumber === new Date().getDate()))
+                }else{setSelectedCell(undefined)}
                 setLoading(false)
             }
         })()
-    },[date, selectedCompany])
+    },[date.month, date.year, selectedCompany])
 
     const onShiftChange = (newShift: ShiftTypes)=>{
         const shiftIndex = userShift.shift.findIndex(myShift=>myShift.shift_id === newShift.shift_id)
