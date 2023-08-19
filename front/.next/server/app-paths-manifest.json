@@ -1,7 +1,0 @@
-{
-  "/page": "app/page.js",
-  "/shift/page": "app/shift/page.js",
-  "/dashboard/[id]/page": "app/dashboard/[id]/page.js",
-  "/shift/new/page": "app/shift/new/page.js",
-  "/profile/entreprise/page": "app/profile/entreprise/page.js"
-}

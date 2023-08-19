@@ -1,16 +1,17 @@
 /front/node_modules
-//front/front/.pnp
+/front/front/.pnp
 /front/.pnp.js
 
 # testing
-/front//coverage
+/front/coverage
+
 
 # next.js
-/front//.next/
-/front//out/
+/front/.next/
+/front/out/
 
 # production
-/front//build
+/front/build
 
 # misc
 /front/.DS_Store

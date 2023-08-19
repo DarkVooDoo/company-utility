@@ -1,1 +1,0 @@
-{"kind":"FETCH","data":{"headers":{"access-control-allow-headers":"*","access-control-allow-methods":"*","access-control-allow-origin":"http://localhost:3000","content-length":"4","content-type":"application/json","date":"Sat, 19 Aug 2023 19:32:31 GMT"},"body":"bnVsbA==","status":200,"tags":["/shift/new/page"],"url":"http://localhost:5000/api/notif"},"revalidate":300}
