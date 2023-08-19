@@ -40,14 +40,6 @@
         "async": false
       }
     },
-    "(app-client)/./node_modules/next/dist/client/link.js": {
-      "*": {
-        "id": "(sc_client)/./node_modules/next/dist/client/link.js",
-        "name": "*",
-        "chunks": [],
-        "async": false
-      }
-    },
     "(app-client)/./node_modules/next/dist/shared/lib/lazy-dynamic/dynamic-no-ssr.js": {
       "*": {
         "id": "(sc_client)/./node_modules/next/dist/shared/lib/lazy-dynamic/dynamic-no-ssr.js",
@@ -67,6 +59,14 @@
     "(app-client)/./component/UserContext.tsx": {
       "*": {
         "id": "(sc_client)/./component/UserContext.tsx",
+        "name": "*",
+        "chunks": [],
+        "async": false
+      }
+    },
+    "(app-client)/./node_modules/next/dist/client/link.js": {
+      "*": {
+        "id": "(sc_client)/./node_modules/next/dist/client/link.js",
         "name": "*",
         "chunks": [],
         "async": false
@@ -120,17 +120,9 @@
         "async": false
       }
     },
-    "(app-client)/./component/NewCompany.tsx": {
+    "(app-client)/./component/Shift/component.tsx": {
       "*": {
-        "id": "(sc_client)/./component/NewCompany.tsx",
-        "name": "*",
-        "chunks": [],
-        "async": false
-      }
-    },
-    "(app-client)/./component/MyCompanys/component.tsx": {
-      "*": {
-        "id": "(sc_client)/./component/MyCompanys/component.tsx",
+        "id": "(sc_client)/./component/Shift/component.tsx",
         "name": "*",
         "chunks": [],
         "async": false
@@ -144,9 +136,17 @@
         "async": false
       }
     },
-    "(app-client)/./component/Shift/component.tsx": {
+    "(app-client)/./component/NewCompany.tsx": {
       "*": {
-        "id": "(sc_client)/./component/Shift/component.tsx",
+        "id": "(sc_client)/./component/NewCompany.tsx",
+        "name": "*",
+        "chunks": [],
+        "async": false
+      }
+    },
+    "(app-client)/./component/MyCompanys/component.tsx": {
+      "*": {
+        "id": "(sc_client)/./component/MyCompanys/component.tsx",
         "name": "*",
         "chunks": [],
         "async": false
@@ -243,35 +243,11 @@
       ],
       "async": false
     },
-    "C:\\Users\\moise\\Projects\\work\\front\\app\\page.module.css": {
-      "id": "(app-client)/./app/page.module.css",
-      "name": "*",
-      "chunks": [
-        "app/page:static/chunks/app/page.js"
-      ],
-      "async": false
-    },
-    "C:\\Users\\moise\\Projects\\work\\front\\node_modules\\next\\dist\\client\\link.js": {
-      "id": "(app-client)/./node_modules/next/dist/client/link.js",
-      "name": "*",
-      "chunks": [
-        "app/not-found:static/chunks/app/not-found.js"
-      ],
-      "async": false
-    },
-    "C:\\Users\\moise\\Projects\\work\\front\\node_modules\\next\\dist\\esm\\client\\link.js": {
-      "id": "(app-client)/./node_modules/next/dist/client/link.js",
-      "name": "*",
-      "chunks": [
-        "app/not-found:static/chunks/app/not-found.js"
-      ],
-      "async": false
-    },
     "C:\\Users\\moise\\Projects\\work\\front\\node_modules\\next\\dist\\shared\\lib\\app-router-context.js": {
       "id": "(app-client)/./node_modules/next/dist/shared/lib/app-router-context.js",
       "name": "*",
       "chunks": [
-        "app/shift/page:static/chunks/app/shift/page.js"
+        "app/profile/entreprise/page:static/chunks/app/profile/entreprise/page.js"
       ],
       "async": false
     },
@@ -279,7 +255,7 @@
       "id": "(app-client)/./node_modules/next/dist/shared/lib/app-router-context.js",
       "name": "*",
       "chunks": [
-        "app/shift/page:static/chunks/app/shift/page.js"
+        "app/profile/entreprise/page:static/chunks/app/profile/entreprise/page.js"
       ],
       "async": false
     },
@@ -287,7 +263,7 @@
       "id": "(app-client)/./node_modules/next/dist/shared/lib/hooks-client-context.js",
       "name": "*",
       "chunks": [
-        "app/shift/page:static/chunks/app/shift/page.js"
+        "app/profile/entreprise/page:static/chunks/app/profile/entreprise/page.js"
       ],
       "async": false
     },
@@ -295,7 +271,7 @@
       "id": "(app-client)/./node_modules/next/dist/shared/lib/hooks-client-context.js",
       "name": "*",
       "chunks": [
-        "app/shift/page:static/chunks/app/shift/page.js"
+        "app/profile/entreprise/page:static/chunks/app/profile/entreprise/page.js"
       ],
       "async": false
     },
@@ -303,7 +279,7 @@
       "id": "(app-client)/./node_modules/next/dist/shared/lib/server-inserted-html.js",
       "name": "*",
       "chunks": [
-        "app/shift/page:static/chunks/app/shift/page.js"
+        "app/profile/entreprise/page:static/chunks/app/profile/entreprise/page.js"
       ],
       "async": false
     },
@@ -311,7 +287,7 @@
       "id": "(app-client)/./node_modules/next/dist/shared/lib/server-inserted-html.js",
       "name": "*",
       "chunks": [
-        "app/shift/page:static/chunks/app/shift/page.js"
+        "app/profile/entreprise/page:static/chunks/app/profile/entreprise/page.js"
       ],
       "async": false
     },
@@ -319,7 +295,7 @@
       "id": "(app-client)/./node_modules/next/dist/shared/lib/lazy-dynamic/dynamic-no-ssr.js",
       "name": "*",
       "chunks": [
-        "app/shift/page:static/chunks/app/shift/page.js"
+        "app/profile/entreprise/page:static/chunks/app/profile/entreprise/page.js"
       ],
       "async": false
     },
@@ -327,7 +303,7 @@
       "id": "(app-client)/./node_modules/next/dist/shared/lib/lazy-dynamic/dynamic-no-ssr.js",
       "name": "*",
       "chunks": [
-        "app/shift/page:static/chunks/app/shift/page.js"
+        "app/profile/entreprise/page:static/chunks/app/profile/entreprise/page.js"
       ],
       "async": false
     },
@@ -360,6 +336,30 @@
       "name": "*",
       "chunks": [
         "app/layout:static/chunks/app/layout.js"
+      ],
+      "async": false
+    },
+    "C:\\Users\\moise\\Projects\\work\\front\\app\\page.module.css": {
+      "id": "(app-client)/./app/page.module.css",
+      "name": "*",
+      "chunks": [
+        "app/page:static/chunks/app/page.js"
+      ],
+      "async": false
+    },
+    "C:\\Users\\moise\\Projects\\work\\front\\node_modules\\next\\dist\\client\\link.js": {
+      "id": "(app-client)/./node_modules/next/dist/client/link.js",
+      "name": "*",
+      "chunks": [
+        "app/not-found:static/chunks/app/not-found.js"
+      ],
+      "async": false
+    },
+    "C:\\Users\\moise\\Projects\\work\\front\\node_modules\\next\\dist\\esm\\client\\link.js": {
+      "id": "(app-client)/./node_modules/next/dist/client/link.js",
+      "name": "*",
+      "chunks": [
+        "app/not-found:static/chunks/app/not-found.js"
       ],
       "async": false
     },
@@ -419,6 +419,30 @@
       ],
       "async": false
     },
+    "C:\\Users\\moise\\Projects\\work\\front\\app\\shift\\shift.module.css": {
+      "id": "(app-client)/./app/shift/shift.module.css",
+      "name": "*",
+      "chunks": [
+        "app/shift/page:static/chunks/app/shift/page.js"
+      ],
+      "async": false
+    },
+    "C:\\Users\\moise\\Projects\\work\\front\\component\\Shift\\component.tsx": {
+      "id": "(app-client)/./component/Shift/component.tsx",
+      "name": "*",
+      "chunks": [
+        "app/shift/page:static/chunks/app/shift/page.js"
+      ],
+      "async": false
+    },
+    "C:\\Users\\moise\\Projects\\work\\front\\component\\Members\\Component.tsx": {
+      "id": "(app-client)/./component/Members/Component.tsx",
+      "name": "*",
+      "chunks": [
+        "app/dashboard/[id]/page:static/chunks/app/dashboard/[id]/page.js"
+      ],
+      "async": false
+    },
     "C:\\Users\\moise\\Projects\\work\\front\\component\\NewCompany.tsx": {
       "id": "(app-client)/./component/NewCompany.tsx",
       "name": "*",
@@ -435,30 +459,6 @@
       ],
       "async": false
     },
-    "C:\\Users\\moise\\Projects\\work\\front\\component\\Members\\Component.tsx": {
-      "id": "(app-client)/./component/Members/Component.tsx",
-      "name": "*",
-      "chunks": [
-        "app/dashboard/[id]/page:static/chunks/app/dashboard/[id]/page.js"
-      ],
-      "async": false
-    },
-    "C:\\Users\\moise\\Projects\\work\\front\\component\\Shift\\component.tsx": {
-      "id": "(app-client)/./component/Shift/component.tsx",
-      "name": "*",
-      "chunks": [
-        "app/shift/page:static/chunks/app/shift/page.js"
-      ],
-      "async": false
-    },
-    "C:\\Users\\moise\\Projects\\work\\front\\app\\shift\\shift.module.css": {
-      "id": "(app-client)/./app/shift/shift.module.css",
-      "name": "*",
-      "chunks": [
-        "app/shift/page:static/chunks/app/shift/page.js"
-      ],
-      "async": false
-    },
     "C:\\Users\\moise\\Projects\\work\\front\\app\\shift\\new\\page.tsx": {
       "id": "(app-client)/./app/shift/new/page.tsx",
       "name": "*",
@@ -469,13 +469,13 @@
     }
   },
   "entryCSSFiles": {
+    "C:\\Users\\moise\\Projects\\work\\front\\app\\layout": [
+      "static/css/app/layout.css"
+    ],
     "C:\\Users\\moise\\Projects\\work\\front\\app\\page": [
       "static/css/app/page.css"
     ],
     "C:\\Users\\moise\\Projects\\work\\front\\app\\not-found": [],
-    "C:\\Users\\moise\\Projects\\work\\front\\app\\layout": [
-      "static/css/app/layout.css"
-    ],
     "C:\\Users\\moise\\Projects\\work\\front\\app\\profile\\page": [
       "static/css/app/profile/page.css"
     ],
@@ -485,14 +485,14 @@
     "C:\\Users\\moise\\Projects\\work\\front\\app\\profile\\layout": [
       "static/css/app/profile/layout.css"
     ],
-    "C:\\Users\\moise\\Projects\\work\\front\\app\\profile\\entreprise\\page": [
-      "static/css/app/profile/entreprise/page.css"
+    "C:\\Users\\moise\\Projects\\work\\front\\app\\shift\\page": [
+      "static/css/app/shift/page.css"
     ],
     "C:\\Users\\moise\\Projects\\work\\front\\app\\dashboard\\[id]\\page": [
       "static/css/app/dashboard/[id]/page.css"
     ],
-    "C:\\Users\\moise\\Projects\\work\\front\\app\\shift\\page": [
-      "static/css/app/shift/page.css"
+    "C:\\Users\\moise\\Projects\\work\\front\\app\\profile\\entreprise\\page": [
+      "static/css/app/profile/entreprise/page.css"
     ],
     "C:\\Users\\moise\\Projects\\work\\front\\app\\shift\\new\\page": [
       "static/css/app/shift/new/page.css"

@@ -56,7 +56,7 @@ export const GetNotification = async()=>{
     if (token){
         const fetchNotif = await fetch(`http://localhost:5000/api/notif`, {
             headers: [["Authorization", token]],
-            next: {revalidate: 0}
+            next: {revalidate: 60*5}
         })
         if (fetchNotif.status === 200){
             return await fetchNotif.json() || []

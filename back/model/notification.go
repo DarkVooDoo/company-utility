@@ -27,6 +27,15 @@ func GetNotifications(userToken string) ([]util.Notification, error) {
 	return myNotification, nil
 }
 
+func DeleteNotification(id string) error {
+	db := DBInit()
+	_, err := db.Exec(`DELETE FROM Alert WHERE alert_id=$1`, id)
+	if err != nil {
+		return errors.New("forbidden")
+	}
+	return nil
+}
+
 func getFormatedDate(date string) string {
 	timeLabel := []string{"An", "Mois", "Jour", "Heure", "Minute", "Seconde"}
 	for index, value := range strings.Split(date, "-") {

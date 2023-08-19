@@ -1,5 +1,4 @@
 "use client"
-import style from "@/style/Navbar.module.css"
 import { useContext, useEffect, useRef, useState } from "react"
 import { userContext } from "./UserContext"
 
@@ -10,7 +9,9 @@ import Image from "next/image"
 import User from "@/public/user.webp"
 import LeftArrow from "@/public/left-arrow.webp"
 import bell from "@/public/bell.svg"
-import { GetCookie, closeDialogOnBackdropClick } from "@/util/lib"
+
+import style from "@/style/Navbar.module.css"
+import { closeDialogOnBackdropClick } from "@/util/lib"
 
 const Navbar:React.FC<{notif: {id: string, message: string, date: string}[] | []}> = ({notif})=>{
     const router = useRouter()
@@ -34,8 +35,13 @@ const Navbar:React.FC<{notif: {id: string, message: string, date: string}[] | []
         })
     }
 
-    const onDeleteNotif = (notifId: string)=>{
-        console.log(`Deleting ${notifId}`)
+    const onDeleteNotif = async (notifId: string)=>{
+        const deleteNotif = await fetch(`http://localhost:5000/api/notif`, {
+            method: "DELETE",
+            headers: [["Content-Type", "application/json"]],
+            body: JSON.stringify({id: notifId})
+        })
+        if (deleteNotif.status === 200) onCloseNotif()
     }
 
     useEffect(()=>{

@@ -87,6 +87,7 @@ const Shift:React.FC<Props> = ({companys})=>{
                     setUserShift(shift)
                     initialShifts = [...shift.shift]
                 }
+                setSelectedCell(currentMonth.calendar.findIndex(calendar=> calendar.isCurrentMonth && calendar.dayNumber === new Date().getDate()))
                 setLoading(false)
             }
         })()

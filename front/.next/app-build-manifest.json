@@ -1,5 +1,11 @@
 {
   "pages": {
+    "/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/layout.css",
+      "static/chunks/app/layout.js"
+    ],
     "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -10,12 +16,6 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/not-found.js"
-    ],
-    "/layout": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/layout.css",
-      "static/chunks/app/layout.js"
     ],
     "/profile/page": [
       "static/chunks/webpack.js",
@@ -35,11 +35,11 @@
       "static/css/app/profile/layout.css",
       "static/chunks/app/profile/layout.js"
     ],
-    "/profile/entreprise/page": [
+    "/shift/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/profile/entreprise/page.css",
-      "static/chunks/app/profile/entreprise/page.js"
+      "static/css/app/shift/page.css",
+      "static/chunks/app/shift/page.js"
     ],
     "/dashboard/[id]/page": [
       "static/chunks/webpack.js",
@@ -47,11 +47,11 @@
       "static/css/app/dashboard/[id]/page.css",
       "static/chunks/app/dashboard/[id]/page.js"
     ],
-    "/shift/page": [
+    "/profile/entreprise/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/shift/page.css",
-      "static/chunks/app/shift/page.js"
+      "static/css/app/profile/entreprise/page.css",
+      "static/chunks/app/profile/entreprise/page.js"
     ],
     "/shift/new/page": [
       "static/chunks/webpack.js",
