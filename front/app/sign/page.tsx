@@ -29,7 +29,7 @@ const Sign = ()=>{
             })
             if(signUser.status === 200){
                 const userCredential = await signUser.json()
-                onUserChange({user_id: userCredential.user_id, user_lastname: userCredential.user_name})
+                onUserChange({user_id: userCredential.user_id, user_name: userCredential.user_name})
                 CreateCookie("auth-token", userCredential.user_token, 60*60*24*3)
                 CreateCookie("id", userCredential.user_id, 60*60*24*3)
                 CreateCookie("user_name", userCredential.user_name, 60*60*24*3)
@@ -47,16 +47,19 @@ const Sign = ()=>{
                 {isNewUser && <> 
                     <div className={`${style.sign_input}`}>
                         <label htmlFor="prenom" className={style.sign_input_label}>Prenom</label>
-                        <input type="text" name="prenom" id="prenom" className={style.sign_input_field} onChange={({currentTarget:{value}})=>setUser({...user, firstname: value})} />
+                        <input type="text" name="prenom" id="prenom" autoComplete="off"
+                        className={style.sign_input_field} onChange={({currentTarget:{value}})=>setUser({...user, firstname: value})} />
                     </div>
                     <div className={`${style.sign_input}`}>
                         <label htmlFor="nom" className={style.sign_input_label}>Nom</label>
-                        <input type="text" name="nom" id="nom" className={style.sign_input_field} onChange={({currentTarget:{value}})=>setUser({...user, lastname: value})} />
+                        <input type="text" name="nom" id="nom" className={style.sign_input_field} autoComplete="off"
+                        onChange={({currentTarget:{value}})=>setUser({...user, lastname: value})} />
                     </div>
                 </>}
                 <div className={style.sign_input}>
                     <label htmlFor="email" className={style.sign_input_label}>Email</label>
-                    <input type="text" name="email" id="email" className={style.sign_input_field} onChange={({currentTarget:{value}})=>setUser({...user, email: value})} />
+                    <input type="text" name="email" id="email" className={style.sign_input_field} autoComplete="off"
+                    onChange={({currentTarget:{value}})=>setUser({...user, email: value})} />
                 </div>
                 <div className={style.sign_input}> 
                     <label htmlFor="password" className={style.sign_input_label}>Mot de passe</label>

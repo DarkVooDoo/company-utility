@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="60.611336"
+   height="63.999989"
+   viewBox="0 0 16.036749 16.933331"
+   version="1.1"
+   id="svg5"
+   inkscape:export-filename="bell.svg"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     showguides="false" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-64.586016,-65.040631)">
+    <path
+       id="path744"
+       style="fill:none;stroke:#000000;stroke-width:0.735539;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       d="m 69.524143,67.86769 -2.251655,9.528711 -2.318743,2.825829 h 7.650682 7.65061 L 77.936294,77.396401 75.68464,67.86769 c -2.201069,-1.869225 -4.249874,-1.809756 -6.160497,0 z"
+       sodipodi:nodetypes="cccccccc" />
+    <ellipse
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.367791;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       id="path3235"
+       cx="72.604393"
+       cy="65.829842"
+       rx="0.7892105"
+       ry="0.78921044" />
+    <path
+       id="path8425"
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.367791;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       d="m 71.545151,80.773898 a 1.2004261,1.2000537 0 0 0 1.200421,1.200063 1.2004261,1.2000537 0 0 0 1.200423,-1.200063 z" />
+  </g>
+</svg>

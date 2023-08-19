@@ -15,6 +15,62 @@
     gap: .5rem;
 }
 
+.Navbar_navbar_navigation_bellIcon__RSrqu{
+    height: calc(var(--Navbar-Height) - 1rem);
+    width: calc(var(--Navbar-Height) - 1rem);
+}
+
+.Navbar_navbar_notifPopup__4Dac6 > *{
+    margin-bottom: var(--Row-Margin);
+}
+
+.Navbar_navbar_notifPopup__4Dac6{
+    position: absolute;
+    left: 100vw;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    padding: calc(var(--Mobile-Padding) * 2);
+    background-color: white;
+    animation: Navbar_showNotificationPopup__r2xH5 .1s linear forwards;
+    z-index: 10;
+}
+
+.Navbar_navbar_notifPopup_header__0gcUJ{
+    display: flex;
+    justify-content: space-between;
+}
+
+.Navbar_navbar_notifPopup_closeBtn__8nXoV{
+    height: 2rem;
+    width: 2rem;
+}
+
+.Navbar_navbar_notifPopup_notif__3mr_M{
+    position: relative;
+    border-radius: 10px;
+    border: 1px solid var(--Primary-Color);
+    padding: .5rem;
+}
+
+.Navbar_navbar_notifPopup_notif__3mr_M > *{
+    margin-bottom: var(--Row-Margin);
+}
+
+.Navbar_navbar_notifPopup_notif_deleteBtn__kD_AY{
+    position: absolute;
+    top: -.75rem;
+    right: -.75rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: var(--Primary-Color);
+    border-radius: 50%;
+}
+
+.Navbar_navbar_notifPopup_notif_date__SYlBH{
+    text-align: end;
+}
+
 .Navbar_navbar_logBtn__yYcAI{
     height: calc(var(--Navbar-Height) - 1rem);
     width: calc(var(--Navbar-Height) - 1rem);
@@ -31,14 +87,31 @@
 }
 
 .Navbar_navbar_logBtn_content__BfQxp{
-    width: 20ch;
+    width: 25ch;
     height: 100%;
     margin-top: 0;
     margin-bottom: 0;
-    margin-left: calc(100vw - 20ch);
+    margin-left: calc(100vw - 25ch);
     border: none;
     height: 100%;
     max-height: 100%;
+}
+
+.Navbar_navbar_logBtn_content_user__fAnv7{
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+    padding: .3rem;
+}
+
+.Navbar_navbar_logBtn_content_user_photo__u9kxX{
+    height: 3rem;
+    width: 3rem;
+    border-radius: 50%;
+}
+
+.Navbar_navbar_logBtn_content_user_name__Twg7c{
+    font-size: 1.1rem;
 }
 
 .Navbar_navbar_logBtn_content_link__rX5N9{
@@ -46,6 +119,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+@keyframes Navbar_showNotificationPopup__r2xH5{
+    50%{
+        left: 50vw;
+    }100%{
+        left: 0;
+    }
 }
 /*!******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[4].oneOf[2].use[1]!./node_modules/next/dist/build/webpack/loaders/next-font-loader/index.js??ruleSet[1].rules[4].oneOf[2].use[2]!./node_modules/next/font/google/target.css?{"path":"app\\layout.tsx","import":"Open_Sans","arguments":[{"subsets":["latin"]}],"variableName":"font"} ***!
@@ -183,6 +264,7 @@ a{
 
 dialog{
   margin: auto;
+  border: none;
 }
 
 ::-webkit-scrollbar{

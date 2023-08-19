@@ -1,3 +1,6 @@
+# Nom de l'app Connected
+ - Logo pour representer une connexion employeur - travailleur
+
 # Idée
     - Tracker les jours travaillées
     - les hours travaillées par mois

@@ -45,6 +45,7 @@ a{
 
 dialog{
   margin: auto;
+  border: none;
 }
 
 ::-webkit-scrollbar{

@@ -15,6 +15,7 @@ func CreateShift(planning []util.ShiftStruct) error {
 				return err
 			}
 		}
+		db.Exec(`INSERT INTO Alert (alert_message, alert_user_id) VALUES('Votre planning a changé', $1)`, user.User_id)
 	}
 	return nil
 }

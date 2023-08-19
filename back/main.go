@@ -17,6 +17,7 @@ func main() {
 	mux.HandleFunc("/api/member", route.MemberRoute)
 	mux.HandleFunc("/api/auth", route.AuthRoute)
 	mux.HandleFunc("/api/shift", route.ShiftRoute)
+	mux.HandleFunc("/api/notif", route.NotificationRoute)
 	log.Println("Server PORT: " + PORT)
 	http.ListenAndServe(":"+PORT, mux)
 

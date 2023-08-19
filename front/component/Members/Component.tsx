@@ -4,7 +4,6 @@ import Image from "next/image"
 import close from "@/public/close.svg"
 import style from "./style.module.css"
 import { GetCookie } from "@/util/lib"
-import { useRouter } from "next/navigation"
 
 interface Props{
     companyId: string,
@@ -16,7 +15,6 @@ interface Props{
 }
 
 const Actions:React.FC<Props> = ({members, companyId})=>{
-    const router = useRouter()
     const dialogRef = useRef<HTMLDialogElement>(null)
     const [email, setEmail] = useState("")
     const [allMembers, setAllMembers] = useState(members)

@@ -1,11 +1,12 @@
 "use client"
 import style from "@/style/Calendar.module.css"
-import {useEffect, useState } from "react"
+import {useContext, useEffect, useState } from "react"
 
 import Image from "next/image"
 import left from "../public/left.webp"
 import right from "../public/right.webp"
-import { GetMonthArray, GetYearDays } from "@/util/lib"
+import { GetCookie, GetMonthArray, GetYearDays } from "@/util/lib"
+import { userContext } from "./UserContext"
 
 const monthGrid = new Array(42).fill(0)
 const DAYS = ["Lu", "Ma", "Me", "Je", "Ve", "Sa", "Di"]
@@ -21,22 +22,26 @@ const Calendar:React.FC<CalendarProps> = ({onChange, currentUser, currentCompany
     const [showCalendar, setShowCalendar] = useState(false)
     const [dayAmount] = useState(GetYearDays(new Date().getFullYear(), new Date().getMonth()))
     const [date, setDate] = useState({year: new Date().getFullYear(), month: new Date().getMonth(), daySelected: new Set<number>()})
-    const [shift, setShift] = useState<{shift_day: number}[]>([])
+    const [shift, setShift] = useState<{shift: {shift_day: number, shift_month: number, user_id: string}[]}>({shift: []})
     const [calendar, setCalendar] = useState<{isCurrentMonth: boolean, dayNumber: number}[]>([])
 
     useEffect(()=>{
         (async ()=>{
-            const buildCalendar = GetMonthArray(date.year, date.month)
-            console.log(`${date.year}${date.month+1 < 10 ? "0"+(date.month+1) : date.month+1}-31`)
-            const fetchShifts = await fetch(`http://localhost:5000/api/shift?uId=${currentUser}&companyId=${currentCompany}&from=${date.year}-${date.month+1 < 10 ? "0"+(date.month+1) : date.month+1}-01&to=${date.year}-${date.month+1 < 10 ? "0"+(date.month+1) : date.month+1}-31`)
-            const shifts = await fetchShifts.json() as {shift_day: number}[]
-            setCalendar(buildCalendar.calendar)
-            shifts ? setShift(shifts) : setShift([])
+            const token = GetCookie("auth-token")
+            if(token){
+                const buildCalendar = GetMonthArray(date.year, date.month)
+                const fetchShifts = await fetch(`http://localhost:5000/api/shift?companyId=${currentCompany}&from=${buildCalendar.from}&to=${buildCalendar.to}`,{
+                    headers: [["Authorization", token]]
+                })
+                const shifts = await fetchShifts.json() as {shift: {shift_day: number, shift_month: number, user_id: string}[]}
+                setCalendar(buildCalendar.calendar)
+                setShift({shift: shifts.shift})
+            }
         })()
     },[date.month, currentUser])
 
     const days = calendar.map((day,index)=>{
-        const isDayDisable = day.isCurrentMonth && shift && shift.findIndex(myShift=>myShift.shift_day === day.dayNumber) === -1 ? false : true
+        const isDayDisable = day.isCurrentMonth && shift && shift.shift.findIndex(myShift=>myShift.shift_day === day.dayNumber) === -1 ? false : true
         return (
             <button disabled={isDayDisable} type="button" key={index} className={`${style.calendar_day} ${seletedDays.has(day.dayNumber) && day.isCurrentMonth ? style.active : ""}`} onClick={(e)=>{
                 seletedDays.has(day.dayNumber) ? seletedDays.delete(day.dayNumber) : seletedDays.add(day.dayNumber)

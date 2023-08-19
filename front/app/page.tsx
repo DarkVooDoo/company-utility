@@ -1,9 +1,3 @@
-import Image from "next/image"
-import pause from "@/public/pause.svg"
-import exit from "@/public/exit.svg"
-
-import { MONTH } from '@/util/lib'
-import {GetCompanys} from "@/util/data"
 
 import style from './page.module.css'
 

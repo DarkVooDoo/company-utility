@@ -50,3 +50,16 @@ export const GetCompanys = async (type: string):Promise<{id: string, name: strin
     }
     return []
 }
+
+export const GetNotification = async()=>{
+    const token = cookies().get("auth-token")?.value
+    if (token){
+        const fetchNotif = await fetch(`http://localhost:5000/api/notif`, {
+            headers: [["Authorization", token]],
+            next: {revalidate: 0}
+        })
+        if (fetchNotif.status === 200){
+            return await fetchNotif.json() || []
+        }
+    }
+}

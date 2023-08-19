@@ -2,8 +2,7 @@
   "/page": "app/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/shift/page": "app/shift/page.js",
-  "/sign/page": "app/sign/page.js",
-  "/profile/page": "app/profile/page.js",
   "/dashboard/[id]/page": "app/dashboard/[id]/page.js",
+  "/shift/new/page": "app/shift/new/page.js",
   "/profile/entreprise/page": "app/profile/entreprise/page.js"
 }

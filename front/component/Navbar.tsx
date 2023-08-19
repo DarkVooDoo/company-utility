@@ -1,6 +1,6 @@
 "use client"
 import style from "@/style/Navbar.module.css"
-import { useContext, useEffect, useRef } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { userContext } from "./UserContext"
 
 import Link from "next/link"
@@ -8,13 +8,16 @@ import { useRouter } from "next/navigation"
 import Image from "next/image"
 
 import User from "@/public/user.webp"
-import { closeDialogOnBackdropClick } from "@/util/lib"
+import LeftArrow from "@/public/left-arrow.webp"
+import bell from "@/public/bell.svg"
+import { GetCookie, closeDialogOnBackdropClick } from "@/util/lib"
 
-const Navbar = ()=>{
+const Navbar:React.FC<{notif: {id: string, message: string, date: string}[] | []}> = ({notif})=>{
     const router = useRouter()
     const sideBarRef = useRef<HTMLDialogElement>(null)
+    const notifRef = useRef<HTMLDivElement>(null)
     const [user, onUserChange] = useContext(userContext)
-
+    const [showNotif, setShowNotif] = useState(false)
     const onCloseSideBar = ()=>{
         sideBarRef.current?.close()
     }
@@ -23,39 +26,71 @@ const Navbar = ()=>{
         sideBarRef.current?.showModal()
     }
 
+    const onCloseNotif = ()=>{
+        notifRef.current?.animate({
+            left: ["0", "-100vw"]
+        }, {duration: 100, fill: "forwards"}).addEventListener("finish", ()=>{
+            setShowNotif(false)
+        })
+    }
+
+    const onDeleteNotif = (notifId: string)=>{
+        console.log(`Deleting ${notifId}`)
+    }
+
     useEffect(()=>{
         const dialog = sideBarRef.current
         if (dialog) closeDialogOnBackdropClick(dialog)
+         
     },[])
 
     const onLogOff = ()=>{
-        onUserChange({user_id: "", user_lastname: ""})
+        onUserChange({user_id: "", user_name: ""})
         document.cookie = "id=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
         document.cookie = "lastname=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
         document.cookie = "auth-token=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
         router.push("/")
         onCloseSideBar()
     }
+
+    const notifs = notif.map(notif=>(
+        <div className={style.navbar_notifPopup_notif} key={notif.id}>
+            <button type="button" className={style.navbar_notifPopup_notif_deleteBtn} onClick={()=>onDeleteNotif(notif.id)}>X</button>
+            <p className={style.navbar_notifPopup_notif_date}>{notif.date} </p>
+            <p>{notif.message} </p>
+        </div>
+    ))
+
     return (
         <nav className={style.navbar}>
             <Link href="/">Home</Link>
             <div className={style.navbar_navigation}>
                 {user.user_id !== "" ? 
-                    <button className={style.navbar_logBtn} onClick={onOpenSideBar}>
-                        <Image src={User} alt="user" className={style.navbar_logBtn_icon} />
-                    </button> : 
+                    <>
+                        <button onClick={()=>setShowNotif(true)}><Image src={bell} alt="notification" className={style.navbar_navigation_bellIcon} /> </button>
+                        <button className={style.navbar_logBtn} onClick={onOpenSideBar}>
+                            <Image src={User} alt="user" className={style.navbar_logBtn_icon} />
+                        </button>
+                    </> : 
                     <Link href="/sign">Connexion</Link>
                 }
             </div>
             <dialog ref={sideBarRef} className={style.navbar_logBtn_content}>
-                <div>
-                    <Image src={User} alt="user photo" />
-                    <h2>{user.user_lastname} </h2>
+                <div className={style.navbar_logBtn_content_user}>
+                    <Image src={User} alt="user photo" className={style.navbar_logBtn_content_user_photo} />
+                    <h2 className={style.navbar_logBtn_content_user_name}>{user.user_name} </h2>
                 </div>
                 <button type="button" onClick={onLogOff}>Log Off</button>
                 <Link href="/shift" className={style.navbar_logBtn_content_link} onClick={onCloseSideBar}>Planning</Link>
                 <Link href={`/profile`} className={style.navbar_logBtn_content_link} onClick={onCloseSideBar}>Profile</Link>
             </dialog>
+            {showNotif && <div ref={notifRef} className={style.navbar_notifPopup}>
+                <div className={style.navbar_notifPopup_header}>
+                    <button type="button" onClick={onCloseNotif}><Image src={LeftArrow} alt="close" className={style.navbar_notifPopup_closeBtn} /></button>
+                    <h1>Notification</h1>
+                </div>
+                {notifs.length > 0 ? notifs : <h1>Il y a pas de notification</h1>}
+            </div>}
         </nav>
     )
 }

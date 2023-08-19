@@ -109,6 +109,12 @@ type UserProfile struct {
 	Email     string `json:"email"`
 }
 
+type Notification struct {
+	Id      string `json:"id"`
+	Message string `json:"message"`
+	Date    string `json:"date"`
+}
+
 type JWTokenInterface struct {
 	User UserJWT
 	jwt.RegisteredClaims
