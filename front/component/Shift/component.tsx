@@ -72,7 +72,6 @@ const Shift:React.FC<Props> = ({companys})=>{
         (async ()=>{
             const token = GetCookie("auth-token")
             const companyId = GetCookie("company-id")
-            console.log("Enter")
             const currentMonth = GetMonthArray(new Date().getFullYear(), MONTH.findIndex(month=>month===date.month))
             setShift(currentMonth.calendar)
             if (companyId && token){
@@ -89,12 +88,11 @@ const Shift:React.FC<Props> = ({companys})=>{
                     initialShifts = [...shift.shift]
                 }
                 const calendarMonth = currentMonth.calendar[currentMonth.calendar.findIndex(calendar=>calendar.isCurrentMonth)]
-                console.log(calendarMonth.month, new Date().getMonth())
                 if (calendarMonth.month === new Date().getMonth()){
                     setSelectedCell(currentMonth.calendar.findIndex(calendar=> calendar.isCurrentMonth && calendar.dayNumber === new Date().getDate()))
                 }else{setSelectedCell(undefined)}
-                setLoading(false)
             }
+            setLoading(false)
         })()
     },[date.month, date.year, selectedCompany])
 
@@ -148,7 +146,7 @@ const Shift:React.FC<Props> = ({companys})=>{
             </div>
             {selectedCell && <h1 className={style.shift_date}>
                 {shift[selectedCell].dayNumber} {MONTH[shift[selectedCell].month]}
-                {hasChanged(initialShifts, userShift.shift, ["shift_start", "shift_end", "shift_pause"])[0] && <button type="button" className={style.shift_date_editBtn} onClick={onEditShift}><Image src={Edit} alt="edit" className={style.shift_date_editBtn_icon} /></button>}
+                {userShift.shift.length > 0 && hasChanged(initialShifts, userShift.shift, ["shift_start", "shift_end", "shift_pause"])[0] && <button type="button" className={style.shift_date_editBtn} onClick={onEditShift}><Image src={Edit} alt="edit" className={style.shift_date_editBtn_icon} /></button>}
             </h1>}
             {displayDayShift}
             {popupMessage && <PopupAlert {...{...popupMessage, onAnimationEnd: ()=>{}}} />}

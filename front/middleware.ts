@@ -11,12 +11,22 @@ export const middleware = async (request: NextRequest)=>{
         if(authorize.status === 200){
             const user = await authorize.json()
             if(request.nextUrl.pathname.startsWith("/sign")){
-                return NextResponse.redirect(new URL("/", request.url))
+                return NextResponse.redirect(new URL("/home", request.url))
+            }else if(request.nextUrl.pathname === "/"){
+                const company = request.cookies.get("company-id")?.value
+                if (company){
+                    return NextResponse.redirect(new URL(`/home/${request.cookies.get("company-id")?.value}`, request.url))
+                }
+                return NextResponse.redirect(new URL("/profile", request.url))
             }
             const res = NextResponse.next()
             res.cookies.set("id", user.user_id)
             res.cookies.set("lastname", user.user_lastname)
             return res
+        }else{
+            if(request.nextUrl.pathname.startsWith("/home")){
+                return NextResponse.redirect(new URL("/sign", request.url))
+            }
         }
     }else{
         return NextResponse.redirect(new URL("/sign", request.url))
@@ -26,5 +36,5 @@ export const middleware = async (request: NextRequest)=>{
  
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ['/shift/:path*', "/profile/:path*"],
+  matcher: ['/', '/shift/:path*', "/profile/:path*", "/home", "/sign"],
 }

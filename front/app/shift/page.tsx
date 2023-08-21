@@ -5,7 +5,6 @@ import Shift from "@/component/Shift/component"
 
 const ShiftLayout = async ()=>{
     const allCompany = await GetCompanys("Shift")
-    
     return (
         <main className={style.shift}>
             <Shift {...{companys: allCompany}} />

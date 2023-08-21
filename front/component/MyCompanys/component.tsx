@@ -4,6 +4,8 @@ import { CreateCookie, GetCookie } from "@/util/lib"
 import { useEffect, useState } from "react"
 import {useRouter} from "next/navigation"
 
+import Link from "next/link"
+
 import Image from "next/image"
 import Company from "@/public/companie.webp"
 
@@ -11,7 +13,7 @@ import style from "./style.module.css"
 
 interface Props{
     companys: {id: string, name: string, adresse: string, postal: number}[],
-    type: "Shift" | "Profile",
+    type: "Shift" | "Profile" | "User",
     onCompanyChange?: (id: string)=>void
 }
 
@@ -21,12 +23,14 @@ const MyCompanys:React.FC<Props> = ({companys, type, onCompanyChange = ()=>{}})=
 
     const onCompanyClick = async (id: string)=>{
         if(type === "Shift"){
-            CreateCookie("company-id", id, 60*60*24*200)
             setSelectedCompany(id)
             onCompanyChange(id)
-        }else{
+        }else if(type === "Profile"){
             router.push(`/dashboard/${id}`)
+        }else{
+            router.push(`/home/${id}`)
         }
+        CreateCookie("company-id", id, 60*60*24*200)
     }
 
     useEffect(()=>{

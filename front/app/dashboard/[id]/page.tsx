@@ -47,6 +47,15 @@ const Dashboard = async ({params:{id}}:Props)=>{
             <p>Adresse {company.adresse}</p>
             <h1>Planning Aujourd'hui</h1>
             {shift}
+            <div>
+                <h1>Congés</h1>
+                <h1>John Doe</h1>
+                <p>demande de congé payé du 22 Juillet au 30 Juillet</p>
+                <div>
+                    <button type="button">Refusé</button>
+                    <button type="button">Accepté</button>
+                </div>
+            </div>
             <Actions {...{members: company.members, companyId: id}} />
         </main>
     )

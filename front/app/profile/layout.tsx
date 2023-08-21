@@ -29,7 +29,7 @@ const ProfileLayout:React.FC<Props> = async ({children})=>{
                 </a>
                 <a href="#" className={style.profile_navigation_link}>
                     <Image src={trash} alt="Notification" className={style.profile_navigation_link_icon} />
-                    <p className={style.profile_navigation_link_text}>Notification</p>
+                    <p className={style.profile_navigation_link_text}>Fiches</p>
                 </a>
             </div>
             {children}

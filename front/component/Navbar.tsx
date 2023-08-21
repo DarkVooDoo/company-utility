@@ -81,14 +81,14 @@ const Navbar:React.FC<{notif: {id: string, message: string, date: string}[] | []
                     <Link href="/sign">Connexion</Link>
                 }
             </div>
-            <dialog ref={sideBarRef} className={style.navbar_logBtn_content}>
-                <div className={style.navbar_logBtn_content_user}>
-                    <Image src={User} alt="user photo" className={style.navbar_logBtn_content_user_photo} />
-                    <h2 className={style.navbar_logBtn_content_user_name}>{user.user_name} </h2>
+            <dialog ref={sideBarRef} className={style.navbar_sideBar}>
+                <div className={style.navbar_sideBar_user}>
+                    <Image src={User} alt="user photo" className={style.navbar_sideBar_user_photo} />
+                    <h2 className={style.navbar_sideBar_user_name}>{user.user_name} </h2>
                 </div>
-                <button type="button" onClick={onLogOff}>Log Off</button>
-                <Link href="/shift" className={style.navbar_logBtn_content_link} onClick={onCloseSideBar}>Planning</Link>
-                <Link href={`/profile`} className={style.navbar_logBtn_content_link} onClick={onCloseSideBar}>Profile</Link>
+                <Link href="/shift" className={style.navbar_sideBar_link} onClick={onCloseSideBar}>Planning</Link>
+                <Link href={`/profile`} className={style.navbar_sideBar_link} onClick={onCloseSideBar}>Profile</Link>
+                <button type="button" onClick={onLogOff} className={style.navbar_sideBar_logoffBtn} >Log Off</button>
             </dialog>
             {showNotif && <div ref={notifRef} className={style.navbar_notifPopup}>
                 <div className={style.navbar_notifPopup_header}>
