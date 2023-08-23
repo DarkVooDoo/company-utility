@@ -1,3 +1,7 @@
+.shift > *{
+    margin-bottom: var(--Row-Margin);
+}
+
 .shift_company{
     display: flex;
     align-items: center;

@@ -70,18 +70,18 @@ func DeleteShift(id string) error {
 	return nil
 }
 
-func CompanyEmployee(companyId string) ([]util.CompanyUser, error) {
-	var db = DBInit()
-	var companyUser []util.CompanyUser
-	var name, role, id string
-	result, err := db.Query(`SELECT CONCAT(user_firstname,' ', user_lastname), member_role, user_id FROM Member LEFT JOIN Users ON user_id=member_user_id WHERE member_company_id=$1`, companyId)
-	// userShifs, shiftError := db.Query(`SELECT user_lastname FROM Shift WHERE shift_user_id=$1 AND shift_company_id=$2`, userId, companyId)
+func GetDayShift(userToken string, companyId string, date string) (util.TodayShift, error) {
+	var start, end string
+	var pause uint16
+	user, tokenErr := VerifyToken(userToken)
+	if tokenErr != nil {
+		return util.TodayShift{}, errors.New("error")
+	}
+	db := DBInit()
+	row := db.QueryRow(`SELECT shift_start, shift_end, shift_pause FROM Member LEFT JOIN Shift ON member_user_id=shift_user_id AND member_company_id=shift_company_id WHERE member_user_id=$1 AND member_company_id=$2 AND shift_date=$3`, user.User_id, companyId, date)
+	err := row.Scan(&start, &end, &pause)
 	if err != nil {
-		return companyUser, errors.New("error fetching data")
+		return util.TodayShift{}, errors.New("error")
 	}
-	for result.Next() {
-		result.Scan(&name, &role, &id)
-		companyUser = append(companyUser, util.CompanyUser{User_id: id, User_name: name, User_role: role})
-	}
-	return companyUser, nil
+	return util.TodayShift{Start: start, End: end, Pause: pause}, nil
 }

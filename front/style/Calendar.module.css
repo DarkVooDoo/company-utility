@@ -69,3 +69,7 @@
     background-color: rgb(59, 148, 183);
     border-radius: 50%;
 }
+
+.between_active{
+    background-color: red;
+}

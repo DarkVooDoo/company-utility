@@ -46,14 +46,14 @@ const MyCompanys:React.FC<Props> = ({companys, type, onCompanyChange = ()=>{}})=
         </div>
     ))
     return (
-        <>
+        <div className={style.shift}>
             <h1>Entreprises</h1> 
             <div className={style.shift_company}>
                 <div className={style.shift_company_inner}>
                     {company}
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 

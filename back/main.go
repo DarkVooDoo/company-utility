@@ -10,14 +10,21 @@ const (
 	PORT = "5000"
 )
 
+var Routes map[string]func(http.ResponseWriter, *http.Request) = map[string]func(http.ResponseWriter, *http.Request){
+	"/api/user":    route.UserRoute,
+	"/api/pro":     route.ProRoute,
+	"/api/member":  route.MemberRoute,
+	"/api/auth":    route.AuthRoute,
+	"/api/shift":   route.ShiftRoute,
+	"/api/notif":   route.NotificationRoute,
+	"/api/holyday": route.HolydayRoute,
+}
+
 func main() {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/api/user", route.UserRoute)
-	mux.HandleFunc("/api/pro", route.ProRoute)
-	mux.HandleFunc("/api/member", route.MemberRoute)
-	mux.HandleFunc("/api/auth", route.AuthRoute)
-	mux.HandleFunc("/api/shift", route.ShiftRoute)
-	mux.HandleFunc("/api/notif", route.NotificationRoute)
+	for route, funcHandler := range Routes {
+		mux.HandleFunc(route, funcHandler)
+	}
 	log.Println("Server PORT: " + PORT)
 	http.ListenAndServe(":"+PORT, mux)
 

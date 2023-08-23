@@ -61,5 +61,21 @@ export const GetNotification = async()=>{
         if (fetchNotif.status === 200){
             return await fetchNotif.json() || []
         }
+    }else{
+        return []
+    }
+}
+
+export const GetTodayShift =async () => {
+    const [day, month, year] = new Date().toLocaleDateString().split("/")
+    const token = cookies().get("auth-token")?.value
+    if (token){
+        const fetchShift = await fetch(`http://localhost:5000/api/shift?date=${year}-${month}-${day}&cId=${cookies().get("company-id")?.value}`,{
+            headers: [["Authorization", token], ["Accept", "application/json"]]
+        })
+        if (fetchShift.status === 200){
+            const body = await fetchShift.json()
+            return body
+        }
     }
 }

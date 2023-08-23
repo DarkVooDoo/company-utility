@@ -7,6 +7,12 @@ type ShiftResponse struct {
 	Shift []ShiftStruct `json:"shift"`
 }
 
+type TodayShift struct {
+	Start string `json:"start"`
+	End   string `json:"end"`
+	Pause uint16 `json:"pause"`
+}
+
 type ShiftStruct struct {
 	User_id     string   `json:"user_id"`
 	User_name   string   `json:"user_name"`
@@ -113,6 +119,12 @@ type Notification struct {
 	Id      string `json:"id"`
 	Message string `json:"message"`
 	Date    string `json:"date"`
+}
+
+type HolydayRequestPayload struct {
+	From      string `json:"from"`
+	To        string `json:"to"`
+	CompanyId string `json:"companyId"`
 }
 
 type JWTokenInterface struct {

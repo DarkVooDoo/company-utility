@@ -83,3 +83,19 @@ func GetSingleEntreprise(companyId string, userToken string) (util.Company, erro
 	}
 	return util.Company{Id: id, Name: name, Adresse: adresse, Postal: postal, Members: members}, nil
 }
+
+func CompanyEmployee(companyId string) ([]util.CompanyUser, error) {
+	var db = DBInit()
+	var companyUser []util.CompanyUser
+	var name, role, id string
+	result, err := db.Query(`SELECT CONCAT(user_firstname,' ', user_lastname), member_role, user_id FROM Member LEFT JOIN Users ON user_id=member_user_id WHERE member_company_id=$1`, companyId)
+	// userShifs, shiftError := db.Query(`SELECT user_lastname FROM Shift WHERE shift_user_id=$1 AND shift_company_id=$2`, userId, companyId)
+	if err != nil {
+		return companyUser, errors.New("error fetching data")
+	}
+	for result.Next() {
+		result.Scan(&name, &role, &id)
+		companyUser = append(companyUser, util.CompanyUser{User_id: id, User_name: name, User_role: role})
+	}
+	return companyUser, nil
+}

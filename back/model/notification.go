@@ -24,7 +24,11 @@ func GetNotifications(userToken string) ([]util.Notification, error) {
 		formatedDate := getFormatedDate(date)
 		myNotification = append(myNotification, util.Notification{Id: id, Message: message, Date: formatedDate})
 	}
-	return myNotification, nil
+	if len(myNotification) > 0 {
+		return myNotification, nil
+	} else {
+		return []util.Notification{}, nil
+	}
 }
 
 func DeleteNotification(id string) error {

@@ -21,7 +21,7 @@ func ProRoute(res http.ResponseWriter, req *http.Request) {
 				res.Header().Add("Content-Type", "application/json")
 				res.Write(body)
 			}
-		} else {
+		} else if req.URL.Query().Has("type") {
 			cType := req.URL.Query().Get("type")
 			company, err := model.GetEntreprises(userToken, cType)
 			if err != nil {

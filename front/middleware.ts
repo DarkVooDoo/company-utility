@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { NextRequest } from 'next/server'
  
 // This function can be marked `async` if using `await` inside
 export const middleware = async (request: NextRequest)=>{
@@ -26,10 +26,14 @@ export const middleware = async (request: NextRequest)=>{
         }else{
             if(request.nextUrl.pathname.startsWith("/home")){
                 return NextResponse.redirect(new URL("/sign", request.url))
+            }else{
+                return NextResponse.redirect(new URL("/sign", request.url))
             }
         }
     }else{
-        return NextResponse.redirect(new URL("/sign", request.url))
+        if (!request.nextUrl.pathname.startsWith("/sign")){
+            return NextResponse.redirect(new URL("/sign", request.url))
+        }
     }
     
 }

@@ -1,5 +1,5 @@
 "use client"
-import { useContext, useState } from "react"
+import { FormEventHandler, useContext, useState } from "react"
 import style from "./Sign.module.css"
 import { CreateCookie } from "@/util/lib"
 import { userContext } from "@/component/UserContext"
@@ -11,7 +11,8 @@ const Sign = ()=>{
     const [isNewUser, setIsNewUser] = useState(false)
     const [user, setUser] = useState({email: "", password: "", firstname: "", lastname: "", confirmation: ""})
 
-    const onSignin = async ()=>{
+    const onSignin:FormEventHandler = async (e)=>{
+        e.preventDefault()
         if (user.confirmation === user.password && isNewUser){
             const createUser = await fetch(`http://localhost:5000/api/user`, {
                 method: "POST",
@@ -39,7 +40,7 @@ const Sign = ()=>{
     }
     return (
         <main className={style.sign}>
-            <div className={style.sign_form}>
+            <form onSubmit={onSignin} className={style.sign_form}>
                 <h1 style={{textAlign: "center"}}>Company</h1>
                 <p className={style.sign_form_new}>{isNewUser ? "Connexion " : "Nouveau? "}
                     <button type="button" className={style.sign_form_newBtn} onClick={()=>setIsNewUser(prev=>!prev)}>{isNewUser ? "Connectez-vous" : "Creer un compte"} </button>
@@ -71,9 +72,9 @@ const Sign = ()=>{
                 </div>}
                 <p>Mot de passe oublié?</p>
                 <div className={style.sign_button}>
-                    <button type="button" className={style.sign_button_sign} onClick={onSignin}>Connexion</button>
+                    <button type="submit" className={style.sign_button_sign} onClick={onSignin}>Connexion</button>
                 </div>
-            </div>
+            </form>
         </main>
     )
 }

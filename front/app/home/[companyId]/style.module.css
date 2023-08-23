@@ -1,3 +1,19 @@
+.landpage_shiftHeader{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.landpage_shiftHeader_text{
+    font-size: 1.2rem;
+}
+
+.landpage_shiftHeader_link{
+    border: 2px solid var(--Primary-Color);
+    padding: .5rem;
+    border-radius: 5px;
+}
+
 .landpage_shift{
     padding: 1rem;
     border-radius: 10px;

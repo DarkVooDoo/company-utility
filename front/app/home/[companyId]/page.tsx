@@ -8,15 +8,23 @@ import pause from "@/public/pause.svg"
 
 import style from "./style.module.css"
 import MyCompanys from "@/component/MyCompanys/component"
-import { GetCompanys } from "@/util/data"
+import Holydays from "@/component/Holydays/component"
+import { GetCompanys, GetTodayShift } from "@/util/data"
+import { MONTH } from "@/util/lib"
 
 const Home = async ()=>{
 
     const companys = await GetCompanys("User")
+    const shift = await GetTodayShift() as {start: string, end: string, pause: number}
     return (
         <main>
             <MyCompanys {...{type: "User", companys}} />
+            <div className={style.landpage_shiftHeader}>
+                <h1 className={style.landpage_shiftHeader_text}>Aujourd'hui</h1>
+                <Link href="/shift" className={style.landpage_shiftHeader_link}>Mon Planning</Link>
+            </div>
             <div className={style.landpage_shift}>
+            
                 <div className={style.landpage_shift_date}>
                 <svg
                     width="16.933332mm"
@@ -51,26 +59,24 @@ const Home = async ()=>{
                         y="124.91429">{new Date().getDate() < 10 ? "0"+new Date().getDate() : new Date().getDate()} </tspan></text>
                     </g>
                 </svg>
-                <h2>22 Juillet </h2>
+                <h2>{new Date().getDate()} {MONTH[new Date().getMonth()]} </h2>
                 </div>
-                <div className={style.landpage_shift_time}>
-                <div>
-                    <h3>13:00</h3>
-                </div>
-                <div>
-                <Image src={exit} alt="exit" className={style.shift_time_content_icon} />
-                    <h3>20:00</h3>
-                </div>
-                <div className={style.shift_time_content}>
-                    <Image src={pause} alt="pause" className={style.shift_time_content_icon} />
-                    <h3>30 mins</h3>
-                </div>
-                </div>
+                {shift ? <div className={style.landpage_shift_time}>
+                    <div>
+                        <h3>{shift.start} </h3>
+                    </div>
+                    <div>
+                        <Image src={exit} alt="exit" className={style.shift_time_content_icon} />
+                        <h3>{shift.end} </h3>
+                    </div>
+                    <div className={style.shift_time_content}>
+                        <Image src={pause} alt="pause" className={style.shift_time_content_icon} />
+                        <h3>{shift.pause} mins</h3>
+                    </div>
+                </div> : <h3>Vous etes libre</h3>}
+                
             </div>
-            <div className={style.user_actions}>
-                <button type="button" className={style.user_actions_box}>Demander un congé</button>
-                <button type="button" className={style.user_actions_box}><Link href="/shift">Mon Planning</Link> </button>
-            </div> 
+            <Holydays />
         </main>
     )
 }
