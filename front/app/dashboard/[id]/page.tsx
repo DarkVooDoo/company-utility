@@ -32,7 +32,8 @@ const Test = [
 ]
 
 const Dashboard = async ({params:{id}}:Props)=>{
-    const company = await GetMyCompany(id) as  {name: string, adresse: string, members: {id: string, name: string, role: string}[]}
+    const company = await GetMyCompany(id) as  {name: string, adresse: string, holyday_pending: string, members: {id: string, name: string, role: string}[]}
+    
     const shift = Test.map(shift=>(
         <div>
             <h1>{shift.user_name} </h1>
@@ -47,14 +48,15 @@ const Dashboard = async ({params:{id}}:Props)=>{
             <p>Adresse {company.adresse}</p>
             <h1>Planning Aujourd'hui</h1>
             {shift}
-            <div>
+            <div className={style.dashboard_holydays}>
                 <h1>Congés</h1>
-                <h1>John Doe</h1>
+                <p>Vous avez {company.holyday_pending} en attente </p>
+                {/* <h1>John Doe</h1>
                 <p>demande de congé payé du 22 Juillet au 30 Juillet</p>
-                <div>
-                    <button type="button">Refusé</button>
-                    <button type="button">Accepté</button>
-                </div>
+                <div className={style.dashboard_holydays_controls}>
+                    <button type="button" className={style.dashboard_holydays_controls_btn}>Refusé</button>
+                    <button type="button" className={style.dashboard_holydays_controls_btn}>Accepté</button>
+                </div> */}
             </div>
             <Actions {...{members: company.members, companyId: id}} />
         </main>

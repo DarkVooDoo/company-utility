@@ -22,6 +22,7 @@ interface ShiftTypes {
 const NewShift = ()=>{
 
     const [loading, setLoading] = useState(true)
+    const [showCalendar, setShowCalendar] = useState(false)
     const [employee, setEmployee] = useState<ShiftTypes[]>([])
     const [currUser, setCurrUser] = useState<ShiftTypes>({user_name: "", user_id: "", company_id: undefined, shift_date: [], shift_start: "09:00", shift_end: "17:00", shift_pause: 0})
     const [userShift, setUserShift] = useState<ShiftTypes[]>([])
@@ -112,9 +113,10 @@ const NewShift = ()=>{
             <div className={style.shift_time}>
                 <div className={style.shift_time_t}>
                     <p>Date</p>
-                    <Calendar {...{currentUser: currUser.user_id, currentCompany: currUser.company_id, onChange: (dates)=>{
+                    <button className={style.shift_time_t_dateBtn} onClick={()=>setShowCalendar(state=>!state)}>ICON</button>
+                    {showCalendar && <Calendar {...{currentUser: currUser.user_id, className: style.shift_time_t_calendar, currentCompany: currUser.company_id, onChange: (dates)=>{
                         setCurrUser(user=>({...user, shift_date: dates, company_id: GetCookie("company-id")}))
-                    }}} />
+                    }}} />}
                 </div>  
                 <div className={style.shift_time_t}>
                     <label htmlFor="start">Commence</label>

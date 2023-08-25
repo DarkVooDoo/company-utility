@@ -1,7 +1,3 @@
-.container{
-    position: relative;
-    height: 2.5rem;
-}
 
 .btn{
     height: 100%;
@@ -13,9 +9,7 @@
 }
 
 .calendar{
-    position: absolute;
-    top: 2.7rem;
-    left: 0;
+    position: relative;
     width: 18rem;
     background-color: lightgray;
     border-radius: 10px;

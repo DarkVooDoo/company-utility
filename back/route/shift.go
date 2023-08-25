@@ -31,7 +31,16 @@ var ShiftRoute = func(res http.ResponseWriter, req *http.Request) {
 			res.Write(body)
 		}
 	} else if req.Method == http.MethodGet {
-		if req.URL.Query().Has("companyId") {
+		if req.URL.Query().Has("cId") {
+			emp, err := model.CompanyEmployee(req.URL.Query().Get("cId"))
+			if err != nil {
+				http.Error(res, err.Error(), http.StatusBadRequest)
+			} else {
+				payload, _ := json.Marshal(emp)
+				res.Header().Set("Content-Type", "application/json")
+				res.Write(payload)
+			}
+		} else if req.URL.Query().Has("companyId") {
 			token := req.Header.Get("Authorization")
 			companyId := req.URL.Query().Get("companyId")
 			from := req.URL.Query().Get("from")
@@ -45,7 +54,7 @@ var ShiftRoute = func(res http.ResponseWriter, req *http.Request) {
 				res.Write(payload)
 			}
 		} else if req.URL.Query().Has("date") {
-			companyId := req.URL.Query().Get("cId")
+			companyId := req.URL.Query().Get("company")
 			date := req.URL.Query().Get("date")
 			shift, err := model.GetDayShift(req.Header.Get("Authorization"), companyId, date)
 			if err != nil {

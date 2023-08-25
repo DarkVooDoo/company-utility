@@ -5,6 +5,7 @@ import { Open_Sans } from 'next/font/google'
 import Navbar from "@/component/Navbar"
 import UserContext from '@/component/UserContext'
 import { GetNotification } from '@/util/data'
+import { Suspense } from 'react'
 
 const font = Open_Sans({ subsets: ['latin'] })
 
@@ -22,7 +23,9 @@ const RootLayout = async ({children}: {children: React.ReactNode})=> {
       <UserContext>
         <body className={font.className}>
           <Navbar {...{notif}} />
-          {children}
+            <Suspense fallback={<p>Loading</p>}>
+              {children}
+            </Suspense>
         </body>
       </UserContext>
     </html>

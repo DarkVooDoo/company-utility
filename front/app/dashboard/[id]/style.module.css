@@ -7,3 +7,28 @@
     border-radius: 10px;
     border: 1px solid black;
 } */
+
+.dashboard_holydays > *{
+    margin-bottom: var(--Row-Margin);
+}
+
+.dashboard_holydays_controls{
+    display: flex;
+    justify-content: space-between;
+}
+
+.dashboard_holydays_controls_btn{
+    padding: .5rem 1rem;
+}
+
+.dashboard_holydays_controls_btn:first-child{
+    border: 2px solid red;
+    font-weight: bold;
+    color: red;
+}
+
+.dashboard_holydays_controls_btn:last-child{
+    border: 2px solid rgb(0, 177, 85);
+    font-weight: bold;
+    color: rgb(0, 177, 85);
+}

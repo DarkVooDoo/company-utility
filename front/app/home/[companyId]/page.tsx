@@ -8,14 +8,16 @@ import pause from "@/public/pause.svg"
 
 import style from "./style.module.css"
 import MyCompanys from "@/component/MyCompanys/component"
-import Holydays from "@/component/Holydays/component"
-import { GetCompanys, GetTodayShift } from "@/util/data"
+import { GetCompanys, GetTodayShift, GetHolyday } from "@/util/data"
 import { MONTH } from "@/util/lib"
+import Holydays from "@/component/Holydays/component"
+import { Holyday } from "@/util/type"
 
 const Home = async ()=>{
 
     const companys = await GetCompanys("User")
     const shift = await GetTodayShift() as {start: string, end: string, pause: number}
+    const holydays = await GetHolyday() as Holyday[] || []
     return (
         <main>
             <MyCompanys {...{type: "User", companys}} />
@@ -74,9 +76,8 @@ const Home = async ()=>{
                         <h3>{shift.pause} mins</h3>
                     </div>
                 </div> : <h3>Vous etes libre</h3>}
-                
             </div>
-            <Holydays />
+            <Holydays {...{holydays}} />
         </main>
     )
 }

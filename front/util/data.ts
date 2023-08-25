@@ -70,12 +70,32 @@ export const GetTodayShift =async () => {
     const [day, month, year] = new Date().toLocaleDateString().split("/")
     const token = cookies().get("auth-token")?.value
     if (token){
-        const fetchShift = await fetch(`http://localhost:5000/api/shift?date=${year}-${month}-${day}&cId=${cookies().get("company-id")?.value}`,{
-            headers: [["Authorization", token], ["Accept", "application/json"]]
+        const fetchShift = await fetch(`http://localhost:5000/api/shift?date=${year}-${month}-${day}&company=${cookies().get("company-id")?.value}`,{
+            headers: [["Authorization", token], ["Accept", "application/json"]],
+            next: {revalidate: 60*5}
         })
         if (fetchShift.status === 200){
             const body = await fetchShift.json()
             return body
         }
     }
+}
+
+export const GetHolyday = async()=>{
+    const token = cookies().get("auth-token")?.value
+    const companyId = cookies().get("company-id")?.value
+    if (token && companyId){
+        const fetchHolyday = await fetch(`http://localhost:5000/api/holyday?companyId=${companyId}`,{
+            headers: [["Content-Type", "application/json"], ["Authorization", token]]
+        })
+        const holyday = await fetchHolyday.json()
+        return holyday
+    }
+}
+
+export const GetHolydayCount = async()=>{
+    const companyId = cookies().get("company-id")
+    const fetchCount = await fetch(`http://localhost:5000/api/holyday?cId=${companyId}`)
+    const count = await fetchCount.text()
+    return count
 }

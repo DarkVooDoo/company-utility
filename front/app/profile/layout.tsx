@@ -1,10 +1,13 @@
 import Image from "next/image"
+import Link from "next/link"
+
 import user from "@/public/user.svg"
 import trash from "@/public/trash.svg"
 
 import style from "./profile.module.css"
 import { getUserProfile } from "@/util/data"
 
+import { Suspense } from "react"
 interface Props{
     children: React.ReactNode
 }
@@ -19,20 +22,22 @@ const ProfileLayout:React.FC<Props> = async ({children})=>{
                 <p>Inscrit depuis {profile.joined} </p>
             </div>
             <div className={style.profile_navigation}>
-                <a href={`/profile`} className={style.profile_navigation_link}>
+                <Link href={`/profile`} className={style.profile_navigation_link}>
                     <Image src={user} alt="Profile" className={style.profile_navigation_link_icon} />
                     <p className={style.profile_navigation_link_text}>Profile</p>
-                </a>
-                <a href={`/profile/entreprise`} className={style.profile_navigation_link}>
+                </Link>
+                <Link href={`/profile/entreprise`} className={style.profile_navigation_link}>
                     <Image src={trash} alt="Pro" className={style.profile_navigation_link_icon} />
                     <p className={style.profile_navigation_link_text}>Pro</p>
-                </a>
-                <a href="#" className={style.profile_navigation_link}>
+                </Link>
+                <Link href="#" className={style.profile_navigation_link}>
                     <Image src={trash} alt="Notification" className={style.profile_navigation_link_icon} />
                     <p className={style.profile_navigation_link_text}>Fiches</p>
-                </a>
+                </Link>
             </div>
-            {children}
+            <Suspense fallback={<p>Loading</p>}>
+                {children}
+            </Suspense>
         </main>
     )
 }

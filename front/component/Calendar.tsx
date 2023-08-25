@@ -12,22 +12,21 @@ const seletedDays = new Set<number>()
 
 interface CalendarProps {
     currentUser: string,
+    className?: string,
+    type?: "between" | "single",
     currentCompany?: string,
     onChange: (dates: string[])=> void
-} 
+}  
 
-let isGood = false
-const Calendar:React.FC<CalendarProps> = ({onChange, currentUser, currentCompany})=>{
-    const [showCalendar, setShowCalendar] = useState(false)
+const Calendar:React.FC<CalendarProps> = ({onChange, className, type = "single", currentUser, currentCompany})=>{
     const [date, setDate] = useState({year: new Date().getFullYear(), month: new Date().getMonth(), daySelected: new Set<number>()})
     const [shift, setShift] = useState<{shift: {shift_day: number, shift_month: number, user_id: string}[]}>({shift: []})
     const [calendar, setCalendar] = useState<{isCurrentMonth: boolean, dayNumber: number, month: number}[]>([])
-    const [between, setBetWeen] = useState(["2023-08-10", "2023-10-22"])
+    const [between, setBetWeen] = useState<string[]>([])
 
     useEffect(()=>{
         const buildCalendar = GetMonthArray(date.year, date.month)
         setCalendar(buildCalendar.calendar)
-        isGood = false
         if (currentCompany){
             (async ()=>{
                 const token = GetCookie("auth-token")
@@ -49,19 +48,30 @@ const Calendar:React.FC<CalendarProps> = ({onChange, currentUser, currentCompany
     }, [currentUser])
 
     const days = calendar.map((day,index)=>{
-        const [fromYear, fromMonth, fromDay] = between.sort()[0].split("-")
-        const [toYear, toMonth, toDay] = between.sort()[1].split("-")
-        const isSelected = parseInt(fromYear) >= parseInt(toYear) && parseInt(fromMonth) >= parseInt(toMonth) && parseInt(fromDay) >= parseInt(toDay)
+        const sortedDate = between.sort()
+        const today = `${date.year}-${day.month < 9 ? '0'+(day.month+1) : (day.month+1)}-${day.dayNumber < 10 ? '0'+day.dayNumber : day.dayNumber}`
+        const isBetween = sortedDate.length === 2 ? today < sortedDate[0] || today > sortedDate[1] : true
+        const firstChoice = between[0] === today
         const isDayDisable = day.isCurrentMonth && shift && shift.shift.findIndex(myShift=>myShift.shift_day === day.dayNumber && myShift.user_id === currentUser) === -1 ? false : true
         return (
             <button disabled={isDayDisable} type="button" key={index} 
-            className={`${style.calendar_day} ${seletedDays.has(day.dayNumber) && day.isCurrentMonth ? style.active : ""}`} 
-            // className={`${isGood ? style.between_active : ""}`}
+            className={`${style.calendar_day} ${firstChoice && style.between_active} ${type === 'between' ? !isBetween ? style.between_active : "" : `${seletedDays.has(day.dayNumber) && day.isCurrentMonth ? style.active : ""}` }`}
             onClick={(e)=>{
-                seletedDays.has(day.dayNumber) ? seletedDays.delete(day.dayNumber) : seletedDays.add(day.dayNumber)
-                e.currentTarget.classList.toggle(style.active)
-                setDate(date=>({...date, daySelected: new Set(seletedDays)}))
-                // console.log(["2023-04-10", "2023-04-04"].sort())
+                if(type === "single"){
+                    seletedDays.has(day.dayNumber) ? seletedDays.delete(day.dayNumber) : seletedDays.add(day.dayNumber)
+                    e.currentTarget.classList.toggle(style.active)
+                    setDate(date=>({...date, daySelected: new Set(seletedDays)}))
+                    const dates:string[] = []
+                    seletedDays.forEach(value=>{
+                        dates.push(`${date.year}-${date.month < 10 ? `0${date.month+1}` : date.month+1}-${value < 10 ? `0${value}` : value}`)
+                    })
+                    onChange(dates)
+                }else{
+                    between.push(today)
+                    if (between.length > 2) setBetWeen([today])
+                    else setBetWeen([...between])
+                    onChange(between.sort())
+                }
             }} >{day.dayNumber} </button>
         )
     })
@@ -69,18 +79,7 @@ const Calendar:React.FC<CalendarProps> = ({onChange, currentUser, currentCompany
         <div key={name} className={style.calendar_dayName_name}>{name} </div>
     ))
     return (
-        <div className={style.container}>
-            <button type="button" className={style.btn} onClick={()=>{
-                setShowCalendar(state=>!state)
-                if(showCalendar){
-                    const dates:string[] = []
-                    date.daySelected.forEach(value=>{
-                        dates.push(`${date.year}-${date.month < 10 ? `0${date.month+1}` : date.month+1}-${value < 10 ? `0${value}` : value}`)
-                    })
-                    onChange(dates)
-                }
-            }}>Calendar</button>
-            {showCalendar &&<div className={style.calendar}>
+            <div className={`${style.calendar} ${className}`}>
                 <div className={style.calendar_monthYear}>
                     <button type="button" className={style.calendar_monthYear_btn} onClick={()=>{
                         setDate(date=>{
@@ -114,8 +113,7 @@ const Calendar:React.FC<CalendarProps> = ({onChange, currentUser, currentCompany
                 <div className={style.calendar_days}>
                     {days}
                 </div>
-            </div>}
-        </div>
+            </div>
     )
 }
 

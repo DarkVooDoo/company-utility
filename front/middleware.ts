@@ -17,11 +17,11 @@ export const middleware = async (request: NextRequest)=>{
                 if (company){
                     return NextResponse.redirect(new URL(`/home/${request.cookies.get("company-id")?.value}`, request.url))
                 }
-                return NextResponse.redirect(new URL("/profile", request.url))
+                return NextResponse.redirect(new URL("/shift", request.url))
             }
             const res = NextResponse.next()
             res.cookies.set("id", user.user_id)
-            res.cookies.set("lastname", user.user_lastname)
+            res.cookies.set("user_name", user.user_name)
             return res
         }else{
             if(request.nextUrl.pathname.startsWith("/home")){
@@ -30,15 +30,11 @@ export const middleware = async (request: NextRequest)=>{
                 return NextResponse.redirect(new URL("/sign", request.url))
             }
         }
-    }else{
-        if (!request.nextUrl.pathname.startsWith("/sign")){
-            return NextResponse.redirect(new URL("/sign", request.url))
-        }
     }
     
 }
  
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ['/', '/shift/:path*', "/profile/:path*", "/home", "/sign"],
+  matcher: ['/', '/shift/:path*', "/profile/:path*", "/home/:path*", "/sign"],
 }

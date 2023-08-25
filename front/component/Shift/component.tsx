@@ -2,7 +2,7 @@
 
 import style from "./style.module.css"
 import { GetCookie, GetMonthArray, MONTH, hasChanged } from "@/util/lib"
-import { useContext, useEffect, useState } from "react"
+import { Suspense, useContext, useEffect, useState } from "react"
 
 import Link from "next/link"
 import Image from "next/image"

@@ -19,14 +19,15 @@ const Navbar:React.FC<{notif: {id: string, message: string, date: string}[] | []
     const notifRef = useRef<HTMLDivElement>(null)
     const [user, onUserChange] = useContext(userContext)
     const [showNotif, setShowNotif] = useState(false)
+    
     const onCloseSideBar = ()=>{
         sideBarRef.current?.close()
     }
-
+    
     const onOpenSideBar = ()=>{
         sideBarRef.current?.showModal()
     }
-
+    
     const onCloseNotif = ()=>{
         notifRef.current?.animate({
             left: ["0", "-100vw"]
@@ -44,23 +45,24 @@ const Navbar:React.FC<{notif: {id: string, message: string, date: string}[] | []
         if (deleteNotif.status === 200) onCloseNotif()
     }
 
-    useEffect(()=>{
-        const dialog = sideBarRef.current
-        if (dialog) closeDialogOnBackdropClick(dialog)
-         
-    },[])
+useEffect(()=>{
+    const dialog = sideBarRef.current
+    if (dialog) closeDialogOnBackdropClick(dialog)
+    
+},[])
 
-    const onLogOff = ()=>{
-        onUserChange({user_id: "", user_name: ""})
-        document.cookie = "id=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
-        document.cookie = "lastname=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
-        document.cookie = "auth-token=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
-        router.push("/")
-        onCloseSideBar()
-    }
+const onLogOff = ()=>{
+    onUserChange({user_id: "", user_name: ""})
+    document.cookie = "id=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
+    document.cookie = "user_name=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
+    document.cookie = "auth-token=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
+    document.cookie = "company-id=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
+    onCloseSideBar()
+    router.push("/sign")
+}
 
-    const notifs = notif.map(notif=>(
-        <div className={style.navbar_notifPopup_notif} key={notif.id}>
+const notifs = notif.map(notif=>(
+    <div className={style.navbar_notifPopup_notif} key={notif.id}>
             <button type="button" className={style.navbar_notifPopup_notif_deleteBtn} onClick={()=>onDeleteNotif(notif.id)}>X</button>
             <p className={style.navbar_notifPopup_notif_date}>{notif.date} </p>
             <p>{notif.message} </p>
