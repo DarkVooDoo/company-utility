@@ -90,11 +90,17 @@ func GetUserProfile(userToken string) (util.UserProfile, error) {
 	return util.UserProfile{Id: id, Joined: joined, Firstname: firstname, Lastname: lastname, Adresse: adresse, Postal: postal, Email: email}, nil
 }
 
-func ModifyProfile(profile util.UserProfile) error {
-	db := DBInit()
-	_, err := db.Exec(`UPDATE Users SET user_firstname=$1, user_lastname=$2, user_adresse=$3, user_postal=$4 WHERE user_id=$5`, profile.Firstname, profile.Lastname, profile.Adresse, profile.Postal, profile.Id)
-	if err != nil {
-		return errors.New("error happends")
+func ModifyProfile(profile util.UserProfile, userToken string) (util.UserProfile, error) {
+	var id, firstname, lastname, adresse, postal, email, joined string
+	user, tokenErr := VerifyToken(userToken)
+	if tokenErr != nil {
+		return util.UserProfile{}, errors.New("error")
 	}
-	return nil
+	db := DBInit()
+	row := db.QueryRow(`UPDATE Users SET user_firstname=$1, user_lastname=$2, user_adresse=$3, user_postal=$4 WHERE user_id=$5 
+	RETURNING user_id, TO_CHAR(user_joined, 'Month-YYYY'), user_lastname, user_firstname, user_email, user_adresse, user_postal`, profile.Firstname, profile.Lastname, profile.Adresse, profile.Postal, user.User_id)
+	if err := row.Scan(&id, &joined, &lastname, &firstname, &email, &adresse, &postal); err != nil {
+		return util.UserProfile{}, errors.New("error happends")
+	}
+	return util.UserProfile{Id: id, Joined: joined, Firstname: firstname, Lastname: lastname, Adresse: adresse, Postal: postal, Email: email}, nil
 }

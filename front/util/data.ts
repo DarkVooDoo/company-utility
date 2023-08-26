@@ -16,11 +16,11 @@ export const getUserProfile = async ():Promise<Profile>=>{
     if (token){
         const fetchProfile = await fetch(`http://localhost:5000/api/user`,{
             headers: [["Accept", "application/json"], ["Authorization", token.value]],
-            next:{revalidate: 0}
+            next:{revalidate: 60*10, tags: ["profile"]}
         })
         return await fetchProfile.json() as Profile
     }
-    return new Promise((resolve, rej)=>{
+    return new Promise((resolve, _)=>{
         resolve({adresse: "", email: "", firstname: "", id: "", joined: "", lastname: "", postal: ""})
     })
 }
@@ -30,7 +30,7 @@ export const GetMyCompany = async (companyId: string):Promise<unknown>=>{
     if (authToken){
         const fetchCompany = await fetch(`http://localhost:5000/api/pro?companyId=${companyId}`, {
             headers: [["Authorization", authToken]],
-            next: {revalidate: 0}
+            next: {revalidate: 60*5, tags: ["company"]}
         })
         if (fetchCompany.status === 307){
             redirect("/")

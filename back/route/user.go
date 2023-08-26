@@ -32,13 +32,16 @@ var UserRoute = func(res http.ResponseWriter, req *http.Request) {
 		}
 	} else if req.Method == http.MethodPut {
 		var modifyUser util.UserProfile
+		userToken := req.Header.Get("Authorization")
 		body, _ := io.ReadAll(req.Body)
 		json.Unmarshal(body, &modifyUser)
-		err := model.ModifyProfile(modifyUser)
+		updateUser, err := model.ModifyProfile(modifyUser, userToken)
 		if err != nil {
 			http.Error(res, "Forbidden", http.StatusForbidden)
-		} else {
-			res.Write([]byte("Success"))
+			return
 		}
+		payload, _ := json.Marshal(updateUser)
+		res.Header().Add("Content-Type", "application/json")
+		res.Write(payload)
 	}
 }

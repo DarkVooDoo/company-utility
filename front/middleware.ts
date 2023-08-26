@@ -17,11 +17,11 @@ export const middleware = async (request: NextRequest)=>{
                 if (company){
                     return NextResponse.redirect(new URL(`/home/${request.cookies.get("company-id")?.value}`, request.url))
                 }
-                return NextResponse.redirect(new URL("/shift", request.url))
+                return NextResponse.redirect(new URL("/home", request.url))
             }
             const res = NextResponse.next()
             res.cookies.set("id", user.user_id)
-            res.cookies.set("user_name", user.user_name)
+            // res.cookies.set("user_name", user.user_name)
             return res
         }else{
             if(request.nextUrl.pathname.startsWith("/home")){

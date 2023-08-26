@@ -23,13 +23,13 @@ const MyCompanys:React.FC<Props> = ({companys, type, onCompanyChange = ()=>{}})=
 
     const onCompanyClick = async (id: string)=>{
         if(type === "Shift"){
-            setSelectedCompany(id)
             onCompanyChange(id)
         }else if(type === "Profile"){
             router.push(`/dashboard/${id}`)
         }else{
             router.push(`/home/${id}`)
         }
+        setSelectedCompany(id)
         CreateCookie("company-id", id, 60*60*24*200)
     }
 

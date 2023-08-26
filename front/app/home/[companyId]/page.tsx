@@ -7,20 +7,17 @@ import exit from "@/public/exit.svg"
 import pause from "@/public/pause.svg"
 
 import style from "./style.module.css"
-import MyCompanys from "@/component/MyCompanys/component"
-import { GetCompanys, GetTodayShift, GetHolyday } from "@/util/data"
+import { GetTodayShift, GetHolyday } from "@/util/data"
 import { MONTH } from "@/util/lib"
 import Holydays from "@/component/Holydays/component"
 import { Holyday } from "@/util/type"
 
-const Home = async ()=>{
+const HomeCompany = async ()=>{
 
-    const companys = await GetCompanys("User")
     const shift = await GetTodayShift() as {start: string, end: string, pause: number}
     const holydays = await GetHolyday() as Holyday[] || []
     return (
-        <main>
-            <MyCompanys {...{type: "User", companys}} />
+        <div>
             <div className={style.landpage_shiftHeader}>
                 <h1 className={style.landpage_shiftHeader_text}>Aujourd'hui</h1>
                 <Link href="/shift" className={style.landpage_shiftHeader_link}>Mon Planning</Link>
@@ -78,8 +75,8 @@ const Home = async ()=>{
                 </div> : <h3>Vous etes libre</h3>}
             </div>
             <Holydays {...{holydays}} />
-        </main>
+        </div>
     )
 }
 
-export default Home
+export default HomeCompany

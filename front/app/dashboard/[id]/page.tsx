@@ -1,6 +1,8 @@
 import Actions from "@/component/Members/Component"
 import { GetMyCompany } from "@/util/data"
 
+import Link from "next/link"
+
 import style from "./style.module.css"
 
 interface Props{
@@ -49,6 +51,7 @@ const Dashboard = async ({params:{id}}:Props)=>{
             <h1>Planning Aujourd'hui</h1>
             {shift}
             <div className={style.dashboard_holydays}>
+                <Link href="#" className={style.dashboard_holydays_link}>Tout les congés</Link>
                 <h1>Congés</h1>
                 <p>Vous avez {company.holyday_pending} en attente </p>
                 {/* <h1>John Doe</h1>
@@ -58,7 +61,7 @@ const Dashboard = async ({params:{id}}:Props)=>{
                     <button type="button" className={style.dashboard_holydays_controls_btn}>Accepté</button>
                 </div> */}
             </div>
-            <Actions {...{members: company.members, companyId: id}} />
+            <Actions {...{members: company.members}} />
         </main>
     )
 }

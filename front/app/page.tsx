@@ -14,7 +14,6 @@ const Home = async ()=> {
           <p>Photo preview des plannings</p>
         </div>
       </div>
-
     </div>
   )
 }
