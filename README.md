@@ -7,6 +7,7 @@
     - Les Entreprise peuvent mettre des annonces
     - Demande des congés
     - Team talk
+    - recevoir des messages
 
 
 # TODO

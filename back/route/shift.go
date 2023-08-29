@@ -19,18 +19,10 @@ type ModifyPayload struct {
 
 var ShiftRoute = func(res http.ResponseWriter, req *http.Request) {
 	util.EnableCors(res, "http://localhost:3000")
-	if req.Method == http.MethodPost {
-		var payload PayloadStruct
-		body, _ := io.ReadAll(req.Body)
-		json.Unmarshal(body, &payload)
-		err := model.CreateShift(payload.Payload)
-		if err != nil {
-			http.Error(res, "error creating shift", http.StatusForbidden)
-		} else {
-			res.Header().Set("Content-Type", "application/json")
-			res.Write(body)
-		}
-	} else if req.Method == http.MethodGet {
+
+	var handler HandlerInterface = Handler{Res: res, Req: req}
+
+	handler.GET(res, req, func() {
 		if req.URL.Query().Has("cId") {
 			emp, err := model.CompanyEmployee(req.URL.Query().Get("cId"))
 			if err != nil {
@@ -66,7 +58,22 @@ var ShiftRoute = func(res http.ResponseWriter, req *http.Request) {
 			res.Header().Add("Content-Type", "application/json")
 			res.Write(body)
 		}
-	} else if req.Method == http.MethodPut {
+	})
+
+	handler.POST(res, req, func() {
+		var payload PayloadStruct
+		body, _ := io.ReadAll(req.Body)
+		json.Unmarshal(body, &payload)
+		err := model.CreateShift(payload.Payload)
+		if err != nil {
+			http.Error(res, "error creating shift", http.StatusForbidden)
+		} else {
+			res.Header().Set("Content-Type", "application/json")
+			res.Write(body)
+		}
+	})
+
+	handler.PUT(res, req, func() {
 		var newShift ModifyPayload
 		body, _ := io.ReadAll(req.Body)
 		json.Unmarshal(body, &newShift)
@@ -76,7 +83,9 @@ var ShiftRoute = func(res http.ResponseWriter, req *http.Request) {
 		} else {
 			res.Write([]byte("Success"))
 		}
-	} else if req.Method == http.MethodDelete {
+	})
+
+	handler.DELETE(res, req, func() {
 		var delete struct {
 			Id string `json:"id"`
 		}
@@ -87,5 +96,7 @@ var ShiftRoute = func(res http.ResponseWriter, req *http.Request) {
 		} else {
 			res.Write([]byte("Success"))
 		}
-	}
+
+	})
+
 }

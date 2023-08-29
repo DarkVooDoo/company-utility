@@ -85,7 +85,7 @@ func GetUserProfile(userToken string) (util.UserProfile, error) {
 	}
 	db := DBInit()
 	var id, firstname, lastname, adresse, postal, email, joined string
-	row := db.QueryRow(`SELECT user_id, TO_CHAR(user_joined, 'Month-YYYY'), user_lastname, user_firstname, user_email, user_adresse, user_postal FROM Users WHERE user_id=$1`, user.User_id)
+	row := db.QueryRow(`SELECT user_id, TO_CHAR(user_joined, 'TMMonth-YYYY'), user_lastname, user_firstname, user_email, user_adresse, user_postal FROM Users WHERE user_id=$1`, user.User_id)
 	row.Scan(&id, &joined, &lastname, &firstname, &email, &adresse, &postal)
 	return util.UserProfile{Id: id, Joined: joined, Firstname: firstname, Lastname: lastname, Adresse: adresse, Postal: postal, Email: email}, nil
 }

@@ -30,7 +30,7 @@ func GetEntreprises(userToken string, requestType string) ([]util.Company, error
 		return []util.Company{}, errors.New("error token")
 	}
 	db := DBInit()
-	var myCompany []util.Company
+	var myCompany []util.Company = []util.Company{}
 	var id, name, adresse string
 	var postal uint
 	if requestType == "Profile" {
@@ -46,7 +46,7 @@ func GetEntreprises(userToken string, requestType string) ([]util.Company, error
 			return myCompany, nil
 		}
 	} else {
-		company, err := db.Query(`SELECT company_id, company_name, company_adresse, company_postal FROM Company LEFT JOIN Member ON member_company_id=company_id WHERE member_user_id=$1`, user.User_id)
+		company, err := db.Query(`SELECT company_id, company_name, company_adresse, company_postal FROM Member LEFT JOIN Company ON member_company_id=company_id WHERE member_user_id=$1`, user.User_id)
 		if err != nil {
 			log.Println(err)
 			return myCompany, errors.New("error")
@@ -63,6 +63,7 @@ func GetEntreprises(userToken string, requestType string) ([]util.Company, error
 
 func GetSingleEntreprise(companyId string, userToken string) (util.Company, error) {
 
+	var members []util.Member = []util.Member{}
 	user, err := VerifyToken(userToken)
 	if err != nil {
 		return util.Company{}, errors.New("error")
@@ -70,19 +71,19 @@ func GetSingleEntreprise(companyId string, userToken string) (util.Company, erro
 	db := DBInit()
 	result := db.QueryRow(`SELECT company_id, company_name, company_adresse, company_postal FROM Company WHERE company_id=$1 AND company_user_id=$2`, companyId, user.User_id)
 	member, errMember := db.Query(`SELECT member_id, user_firstname, member_role FROM member LEFT JOIN Users ON user_id=member_user_id WHERE member_company_id=$1`, companyId)
-	count, countErr := GetPendingHolydaysCount(companyId)
+	pendingHolydays, pendingErr := GetPendingHolydays(companyId)
+	log.Println(pendingHolydays)
 	var id, name, adresse, mId, mName, mRole string
 	var postal uint
 	errCompany := result.Scan(&id, &name, &adresse, &postal)
-	if errCompany != nil || errMember != nil || countErr != nil {
+	if errCompany != nil || errMember != nil || pendingErr != nil {
 		return util.Company{}, errors.New("not company")
 	}
-	var members []util.Member
 	for member.Next() {
 		member.Scan(&mId, &mName, &mRole)
 		members = append(members, util.Member{Id: mId, Name: mName, Role: mRole})
 	}
-	return util.Company{Id: id, Name: name, Adresse: adresse, Postal: postal, HolydayPendingAmount: count, Members: members}, nil
+	return util.Company{Id: id, Name: name, Adresse: adresse, Postal: postal, HolydayPending: pendingHolydays, Members: members}, nil
 }
 
 func CompanyEmployee(companyId string) ([]util.CompanyUser, error) {

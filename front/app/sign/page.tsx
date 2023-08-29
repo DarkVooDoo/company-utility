@@ -34,7 +34,7 @@ const Sign = ()=>{
                 CreateCookie("auth-token", userCredential.user_token, 60*60*24*3)
                 CreateCookie("id", userCredential.user_id, 60*60*24*3)
                 CreateCookie("user_name", userCredential.user_name, 60*60*24*3)
-                router.push("/")
+                router.push("/home")
             }
         }
     }

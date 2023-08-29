@@ -11,7 +11,8 @@ import (
 
 func MemberRoute(res http.ResponseWriter, req *http.Request) {
 	util.EnableCors(res, "http://localhost:3000")
-	if req.Method == http.MethodPost {
+	var router HandlerInterface = Handler{Req: req, Res: res}
+	router.POST(res, req, func() {
 		var newMember util.NewMember
 		body, _ := io.ReadAll(req.Body)
 		json.Unmarshal(body, &newMember)
@@ -23,7 +24,9 @@ func MemberRoute(res http.ResponseWriter, req *http.Request) {
 			res.Header().Add("Content-Type", "application/json")
 			res.Write(body)
 		}
-	} else if req.Method == http.MethodDelete {
+	})
+
+	router.DELETE(res, req, func() {
 		var deleteMember util.DeleteMember
 		body, _ := io.ReadAll(req.Body)
 		json.Unmarshal(body, &deleteMember)
@@ -33,5 +36,5 @@ func MemberRoute(res http.ResponseWriter, req *http.Request) {
 		} else {
 			res.Write([]byte("Deleted"))
 		}
-	}
+	})
 }

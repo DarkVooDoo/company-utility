@@ -1,0 +1,46 @@
+.holyday_content{
+    display: grid;
+    grid-template-areas: 
+                        "name name ago"
+                        "date date status";
+    padding: 0 .5rem;
+    align-items: center;
+    margin-bottom: var(--Row-Margin);
+}
+
+.holyday_content_name{
+    grid-area: name;
+}
+
+.holyday_content_ago{
+    grid-area: ago;
+}
+
+.holyday_content_date{
+    grid-area: date;
+}
+
+.holyday_content_status{
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+    grid-area: status;
+}
+
+.holyday_content_status_bubble{
+    height: 1rem;
+    width: 1rem;
+    border-radius: 50%;
+}
+
+.holyday_nocontent{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.holyday_content, .holyday_nocontent{
+    height: 5rem;
+    border-radius: 10px;
+    border: 2px solid var(--Primary-Color);
+}

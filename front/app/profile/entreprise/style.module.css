@@ -17,16 +17,34 @@
     border-radius: 5px;
 }
 
-.holyday_nocontent{
+.holyday_content{
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    padding: .5rem;
+}
+
+.holyday_content_status{
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: .3rem;
+}
+
+.holyday_content_status_bubble{
+    height: 1rem;
+    width: 1rem;
+    border-radius: 50%;
 }
 
 .holyday_nocontent{
+    display: flex;
+}
+
+.holyday_content, .holyday_nocontent{
     height: 5rem;
     border-radius: 10px;
     border: 2px solid var(--Primary-Color);
+    align-items: center;
+    justify-content: center;
 }
 
 .holyday_dialog{

@@ -10,7 +10,9 @@ import (
 
 var UserRoute = func(res http.ResponseWriter, req *http.Request) {
 	util.EnableCors(res, "http://localhost:3000")
-	if req.Method == http.MethodGet {
+	var router HandlerInterface = Handler{Req: req, Res: res}
+
+	router.GET(res, req, func() {
 		userToken := req.Header.Get("Authorization")
 		profile, error := model.GetUserProfile(userToken)
 		body, err := json.Marshal(profile)
@@ -20,7 +22,9 @@ var UserRoute = func(res http.ResponseWriter, req *http.Request) {
 			res.Header().Add("Content-Type", "application/json")
 			res.Write(body)
 		}
-	} else if req.Method == http.MethodPost {
+	})
+
+	router.POST(res, req, func() {
 		var newUser util.CreateUserStruct
 		body, _ := io.ReadAll(req.Body)
 		json.Unmarshal(body, &newUser)
@@ -30,7 +34,9 @@ var UserRoute = func(res http.ResponseWriter, req *http.Request) {
 		} else {
 			res.Write([]byte("User created"))
 		}
-	} else if req.Method == http.MethodPut {
+	})
+
+	router.PUT(res, req, func() {
 		var modifyUser util.UserProfile
 		userToken := req.Header.Get("Authorization")
 		body, _ := io.ReadAll(req.Body)
@@ -43,5 +49,6 @@ var UserRoute = func(res http.ResponseWriter, req *http.Request) {
 		payload, _ := json.Marshal(updateUser)
 		res.Header().Add("Content-Type", "application/json")
 		res.Write(payload)
-	}
+	})
+
 }

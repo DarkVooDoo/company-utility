@@ -2,8 +2,12 @@ import Actions from "@/component/Members/Component"
 import { GetMyCompany } from "@/util/data"
 
 import Link from "next/link"
+import Image from "next/image"
+import leftArrow from "@/public/left-arrow.webp"
 
 import style from "./style.module.css"
+import { onAcceptHolyday, onRejectHolyday } from "@/app/actions"
+import UserHolydayCard from "@/component/UserHolydayCard/component"
 
 interface Props{
     params:{id: string}
@@ -34,8 +38,10 @@ const Test = [
 ]
 
 const Dashboard = async ({params:{id}}:Props)=>{
-    const company = await GetMyCompany(id) as  {name: string, adresse: string, holyday_pending: string, members: {id: string, name: string, role: string}[]}
-    
+    const company = await GetMyCompany(id) as  {
+        name: string, adresse: string, holyday_pending: {id: string, from: string, to: string, status: string, name: string, time: string}[], 
+        members: {id: string, name: string, role: string}[]
+    }
     const shift = Test.map(shift=>(
         <div>
             <h1>{shift.user_name} </h1>
@@ -44,16 +50,22 @@ const Dashboard = async ({params:{id}}:Props)=>{
             <p>{shift.shift_pause} </p>
         </div>
     ))
+
+    const pendingHolyday = company.holyday_pending.map(holyday=><UserHolydayCard key={holyday.id} {...{holyday}} />)
     return (
         <main>
             <h1>{company.name}</h1>
             <p>Adresse {company.adresse}</p>
             <h1>Planning Aujourd'hui</h1>
-            {shift}
+            {/* {shift} */}
             <div className={style.dashboard_holydays}>
-                <Link href="#" className={style.dashboard_holydays_link}>Tout les congés</Link>
-                <h1>Congés</h1>
-                <p>Vous avez {company.holyday_pending} en attente </p>
+                <div className={style.dashboard_holydays_header}>
+                    <h1>Congés</h1>
+                    <Link href="#" className={style.dashboard_holydays_link}>Voir les congés <Image src={leftArrow} alt="fleche" className={style.dashboard_holydays_link_arrow} /> </Link>
+                </div>
+                <div className={style.dashboard_holydays_all}>
+                    {pendingHolyday}
+                </div>
                 {/* <h1>John Doe</h1>
                 <p>demande de congé payé du 22 Juillet au 30 Juillet</p>
                 <div className={style.dashboard_holydays_controls}>

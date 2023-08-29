@@ -4,6 +4,21 @@ import { Profile } from "@/util/data"
 import { revalidateTag } from "next/cache"
 import {cookies} from "next/headers"
 
+export const onCreateCompany = async (formData: FormData)=>{
+    const token = cookies().get("auth-token")?.value
+    const info = {name: formData.get("name"), adresse: formData.get("adresse"), postal: parseInt(formData.get("postal")!!.toString())}
+    if (token){
+        const createCompany = await fetch(`http://localhost:5000/api/pro`,{
+            method: "POST",
+            headers: [["Content-Type", "application/json"], ["Authorization", token]],
+            body: JSON.stringify({...info})
+        })
+        if (createCompany.status === 200){
+            revalidateTag("getMyCompanys")
+        }
+    }
+}
+
 export const onModifyProfile = async(formData: FormData)=>{
     const token = cookies().get("auth-token")?.value
     const user = {firstname: formData.get("firstname"), lastname: formData.get("lastname"), adresse: formData.get("adresse"), postal: formData.get("postal")}
@@ -55,4 +70,20 @@ export const onDeleteMember = async(formData: FormData)=>{
             revalidateTag(`company`)
         }
     }
+}
+
+export const onRejectHolyday = async(formData: FormData)=>{
+    console.log(formData.get("id"))
+    // const reject = await fetch(`http://localhost:5000/api/holyday`, {
+    //     method: "DELETE",
+    //     headers: [["Content-Type", "application/json"]],
+    //     body: JSON.stringify({id: formData.get("id")})
+    // })
+    // if (reject.status === 200){
+    //     revalidateTag("company")
+    // }
+}
+
+export const onAcceptHolyday = async(formData: FormData)=>{
+
 }

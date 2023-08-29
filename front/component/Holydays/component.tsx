@@ -6,6 +6,7 @@ import style from "./style.module.css"
 import { GetCookie, closeDialogOnBackdropClick } from "@/util/lib"
 import Calendar from "../Calendar"
 import { Holyday } from "@/util/type"
+import UserHolydayCard from "../UserHolydayCard/component"
 
 const INFOS = {
     paye: `Vous bénéficiez des congés payés quel que soit votre contrat de travail 
@@ -20,6 +21,7 @@ interface Props{
 
 const Holydays:React.FC<Props> = ({holydays = []})=>{
     const dialogRef = useRef<HTMLDialogElement>(null)
+    const [holyday, setHolyday] = useState(holydays)
     const [holydayType, setHolydayType] = useState<string>()
     const [dates, setDates] = useState<string[]>([])
 
@@ -37,6 +39,11 @@ const Holydays:React.FC<Props> = ({holydays = []})=>{
                 headers: [["Content-Type", "application/json"], ["Authorization", token]],
                 body: JSON.stringify({from: dates[0], to: dates[1], companyId: companyId, type: holydayType})
             })
+            if (sendHolydayRequest.status === 200){
+                const newHolyday = await sendHolydayRequest.json()
+                setHolyday(prev=>([newHolyday, ...prev]))
+                dialogRef.current?.close()
+            }
 
         }
     }
@@ -44,29 +51,7 @@ const Holydays:React.FC<Props> = ({holydays = []})=>{
     useEffect(()=>{
         closeDialogOnBackdropClick(dialogRef.current!!)
     },[])
-
-    const dayOff = holydays.map(holyday=>{
-        let statusBubbleColor:CSSProperties
-        switch(holyday.status){
-            case "Validé":
-                statusBubbleColor = {backgroundColor: "greenyellow"}
-                break
-            case "Refusé":
-                statusBubbleColor = {backgroundColor: "red"}
-                break
-            default :
-                statusBubbleColor = {backgroundColor: "orange"}
-                break
-        }
-        return (
-            <div key={holyday.id} className={style.holyday_content}>
-                <p>Du {holyday.from} Au {holyday.to} </p>
-                <div className={style.holyday_content_status}>
-                    <div className={style.holyday_content_status_bubble} style={statusBubbleColor} /><p>{holyday.status} </p>
-                </div>
-            </div>
-        )
-    })
+    const dayOff = holyday.map(holyday=><UserHolydayCard key={holyday.id} {...{holyday}} />)
 
     return (
         <div className={style.holyday}>

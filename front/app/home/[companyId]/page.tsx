@@ -1,5 +1,4 @@
 
-
 import Link from "next/link"
 import Image from "next/image"
 
@@ -23,7 +22,6 @@ const HomeCompany = async ()=>{
                 <Link href="/shift" className={style.landpage_shiftHeader_link}>Mon Planning</Link>
             </div>
             <div className={style.landpage_shift}>
-            
                 <div className={style.landpage_shift_date}>
                 <svg
                     width="16.933332mm"

@@ -25,12 +25,12 @@ export const getUserProfile = async ():Promise<Profile>=>{
     })
 }
 
-export const GetMyCompany = async (companyId: string):Promise<unknown>=>{
+export const GetMyCompany = async (id: string):Promise<unknown>=>{
     const authToken = cookies().get("auth-token")?.value
     if (authToken){
-        const fetchCompany = await fetch(`http://localhost:5000/api/pro?companyId=${companyId}`, {
+        const fetchCompany = await fetch(`http://localhost:5000/api/pro?companyId=${id}`, {
             headers: [["Authorization", authToken]],
-            next: {revalidate: 60*5, tags: ["company"]}
+            next: {revalidate: 0, tags: ["company"]}
         })
         if (fetchCompany.status === 307){
             redirect("/")
@@ -38,13 +38,14 @@ export const GetMyCompany = async (companyId: string):Promise<unknown>=>{
         return await fetchCompany.json()
     }
 }
- 
+
 export const GetCompanys = async (type: string):Promise<{id: string, name: string, adresse: string, postal: number}[]>=>{
     const token = cookies().get("auth-token")
+    let t
     if (token){
         const fetchCompany = await fetch(`http://localhost:5000/api/pro?type=${type}`,{
             headers: [["Authorization", token.value]],
-            next: {revalidate: 0}
+            next: {revalidate: 60*5, tags: ["getMyCompanys"]}
         })
         return await fetchCompany.json() as {id: string, name: string, adresse: string, postal: number}[]
     }
@@ -86,7 +87,7 @@ export const GetHolyday = async()=>{
     const companyId = cookies().get("company-id")?.value
     if (token && companyId){
         const fetchHolyday = await fetch(`http://localhost:5000/api/holyday?companyId=${companyId}`,{
-            headers: [["Content-Type", "application/json"], ["Authorization", token]]
+            headers: [["Authorization", token]]
         })
         const holyday = await fetchHolyday.json()
         return holyday

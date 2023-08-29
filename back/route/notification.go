@@ -10,7 +10,9 @@ import (
 
 func NotificationRoute(res http.ResponseWriter, req *http.Request) {
 	util.EnableCors(res, "http://localhost:3000")
-	if req.Method == http.MethodGet {
+	var router HandlerInterface = Handler{Req: req, Res: res}
+
+	router.GET(res, req, func() {
 		userToken := req.Header.Get("Authorization")
 		notification, err := model.GetNotifications(userToken)
 		if err != nil {
@@ -20,7 +22,9 @@ func NotificationRoute(res http.ResponseWriter, req *http.Request) {
 		body, _ := json.Marshal(notification)
 		res.Header().Add("Content-Type", "application/json")
 		res.Write(body)
-	} else if req.Method == http.MethodDelete {
+	})
+
+	router.DELETE(res, req, func() {
 		var deletePayload struct {
 			Id string `json:"id"`
 		}
@@ -32,5 +36,6 @@ func NotificationRoute(res http.ResponseWriter, req *http.Request) {
 			return
 		}
 		res.Write([]byte("Success"))
-	}
+	})
+
 }

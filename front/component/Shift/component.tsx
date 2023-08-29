@@ -80,21 +80,28 @@ const Shift:React.FC<Props> = ({companys})=>{
                 }) 
                 if (fetchShift.status === 204){
                     setUserShift({role: "User", shift: []})
-                    return 
+                }else{
+                    const shift = await fetchShift.json() as {role: string, shift: ShiftTypes[]}
+                    if(shift){
+                        setUserShift(shift)
+                        initialShifts = [...shift.shift]
+                    }
+                    const calendarMonth = currentMonth.calendar[currentMonth.calendar.findIndex(calendar=>calendar.isCurrentMonth)]
+                    if (calendarMonth.month === new Date().getMonth()){
+                        const date = new Date()
+                        const showShift = shift.shift.filter(shift=>shift.shift_day === date.getDate() && shift.shift_month === calendarMonth.month+1)
+                        setShowShift(showShift)
+                        setSelectedCell(currentMonth.calendar.findIndex(calendar=> calendar.isCurrentMonth && calendar.dayNumber === date.getDate()))
+                    }else{setSelectedCell(undefined)}
                 }
-                const shift = await fetchShift.json() as {role: string, shift: ShiftTypes[]}
-                if(shift){
-                    setUserShift(shift)
-                    initialShifts = [...shift.shift]
-                }
-                const calendarMonth = currentMonth.calendar[currentMonth.calendar.findIndex(calendar=>calendar.isCurrentMonth)]
-                if (calendarMonth.month === new Date().getMonth()){
-                    setSelectedCell(currentMonth.calendar.findIndex(calendar=> calendar.isCurrentMonth && calendar.dayNumber === new Date().getDate()))
-                }else{setSelectedCell(undefined)}
             }
             setLoading(false)
         })()
     },[date.month, date.year, selectedCompany])
+
+    useEffect(()=>{
+        setShowShift(undefined)
+    }, [selectedCompany])
 
     const onShiftChange = (newShift: ShiftTypes)=>{
         const shiftIndex = userShift.shift.findIndex(myShift=>myShift.shift_id === newShift.shift_id)

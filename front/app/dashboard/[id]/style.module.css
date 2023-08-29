@@ -8,8 +8,36 @@
     border: 1px solid black;
 } */
 
+
 .dashboard_holydays > *{
     margin-bottom: var(--Row-Margin);
+}
+
+.dashboard_holydays_header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dashboard_holydays_all{
+    max-height: 30vh;
+    overflow-y: scroll;
+}
+
+.dashboard_holydays_all_box > *{
+    margin-bottom: var(--Row-Margin);
+}
+
+.dashboard_holydays_link{
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+}
+
+.dashboard_holydays_link_arrow{
+    height: 1rem;
+    width: 1rem;
+    transform: rotate(180deg);
 }
 
 .dashboard_holydays_controls{

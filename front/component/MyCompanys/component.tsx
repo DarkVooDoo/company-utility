@@ -4,8 +4,6 @@ import { CreateCookie, GetCookie } from "@/util/lib"
 import { useEffect, useState } from "react"
 import {useRouter} from "next/navigation"
 
-import Link from "next/link"
-
 import Image from "next/image"
 import Company from "@/public/companie.webp"
 
@@ -20,7 +18,6 @@ interface Props{
 const MyCompanys:React.FC<Props> = ({companys, type, onCompanyChange = ()=>{}})=>{
     const [selectedCompany, setSelectedCompany] = useState<string>()
     const router = useRouter()
-
     const onCompanyClick = async (id: string)=>{
         if(type === "Shift"){
             onCompanyChange(id)
@@ -47,11 +44,11 @@ const MyCompanys:React.FC<Props> = ({companys, type, onCompanyChange = ()=>{}})=
     ))
     return (
         <div className={style.shift}>
-            <h1>Entreprises</h1> 
-            <div className={style.shift_company}>
-                <div className={style.shift_company_inner}>
+            <h1>Entreprises</h1>
+            <div className={style.shift_company} style={company.length === 0 ? {justifyContent: "center"} : {}}>
+                {company.length > 0 ? <div className={style.shift_company_inner}>
                     {company}
-                </div>
+                </div> : <h3>Aucune entreprise enregistrer</h3>}
             </div>
         </div>
     )

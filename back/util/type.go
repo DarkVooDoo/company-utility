@@ -57,12 +57,12 @@ type CompanyUser struct {
 }
 
 type Company struct {
-	Id                   string   `json:"id"`
-	Name                 string   `json:"name"`
-	Adresse              string   `json:"adresse"`
-	Postal               uint     `json:"postal"`
-	Members              []Member `json:"members"`
-	HolydayPendingAmount string   `json:"holyday_pending"`
+	Id             string    `json:"id"`
+	Name           string    `json:"name"`
+	Adresse        string    `json:"adresse"`
+	Postal         uint      `json:"postal"`
+	Members        []Member  `json:"members"`
+	HolydayPending []Holyday `json:"holyday_pending"`
 }
 
 type Member struct {
@@ -133,7 +133,9 @@ type Holyday struct {
 	Id     string `json:"id"`
 	From   string `json:"from"`
 	To     string `json:"to"`
+	Time   string `json:"time"`
 	Status string `json:"status"`
+	Name   string `json:"name"`
 }
 
 type JWTokenInterface struct {

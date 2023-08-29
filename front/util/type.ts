@@ -3,4 +3,5 @@ export interface Holyday{
     from: string, 
     to: string, 
     status: string
+    time: string
 }

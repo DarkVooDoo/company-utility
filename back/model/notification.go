@@ -2,14 +2,12 @@ package model
 
 import (
 	"errors"
-	"strconv"
-	"strings"
 	"work/util"
 )
 
 func GetNotifications(userToken string) ([]util.Notification, error) {
 	var id, message, date string
-	var myNotification []util.Notification
+	var myNotification []util.Notification = []util.Notification{}
 	user, err := VerifyToken(userToken)
 	if err != nil {
 		return []util.Notification{}, errors.New("error")
@@ -21,14 +19,10 @@ func GetNotifications(userToken string) ([]util.Notification, error) {
 	}
 	for rows.Next() {
 		rows.Scan(&id, &message, &date)
-		formatedDate := getFormatedDate(date)
+		formatedDate := "Il y a " + util.GetFormatedDate(date)
 		myNotification = append(myNotification, util.Notification{Id: id, Message: message, Date: formatedDate})
 	}
-	if len(myNotification) > 0 {
-		return myNotification, nil
-	} else {
-		return []util.Notification{}, nil
-	}
+	return myNotification, nil
 }
 
 func DeleteNotification(id string) error {
@@ -38,15 +32,4 @@ func DeleteNotification(id string) error {
 		return errors.New("forbidden")
 	}
 	return nil
-}
-
-func getFormatedDate(date string) string {
-	timeLabel := []string{"An", "Mois", "Jour", "Heure", "Minute", "Seconde"}
-	for index, value := range strings.Split(date, "-") {
-		if value != "00" {
-			time, _ := strconv.Atoi(value)
-			return "Il y a " + strconv.Itoa(time) + " " + timeLabel[index]
-		}
-	}
-	return "Il y a 1 seconds"
 }

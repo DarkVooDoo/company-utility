@@ -3,6 +3,7 @@ package route
 import (
 	"encoding/json"
 	"io"
+	"log"
 	"net/http"
 	"work/model"
 	"work/util"
@@ -10,7 +11,9 @@ import (
 
 func HolydayRoute(res http.ResponseWriter, req *http.Request) {
 	util.EnableCors(res, "http://localhost:3000")
-	if req.Method == http.MethodGet {
+	var router HandlerInterface = Handler{Req: req, Res: res}
+
+	router.GET(res, req, func() {
 		if req.URL.Query().Has("companyId") {
 			companyId := req.URL.Query().Get("companyId")
 			userToken := req.Header.Get("Authorization")
@@ -22,13 +25,35 @@ func HolydayRoute(res http.ResponseWriter, req *http.Request) {
 			res.Header().Add("Content-Type", "application/json")
 			res.Write(body)
 		}
+	})
 
-	} else if req.Method == http.MethodPost {
+	router.POST(res, req, func() {
 		userToken := req.Header.Get("Authorization")
 		var requestPayload util.HolydayRequestPayload
 		body, _ := io.ReadAll(req.Body)
 		json.Unmarshal(body, &requestPayload)
-		model.RequestHolyday(userToken, requestPayload)
+		holyday, err := model.RequestHolyday(userToken, requestPayload)
+		if err != nil {
+			http.Error(res, "forbidden", http.StatusForbidden)
+			return
+		}
+		payload, _ := json.Marshal(holyday)
+		res.Header().Add("Content-Type", "application/json")
+		res.Write(payload)
+	})
+
+	router.DELETE(res, req, func() {
+		var id struct {
+			Id string `json:"id"`
+		}
+		payload, _ := io.ReadAll(req.Body)
+		json.Unmarshal(payload, &id)
+		log.Println(id)
+		if err := model.RejectHolyday(id.Id); err != nil {
+			http.Error(res, "forbidden", http.StatusForbidden)
+			return
+		}
 		res.Write([]byte("Success"))
-	}
+	})
+
 }

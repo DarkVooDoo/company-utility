@@ -8,6 +8,7 @@ import trash from "@/public/trash.svg"
 
 import style from "./new.module.css"
 import { GetCookie } from "@/util/lib"
+import { useRouter } from "next/navigation"
 
 interface ShiftTypes {
     user_id: string, 
@@ -21,6 +22,7 @@ interface ShiftTypes {
 
 const NewShift = ()=>{
 
+    const router = useRouter()
     const [loading, setLoading] = useState(true)
     const [showCalendar, setShowCalendar] = useState(false)
     const [employee, setEmployee] = useState<ShiftTypes[]>([])
@@ -45,6 +47,9 @@ const NewShift = ()=>{
             headers: [["Content-Type", "application/json"]],
             body: JSON.stringify({payload: userShift})
         })
+        if (saveShift.status === 200){
+            router.push("/shift")
+        }
     }
 
     const onAddUser = async ()=>{

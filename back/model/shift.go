@@ -28,12 +28,12 @@ func GetUserShift(userToken string, companyId string, from string, to string) (u
 	var db = DBInit()
 	var uId, shiftId, name, start, end, role string
 	var day, month, pause uint16
-	var shift []util.ShiftStruct
+	var shift []util.ShiftStruct = []util.ShiftStruct{}
 	member := db.QueryRow(`SELECT member_role FROM Member WHERE member_user_id=$1`, user.User_id)
 	member.Scan(&role)
 	rows, err := db.Query(`SELECT user_id, CONCAT(user_firstname, ' ', user_lastname) as user_name, shift_id, shift_start, shift_end, 
 	shift_pause, DATE_PART('day', shift_date) shift_day, DATE_PART('month', shift_date) shift_month 
-	FROM Company LEFT JOIN member ON member_company_id=company_id LEFT JOIN Users ON user_id=member_user_id LEFT JOIN Shift ON shift_user_id=member_user_id WHERE shift_date >= $1 AND shift_date < $2 AND company_id=$3 ORDER BY shift_date ASC`, from, to, companyId)
+	FROM Shift LEFT JOIN Users ON user_id=shift_user_id WHERE shift_date >= $1 AND shift_date < $2 AND shift_company_id=$3 ORDER BY shift_date ASC`, from, to, companyId)
 	if err != nil {
 		log.Println(err)
 		return util.ShiftResponse{}, errors.New("error fetching")
@@ -42,15 +42,10 @@ func GetUserShift(userToken string, companyId string, from string, to string) (u
 		rows.Scan(&uId, &name, &shiftId, &start, &end, &pause, &day, &month)
 		shift = append(shift, util.ShiftStruct{User_id: uId, User_name: name, Shift_id: shiftId, Shift_start: start, Shift_end: end, Shift_pause: pause, Shift_day: day, Shift_month: month})
 	}
-	if len(shift) > 0 {
-		return util.ShiftResponse{Role: role, Shift: shift}, nil
-	} else {
-		return util.ShiftResponse{}, errors.New("not shift")
-	}
+	return util.ShiftResponse{Role: role, Shift: shift}, nil
 }
 
 func ModifyShift(newShift []util.ModifyShiftStruct) error {
-	log.Println(newShift)
 	db := DBInit()
 	for _, shift := range newShift {
 		_, err := db.Exec(`UPDATE Shift SET shift_start=$1, shift_end=$2, shift_pause=$3 WHERE shift_id=$4`, shift.Start, shift.End, shift.Pause, shift.Id)

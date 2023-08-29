@@ -5,12 +5,14 @@ import (
 	"io"
 	"net/http"
 	"work/model"
-	"work/util"
+	util "work/util"
 )
 
 func ProRoute(res http.ResponseWriter, req *http.Request) {
 	util.EnableCors(res, "http://localhost:3000")
-	if req.Method == http.MethodGet {
+	var handler HandlerInterface = Handler{Res: res, Req: req}
+
+	handler.GET(res, req, func() {
 		userToken := req.Header.Get("Authorization")
 		if req.URL.Query().Has("companyId") {
 			company, err := model.GetSingleEntreprise(req.URL.Query().Get("companyId"), userToken)
@@ -32,7 +34,9 @@ func ProRoute(res http.ResponseWriter, req *http.Request) {
 				res.Write(body)
 			}
 		}
-	} else if req.Method == http.MethodPost {
+	})
+
+	handler.POST(res, req, func() {
 		var companyData util.CreateCompany
 		body, _ := io.ReadAll(req.Body)
 		token := req.Header.Get("Authorization")
@@ -43,5 +47,6 @@ func ProRoute(res http.ResponseWriter, req *http.Request) {
 		} else {
 			res.Write([]byte("Success"))
 		}
-	}
+	})
+
 }

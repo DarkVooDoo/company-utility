@@ -10,7 +10,9 @@ import (
 
 func AuthRoute(res http.ResponseWriter, req *http.Request) {
 	util.EnableCors(res, "http://localhost:3000")
-	if req.Method == http.MethodGet {
+	var router HandlerInterface = Handler{Req: req, Res: res}
+
+	router.GET(res, req, func() {
 		auth := req.Header.Get("Authorization")
 		user, err := model.VerifyToken(auth)
 		if err != nil {
@@ -19,7 +21,9 @@ func AuthRoute(res http.ResponseWriter, req *http.Request) {
 			body, _ := json.Marshal(user)
 			res.Write(body)
 		}
-	} else if req.Method == http.MethodPost {
+	})
+
+	router.POST(res, req, func() {
 		var user util.SignUserPayloadStruct
 		var body, _ = io.ReadAll(req.Body)
 		json.Unmarshal(body, &user)
@@ -31,5 +35,6 @@ func AuthRoute(res http.ResponseWriter, req *http.Request) {
 			res.Header().Add("Content-Type", "application/json")
 			res.Write(payload)
 		}
-	}
+	})
+
 }
