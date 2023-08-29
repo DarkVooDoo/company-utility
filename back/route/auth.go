@@ -2,7 +2,6 @@ package route
 
 import (
 	"encoding/json"
-	"io"
 	"net/http"
 	"work/model"
 	util "work/util"
@@ -23,9 +22,8 @@ func AuthRoute(res http.ResponseWriter, req *http.Request) {
 		}
 	})
 
-	router.POST(res, req, func() {
+	router.POST(res, req, func(body []byte) {
 		var user util.SignUserPayloadStruct
-		var body, _ = io.ReadAll(req.Body)
 		json.Unmarshal(body, &user)
 		returnedUser, err := model.SignInUser(user)
 		if err != nil {

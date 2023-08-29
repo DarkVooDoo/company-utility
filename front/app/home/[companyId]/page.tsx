@@ -12,7 +12,6 @@ import Holydays from "@/component/Holydays/component"
 import { Holyday } from "@/util/type"
 
 const HomeCompany = async ()=>{
-
     const shift = await GetTodayShift() as {start: string, end: string, pause: number}
     const holydays = await GetHolyday() as Holyday[] || []
     return (

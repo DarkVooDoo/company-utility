@@ -2,7 +2,6 @@ package route
 
 import (
 	"encoding/json"
-	"io"
 	"log"
 	"net/http"
 	"work/model"
@@ -60,9 +59,8 @@ var ShiftRoute = func(res http.ResponseWriter, req *http.Request) {
 		}
 	})
 
-	handler.POST(res, req, func() {
+	handler.POST(res, req, func(body []byte) {
 		var payload PayloadStruct
-		body, _ := io.ReadAll(req.Body)
 		json.Unmarshal(body, &payload)
 		err := model.CreateShift(payload.Payload)
 		if err != nil {
@@ -73,9 +71,8 @@ var ShiftRoute = func(res http.ResponseWriter, req *http.Request) {
 		}
 	})
 
-	handler.PUT(res, req, func() {
+	handler.PUT(res, req, func(body []byte) {
 		var newShift ModifyPayload
-		body, _ := io.ReadAll(req.Body)
 		json.Unmarshal(body, &newShift)
 		err := model.ModifyShift(newShift.Shifts)
 		if err != nil {
@@ -85,11 +82,10 @@ var ShiftRoute = func(res http.ResponseWriter, req *http.Request) {
 		}
 	})
 
-	handler.DELETE(res, req, func() {
+	handler.DELETE(res, req, func(body []byte) {
 		var delete struct {
 			Id string `json:"id"`
 		}
-		body, _ := io.ReadAll(req.Body)
 		json.Unmarshal(body, &delete)
 		if err := model.DeleteShift(delete.Id); err != nil {
 			http.Error(res, "forbidden", http.StatusForbidden)

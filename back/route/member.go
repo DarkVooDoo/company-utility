@@ -2,7 +2,6 @@ package route
 
 import (
 	"encoding/json"
-	"io"
 	"log"
 	"net/http"
 	"work/model"
@@ -12,9 +11,8 @@ import (
 func MemberRoute(res http.ResponseWriter, req *http.Request) {
 	util.EnableCors(res, "http://localhost:3000")
 	var router HandlerInterface = Handler{Req: req, Res: res}
-	router.POST(res, req, func() {
+	router.POST(res, req, func(body []byte) {
 		var newMember util.NewMember
-		body, _ := io.ReadAll(req.Body)
 		json.Unmarshal(body, &newMember)
 		if newUser, err := model.AddNewMember(newMember, req.Header.Get("Authorization")); err != nil {
 			log.Println(err)
@@ -26,9 +24,8 @@ func MemberRoute(res http.ResponseWriter, req *http.Request) {
 		}
 	})
 
-	router.DELETE(res, req, func() {
+	router.DELETE(res, req, func(body []byte) {
 		var deleteMember util.DeleteMember
-		body, _ := io.ReadAll(req.Body)
 		json.Unmarshal(body, &deleteMember)
 		if err := model.DeleteMember(deleteMember, req.Header.Get("Authorization")); err != nil {
 			log.Println(err)

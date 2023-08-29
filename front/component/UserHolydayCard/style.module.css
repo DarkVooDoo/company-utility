@@ -2,9 +2,16 @@
     display: grid;
     grid-template-areas: 
                         "name name ago"
-                        "date date status";
-    padding: 0 .5rem;
+                        "date date status"
+                        ". control control";
+    padding: .5rem;
     align-items: center;
+    margin-bottom: var(--Row-Margin);
+    border-radius: 10px;
+    border: 2px solid var(--Primary-Color);
+}
+
+.holyday_content > *{
     margin-bottom: var(--Row-Margin);
 }
 
@@ -14,6 +21,7 @@
 
 .holyday_content_ago{
     grid-area: ago;
+    text-align: end;
 }
 
 .holyday_content_date{
@@ -23,9 +31,11 @@
 .holyday_content_status{
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: .3rem;
     grid-area: status;
 }
+
 
 .holyday_content_status_bubble{
     height: 1rem;
@@ -33,14 +43,24 @@
     border-radius: 50%;
 }
 
-.holyday_nocontent{
+.holyday_content_controls{
     display: flex;
-    align-items: center;
-    justify-content: center;
+    justify-content: space-between;
+    grid-area: control;
 }
 
-.holyday_content, .holyday_nocontent{
-    height: 5rem;
-    border-radius: 10px;
-    border: 2px solid var(--Primary-Color);
+.holyday_content_controls_rejectBtn, .holyday_content_controls_acceptBtn{
+    padding: .5rem 1rem;
+}
+
+.holyday_content_controls_rejectBtn{
+    border: 2px solid red;
+    font-weight: bold;
+    color: red;
+}
+
+.holyday_content_controls_acceptBtn{
+    border: 2px solid rgb(0, 177, 85);
+    font-weight: bold;
+    color: rgb(0, 177, 85);
 }

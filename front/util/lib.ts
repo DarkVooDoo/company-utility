@@ -3,6 +3,10 @@ import { ShiftTypes } from "@/component/Shift/component"
 const MONTH_DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 const MONTHS = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
 
+export type ROLE = "User" | "Admin" | "Boss"
+
+export const BACKEND_HOST = process.env.NODE_ENV === "development" ? "127.0.0.1" : "back"
+
 export const GetYearDays = (year: number, month: number)=>{
 
     if(month !== 1){
@@ -83,10 +87,6 @@ export const GetMonthArray = (year: number, monthIndex: number):CalendarArray=>{
         return {isCurrentMonth, dayNumber, month}            
     })
     return {calendar, to, from}
-}
-
-type Yes<T extends {}> = {
-    [Key in keyof T]: any
 }
 
 export const hasChanged = <TObj extends {}, Key extends keyof TObj>(initialArray: TObj[], compareTo: TObj[], properties: Key[]):[boolean, ShiftTypes[]]=>{

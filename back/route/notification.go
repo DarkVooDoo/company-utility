@@ -2,7 +2,6 @@ package route
 
 import (
 	"encoding/json"
-	"io"
 	"net/http"
 	"work/model"
 	"work/util"
@@ -24,11 +23,10 @@ func NotificationRoute(res http.ResponseWriter, req *http.Request) {
 		res.Write(body)
 	})
 
-	router.DELETE(res, req, func() {
+	router.DELETE(res, req, func(body []byte) {
 		var deletePayload struct {
 			Id string `json:"id"`
 		}
-		body, _ := io.ReadAll(req.Body)
 		json.Unmarshal(body, &deletePayload)
 		err := model.DeleteNotification(deletePayload.Id)
 		if err != nil {

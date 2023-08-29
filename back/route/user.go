@@ -2,7 +2,6 @@ package route
 
 import (
 	"encoding/json"
-	"io"
 	"net/http"
 	"work/model"
 	"work/util"
@@ -24,9 +23,8 @@ var UserRoute = func(res http.ResponseWriter, req *http.Request) {
 		}
 	})
 
-	router.POST(res, req, func() {
+	router.POST(res, req, func(body []byte) {
 		var newUser util.CreateUserStruct
-		body, _ := io.ReadAll(req.Body)
 		json.Unmarshal(body, &newUser)
 		err := model.CreateUser(newUser)
 		if err != nil {
@@ -36,10 +34,9 @@ var UserRoute = func(res http.ResponseWriter, req *http.Request) {
 		}
 	})
 
-	router.PUT(res, req, func() {
+	router.PUT(res, req, func(body []byte) {
 		var modifyUser util.UserProfile
 		userToken := req.Header.Get("Authorization")
-		body, _ := io.ReadAll(req.Body)
 		json.Unmarshal(body, &modifyUser)
 		updateUser, err := model.ModifyProfile(modifyUser, userToken)
 		if err != nil {

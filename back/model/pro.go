@@ -72,7 +72,7 @@ func GetSingleEntreprise(companyId string, userToken string) (util.Company, erro
 	result := db.QueryRow(`SELECT company_id, company_name, company_adresse, company_postal FROM Company WHERE company_id=$1 AND company_user_id=$2`, companyId, user.User_id)
 	member, errMember := db.Query(`SELECT member_id, user_firstname, member_role FROM member LEFT JOIN Users ON user_id=member_user_id WHERE member_company_id=$1`, companyId)
 	pendingHolydays, pendingErr := GetPendingHolydays(companyId)
-	log.Println(pendingHolydays)
+	role := GetUserRole(user.User_id, companyId)
 	var id, name, adresse, mId, mName, mRole string
 	var postal uint
 	errCompany := result.Scan(&id, &name, &adresse, &postal)
@@ -83,7 +83,7 @@ func GetSingleEntreprise(companyId string, userToken string) (util.Company, erro
 		member.Scan(&mId, &mName, &mRole)
 		members = append(members, util.Member{Id: mId, Name: mName, Role: mRole})
 	}
-	return util.Company{Id: id, Name: name, Adresse: adresse, Postal: postal, HolydayPending: pendingHolydays, Members: members}, nil
+	return util.Company{Id: id, Name: name, Adresse: adresse, Postal: postal, Role: role, HolydayPending: pendingHolydays, Members: members}, nil
 }
 
 func CompanyEmployee(companyId string) ([]util.CompanyUser, error) {

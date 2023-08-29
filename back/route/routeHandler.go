@@ -1,6 +1,9 @@
 package route
 
-import "net/http"
+import (
+	"io"
+	"net/http"
+)
 
 type Handler struct {
 	Res http.ResponseWriter
@@ -9,15 +12,9 @@ type Handler struct {
 
 type HandlerInterface interface {
 	GET(res http.ResponseWriter, req *http.Request, handler func())
-	POST(res http.ResponseWriter, req *http.Request, handler func())
-	PUT(res http.ResponseWriter, req *http.Request, handler func())
-	DELETE(res http.ResponseWriter, req *http.Request, handler func())
-}
-
-func (t Handler) POST(res http.ResponseWriter, req *http.Request, handler func()) {
-	if req.Method == http.MethodPost {
-		handler()
-	}
+	POST(res http.ResponseWriter, req *http.Request, handler func(payload []byte))
+	PUT(res http.ResponseWriter, req *http.Request, handler func(payload []byte))
+	DELETE(res http.ResponseWriter, req *http.Request, handler func(payload []byte))
 }
 
 func (t Handler) GET(res http.ResponseWriter, req *http.Request, handler func()) {
@@ -26,14 +23,23 @@ func (t Handler) GET(res http.ResponseWriter, req *http.Request, handler func())
 	}
 }
 
-func (t Handler) PUT(res http.ResponseWriter, req *http.Request, handler func()) {
-	if req.Method == http.MethodPut {
-		handler()
+func (t Handler) POST(res http.ResponseWriter, req *http.Request, handler func(payload []byte)) {
+	if req.Method == http.MethodPost {
+		body, _ := io.ReadAll(req.Body)
+		handler(body)
 	}
 }
 
-func (t Handler) DELETE(res http.ResponseWriter, req *http.Request, handler func()) {
+func (t Handler) PUT(res http.ResponseWriter, req *http.Request, handler func(payload []byte)) {
+	if req.Method == http.MethodPut {
+		body, _ := io.ReadAll(req.Body)
+		handler(body)
+	}
+}
+
+func (t Handler) DELETE(res http.ResponseWriter, req *http.Request, handler func(payload []byte)) {
 	if req.Method == http.MethodDelete {
-		handler()
+		body, _ := io.ReadAll(req.Body)
+		handler(body)
 	}
 }

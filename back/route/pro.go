@@ -2,7 +2,6 @@ package route
 
 import (
 	"encoding/json"
-	"io"
 	"net/http"
 	"work/model"
 	util "work/util"
@@ -36,9 +35,8 @@ func ProRoute(res http.ResponseWriter, req *http.Request) {
 		}
 	})
 
-	handler.POST(res, req, func() {
+	handler.POST(res, req, func(body []byte) {
 		var companyData util.CreateCompany
-		body, _ := io.ReadAll(req.Body)
 		token := req.Header.Get("Authorization")
 		json.Unmarshal(body, &companyData)
 		err := model.CreateCompany(companyData, token)

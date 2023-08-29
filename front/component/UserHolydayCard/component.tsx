@@ -1,14 +1,19 @@
+"use client"
 import { Holyday } from "@/util/type"
 import { CSSProperties } from "react"
 
 import style from "./style.module.css"
+import { BACKEND_HOST, ROLE } from "@/util/lib"
+import { onAcceptHolyday, onRejectHolyday } from "@/app/actions"
 
 interface Props{
     holyday: Holyday
+    role: ROLE
 }
 
 
-const UserHolydayCard:React.FC<Props> = ({holyday})=>{
+const UserHolydayCard:React.FC<Props> = ({holyday, role})=>{
+
     let statusBubbleColor:CSSProperties
     switch(holyday.status){
         case "Validé":
@@ -21,6 +26,7 @@ const UserHolydayCard:React.FC<Props> = ({holyday})=>{
             statusBubbleColor = {backgroundColor: "orange"}
             break
     }
+
     return (
         <div className={style.holyday_content}>
             <h3 className={style.holyday_content_name}>John Doe </h3>
@@ -29,12 +35,17 @@ const UserHolydayCard:React.FC<Props> = ({holyday})=>{
             <div className={style.holyday_content_status}>
                 <div className={style.holyday_content_status_bubble} style={statusBubbleColor} /><p>{holyday.status} </p>
             </div>
-            {false && <div className={style.dashboard_holydays_controls}>
-                <button type="submit" className={style.dashboard_holydays_controls_btn} name='id' value={holyday.id} >Refusé</button>
-                <button type="submit" className={style.dashboard_holydays_controls_btn} name='id' value={holyday.id}>Accepté</button>
+            {role !== "User" && <div className={style.holyday_content_controls}>
+                <form action={onRejectHolyday}>
+                    <button type="submit" className={style.holyday_content_controls_rejectBtn} name="id" value={holyday.id} >Refusé</button>
+                </form>
+                <form action={onAcceptHolyday}>
+                    <button type="submit" className={style.holyday_content_controls_acceptBtn} name="id" value={holyday.id}>Accepté</button>
+                </form>
             </div>}
         </div>
     )
 }
+
 
 export default UserHolydayCard

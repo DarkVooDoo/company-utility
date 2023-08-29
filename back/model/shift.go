@@ -26,14 +26,13 @@ func GetUserShift(userToken string, companyId string, from string, to string) (u
 		return util.ShiftResponse{}, errors.New("token error")
 	}
 	var db = DBInit()
-	var uId, shiftId, name, start, end, role string
+	var uId, shiftId, name, start, end string
 	var day, month, pause uint16
 	var shift []util.ShiftStruct = []util.ShiftStruct{}
-	member := db.QueryRow(`SELECT member_role FROM Member WHERE member_user_id=$1`, user.User_id)
-	member.Scan(&role)
 	rows, err := db.Query(`SELECT user_id, CONCAT(user_firstname, ' ', user_lastname) as user_name, shift_id, shift_start, shift_end, 
 	shift_pause, DATE_PART('day', shift_date) shift_day, DATE_PART('month', shift_date) shift_month 
 	FROM Shift LEFT JOIN Users ON user_id=shift_user_id WHERE shift_date >= $1 AND shift_date < $2 AND shift_company_id=$3 ORDER BY shift_date ASC`, from, to, companyId)
+	role := GetUserRole(user.User_id, companyId)
 	if err != nil {
 		log.Println(err)
 		return util.ShiftResponse{}, errors.New("error fetching")

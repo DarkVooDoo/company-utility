@@ -104,3 +104,11 @@ func ModifyProfile(profile util.UserProfile, userToken string) (util.UserProfile
 	}
 	return util.UserProfile{Id: id, Joined: joined, Firstname: firstname, Lastname: lastname, Adresse: adresse, Postal: postal, Email: email}, nil
 }
+
+func GetUserRole(userId string, companyId string) string {
+	db := DBInit()
+	var role string
+	member := db.QueryRow(`SELECT member_role FROM Member LEFT JOIN Company ON company_user_id=member_user_id WHERE member_user_id=$1 AND company_id=$2`, userId, companyId)
+	member.Scan(&role)
+	return role
+}

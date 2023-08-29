@@ -8,6 +8,7 @@
     - Demande des congés
     - Team talk
     - recevoir des messages
+    - logger
 
 
 # TODO

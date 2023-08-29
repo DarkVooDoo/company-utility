@@ -73,17 +73,23 @@ export const onDeleteMember = async(formData: FormData)=>{
 }
 
 export const onRejectHolyday = async(formData: FormData)=>{
-    console.log(formData.get("id"))
-    // const reject = await fetch(`http://localhost:5000/api/holyday`, {
-    //     method: "DELETE",
-    //     headers: [["Content-Type", "application/json"]],
-    //     body: JSON.stringify({id: formData.get("id")})
-    // })
-    // if (reject.status === 200){
-    //     revalidateTag("company")
-    // }
+    const reject = await fetch(`http://localhost:5000/api/holyday`, {
+        method: "PUT",
+        headers: [["Content-Type", "application/json"]],
+        body: JSON.stringify({id: formData.get("id"), type: "reject"})
+    })
+    if (reject.status === 200){
+        revalidateTag("company")
+    }
 }
 
 export const onAcceptHolyday = async(formData: FormData)=>{
-
+    const accept = await fetch(`http://localhost:5000/api/holyday`, {
+        method: "PUT",
+        headers: [["Content-Type", "application/json"]],
+        body: JSON.stringify({id: formData.get("id"), type: "accept"})
+    })
+    if (accept.status === 200){
+        revalidateTag("company")
+    }
 }

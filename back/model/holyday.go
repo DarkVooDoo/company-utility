@@ -2,6 +2,7 @@ package model
 
 import (
 	"errors"
+	"log"
 	"work/util"
 )
 
@@ -44,12 +45,21 @@ func RejectHolyday(id string) error {
 	return nil
 }
 
+func AcceptHolyday(id string) error {
+	db := DBInit()
+	if _, err := db.Exec(`UPDATE Holyday SET holyday_status='Validé' WHERE holyday_id=$1`, id); err != nil {
+		return errors.New("error")
+	}
+	return nil
+}
+
 func getHolydays(query string, args ...any) ([]util.Holyday, error) {
 	var id, from, to, status, time, name string
-	var holydays []util.Holyday
+	holydays := []util.Holyday{}
 	db := DBInit()
 	rows, err := db.Query(query, args...)
 	if err != nil {
+		log.Println(err)
 		return []util.Holyday{}, errors.New("error")
 	}
 	for rows.Next() {

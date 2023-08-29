@@ -30,7 +30,7 @@ export const GetMyCompany = async (id: string):Promise<unknown>=>{
     if (authToken){
         const fetchCompany = await fetch(`http://localhost:5000/api/pro?companyId=${id}`, {
             headers: [["Authorization", authToken]],
-            next: {revalidate: 0, tags: ["company"]}
+            next: {revalidate: 60*5, tags: ["company"]}
         })
         if (fetchCompany.status === 307){
             redirect("/")

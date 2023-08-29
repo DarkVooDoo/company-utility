@@ -1,5 +1,6 @@
 import Actions from "@/component/Members/Component"
 import { GetMyCompany } from "@/util/data"
+import {ROLE} from "@/util/lib"
 
 import Link from "next/link"
 import Image from "next/image"
@@ -39,6 +40,7 @@ const Test = [
 
 const Dashboard = async ({params:{id}}:Props)=>{
     const company = await GetMyCompany(id) as  {
+        role: ROLE,
         name: string, adresse: string, holyday_pending: {id: string, from: string, to: string, status: string, name: string, time: string}[], 
         members: {id: string, name: string, role: string}[]
     }
@@ -50,8 +52,7 @@ const Dashboard = async ({params:{id}}:Props)=>{
             <p>{shift.shift_pause} </p>
         </div>
     ))
-
-    const pendingHolyday = company.holyday_pending.map(holyday=><UserHolydayCard key={holyday.id} {...{holyday}} />)
+    const pendingHolyday = company.holyday_pending.map(holyday=><UserHolydayCard key={holyday.id} {...{holyday, role: company.role}} />)
     return (
         <main>
             <h1>{company.name}</h1>

@@ -61,6 +61,7 @@ type Company struct {
 	Name           string    `json:"name"`
 	Adresse        string    `json:"adresse"`
 	Postal         uint      `json:"postal"`
+	Role           string    `json:"role"`
 	Members        []Member  `json:"members"`
 	HolydayPending []Holyday `json:"holyday_pending"`
 }
