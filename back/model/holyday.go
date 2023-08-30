@@ -53,6 +53,12 @@ func AcceptHolyday(id string) error {
 	return nil
 }
 
+func DeleteHolyday(id string) error {
+	db := DBInit()
+	_, err := db.Exec(`DELETE FROM Holyday WHERE holyday_id=$1`, id)
+	return err
+}
+
 func getHolydays(query string, args ...any) ([]util.Holyday, error) {
 	var id, from, to, status, time, name string
 	holydays := []util.Holyday{}

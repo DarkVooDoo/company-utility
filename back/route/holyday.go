@@ -40,7 +40,15 @@ func HolydayRoute(res http.ResponseWriter, req *http.Request) {
 	})
 
 	router.DELETE(res, req, func(body []byte) {
-
+		var payload struct {
+			Id string `json:"id"`
+		}
+		json.Unmarshal(body, &payload)
+		if err := model.DeleteHolyday(payload.Id); err != nil {
+			http.Error(res, "forbidden", http.StatusForbidden)
+			return
+		}
+		res.Write([]byte("Success"))
 	})
 
 	router.PUT(res, req, func(body []byte) {

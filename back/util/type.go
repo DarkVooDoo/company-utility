@@ -3,7 +3,7 @@ package util
 import "github.com/golang-jwt/jwt/v5"
 
 type ShiftResponse struct {
-	Role  string        `json:"role"`
+	Role  Role          `json:"role"`
 	Shift []ShiftStruct `json:"shift"`
 }
 
@@ -61,7 +61,7 @@ type Company struct {
 	Name           string    `json:"name"`
 	Adresse        string    `json:"adresse"`
 	Postal         uint      `json:"postal"`
-	Role           string    `json:"role"`
+	Role           Role      `json:"role"`
 	Members        []Member  `json:"members"`
 	HolydayPending []Holyday `json:"holyday_pending"`
 }
@@ -128,6 +128,11 @@ type HolydayRequestPayload struct {
 	To        string `json:"to"`
 	CompanyId string `json:"companyId"`
 	Type      string `json:"type"`
+}
+
+type Role struct {
+	Role string `json:"role"`
+	Id   string `json:"id"`
 }
 
 type Holyday struct {

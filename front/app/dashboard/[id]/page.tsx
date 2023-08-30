@@ -7,7 +7,6 @@ import Image from "next/image"
 import leftArrow from "@/public/left-arrow.webp"
 
 import style from "./style.module.css"
-import { onAcceptHolyday, onRejectHolyday } from "@/app/actions"
 import UserHolydayCard from "@/component/UserHolydayCard/component"
 
 interface Props{
@@ -40,7 +39,7 @@ const Test = [
 
 const Dashboard = async ({params:{id}}:Props)=>{
     const company = await GetMyCompany(id) as  {
-        role: ROLE,
+        role: {id: string, role: ROLE},
         name: string, adresse: string, holyday_pending: {id: string, from: string, to: string, status: string, name: string, time: string}[], 
         members: {id: string, name: string, role: string}[]
     }
@@ -67,12 +66,6 @@ const Dashboard = async ({params:{id}}:Props)=>{
                 <div className={style.dashboard_holydays_all}>
                     {pendingHolyday}
                 </div>
-                {/* <h1>John Doe</h1>
-                <p>demande de congé payé du 22 Juillet au 30 Juillet</p>
-                <div className={style.dashboard_holydays_controls}>
-                    <button type="button" className={style.dashboard_holydays_controls_btn}>Refusé</button>
-                    <button type="button" className={style.dashboard_holydays_controls_btn}>Accepté</button>
-                </div> */}
             </div>
             <Actions {...{members: company.members}} />
         </main>

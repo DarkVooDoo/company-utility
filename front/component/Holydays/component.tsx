@@ -1,12 +1,13 @@
 "use client"
 
-import { CSSProperties, ChangeEventHandler, FormEventHandler, useEffect, useRef, useState } from "react"
+import { ChangeEventHandler, useEffect, useRef, useState } from "react"
 
 import style from "./style.module.css"
 import { GetCookie, closeDialogOnBackdropClick } from "@/util/lib"
 import Calendar from "../Calendar"
 import { Holyday } from "@/util/type"
 import UserHolydayCard from "../UserHolydayCard/component"
+import { onRequestHolyday } from "@/app/actions"
 
 const INFOS = {
     paye: `Vous bénéficiez des congés payés quel que soit votre contrat de travail 
@@ -21,7 +22,6 @@ interface Props{
 
 const Holydays:React.FC<Props> = ({holydays = []})=>{
     const dialogRef = useRef<HTMLDialogElement>(null)
-    const [holyday, setHolyday] = useState(holydays)
     const [holydayType, setHolydayType] = useState<string>()
     const [dates, setDates] = useState<string[]>([])
 
@@ -29,29 +29,10 @@ const Holydays:React.FC<Props> = ({holydays = []})=>{
         setHolydayType(value)
     }
 
-    const onHolydaysRequest:FormEventHandler = async(e)=>{
-        e.preventDefault()
-        const token = GetCookie("auth-token")
-        const companyId = GetCookie("company-id")
-        if(token && companyId && holydayType){
-            const sendHolydayRequest = await fetch(`http://localhost:5000/api/holyday`,{
-                method: "POST",
-                headers: [["Content-Type", "application/json"], ["Authorization", token]],
-                body: JSON.stringify({from: dates[0], to: dates[1], companyId: companyId, type: holydayType})
-            })
-            if (sendHolydayRequest.status === 200){
-                const newHolyday = await sendHolydayRequest.json()
-                setHolyday(prev=>([newHolyday, ...prev]))
-                dialogRef.current?.close()
-            }
-
-        }
-    }
-
     useEffect(()=>{
         closeDialogOnBackdropClick(dialogRef.current!!)
     },[])
-    const dayOff = holyday.map(holyday=><UserHolydayCard key={holyday.id} {...{holyday}} />)
+    const dayOff = holydays.map(holyday=><UserHolydayCard key={holyday.id} {...{holyday, role: {id: "0", role: "User"}}} />)
 
     return (
         <div className={style.holyday}>
@@ -65,7 +46,10 @@ const Holydays:React.FC<Props> = ({holydays = []})=>{
                 Vous avez aucun congé
             </div>}
             <dialog ref={dialogRef} className={style.holyday_dialog}>
-                <form onSubmit={onHolydaysRequest} className={style.holyday_dialog_form}>
+                <form action={()=>{
+                    onRequestHolyday(holydayType, dates)
+                    dialogRef.current?.close()
+                }} className={style.holyday_dialog_form}>
                     <div className={style.holyday_dialog_radio}>
                         <input type="radio" name="holyday" id="conge-payé" value={"Congé Payé"} onChange={onHolydayTypeChange} />
                         <p>Congé Payé <button className={style.holyday_dialog_radio_infoBtn} data-title={INFOS.paye}>!</button></p>
@@ -75,7 +59,7 @@ const Holydays:React.FC<Props> = ({holydays = []})=>{
                         <p>Maternité <button className={style.holyday_dialog_radio_infoBtn} data-title={INFOS.maternite}>!</button></p>
                     </div>
                     <button type="submit" className={style.holyday_dialog_sendBtn}>Envoyer</button>
-                    <Calendar {...{currentUser: "", type: "between", onChange: (date)=>{
+                    <Calendar {...{currentUser: "",type: "between", onChange: (date)=>{
                         setDates(date)
                     }}} />
                 </form>

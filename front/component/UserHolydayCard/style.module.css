@@ -1,4 +1,5 @@
 .holyday_content{
+    position: relative;
     display: grid;
     grid-template-areas: 
                         "name name ago"
@@ -13,6 +14,24 @@
 
 .holyday_content > *{
     margin-bottom: var(--Row-Margin);
+}
+
+.holyday_content_deleteBtn{
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: -.5rem;
+    right: -.5rem;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    background-color: var(--Primary-Color);
+}
+
+.holyday_content_deleteBtn_icon{
+    width: 60%;
+    height: 60%;
 }
 
 .holyday_content_name{

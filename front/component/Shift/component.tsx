@@ -36,14 +36,14 @@ const Shift:React.FC<Props> = ({companys})=>{
     const [loading, setLoading] = useState(true)
     const [selectedCompany, setSelectedCompany] = useState<string>()
     const [date, setDate] = useState({year: 2023, month: MONTH[new Date().getMonth()]})
-    const [userShift, setUserShift] = useState<{role: String, shift: ShiftTypes[]}>({role: "User", shift: []})
+    const [{role: member, shift: userShift}, setUserShift] = useState<{role: {role: string, id: string}, shift: ShiftTypes[]}>({role: {role: "User", id: "0"}, shift: []})
     const [shift, setShift] = useState<{isCurrentMonth: boolean, dayNumber: number, month: number}[]>([])
     const [showShift, setShowShift] = useState<ShiftTypes[]>()
     const [selectedCell, setSelectedCell] = useState<number | undefined>(undefined)
     const [popupMessage, setPopupMessage] = useState<undefined | {message: string, isSuccess: boolean}>(undefined)
 
     const onEditShift = async()=>{
-        const [_, changes] = hasChanged(initialShifts, userShift.shift, ["shift_end", "shift_pause", "shift_start"])
+        const [_, changes] = hasChanged(initialShifts, userShift, ["shift_end", "shift_pause", "shift_start"])
         const editShift = await fetch(`http://localhost:5000/api/shift`,{
             method: "PUT",
             headers: [["Content-Type", "application/json"]],
@@ -61,7 +61,7 @@ const Shift:React.FC<Props> = ({companys})=>{
             body: JSON.stringify({id})
         })
         if (deleteShift.status === 200){
-            const newShift = userShift.shift.filter(shift=>shift.shift_id != id)
+            const newShift = userShift.filter(shift=>shift.shift_id != id)
             setShowShift(showShift?.filter(shift=>shift.shift_id != id))
             setUserShift(prev=>({...prev, shift: newShift}))
             initialShifts = newShift
@@ -79,9 +79,9 @@ const Shift:React.FC<Props> = ({companys})=>{
                     headers: [["Authorization", token]]
                 }) 
                 if (fetchShift.status === 204){
-                    setUserShift({role: "User", shift: []})
+                    setUserShift({role: {role: "User", id: ""}, shift: []})
                 }else{
-                    const shift = await fetchShift.json() as {role: string, shift: ShiftTypes[]}
+                    const shift = await fetchShift.json() as {role: {role: string, id: string}, shift: ShiftTypes[]}
                     if(shift){
                         setUserShift(shift)
                         initialShifts = [...shift.shift]
@@ -104,18 +104,18 @@ const Shift:React.FC<Props> = ({companys})=>{
     }, [selectedCompany])
 
     const onShiftChange = (newShift: ShiftTypes)=>{
-        const shiftIndex = userShift.shift.findIndex(myShift=>myShift.shift_id === newShift.shift_id)
-        userShift.shift[shiftIndex] = newShift
-        setUserShift(prev=>({...prev, shift: [...userShift.shift]}))
+        const shiftIndex = userShift.findIndex(myShift=>myShift.shift_id === newShift.shift_id)
+        userShift[shiftIndex] = newShift
+        setUserShift(prev=>({...prev, shift: [...userShift]}))
     }
 
     const days = shift.map((day, index)=>{
-        const userExist = userShift.shift.findIndex(shift=>shift.shift_day === day.dayNumber && shift.user_id === user.user_id && shift.shift_month-1 === day.month)
+        const userExist = userShift.findIndex(shift=>shift.shift_day === day.dayNumber && shift.user_id === user.user_id && shift.shift_month-1 === day.month)
         if (userExist != -1){
             return (
                 <button disabled={day.isCurrentMonth ? false : true} 
-                type="button" key={index} className={`${style.shift_calendar_day} ${userShift.shift[userExist].user_id === user.user_id ? style.shift_active : ""} ${selectedCell === index && style.selected}`}onClick={()=>{
-                    const shifts = userShift.shift.filter(shift=>shift.shift_day === day.dayNumber && day.month === shift.shift_month-1)
+                type="button" key={index} className={`${style.shift_calendar_day} ${userShift[userExist].user_id === user.user_id ? style.shift_active : ""} ${selectedCell === index && style.selected}`}onClick={()=>{
+                    const shifts = userShift.filter(shift=>shift.shift_day === day.dayNumber && day.month === shift.shift_month-1)
                     setShowShift([...shifts])
                     setSelectedCell(index)
                 }} >{day.dayNumber} </button>
@@ -123,7 +123,7 @@ const Shift:React.FC<Props> = ({companys})=>{
         }
         return (
             <button disabled={!day.isCurrentMonth} type="button" key={index} className={`${style.shift_calendar_day} ${selectedCell === index && style.selected}` } onClick={()=>{
-                const shifts = userShift.shift.filter(shift=>shift.shift_day===day.dayNumber && day.month === shift.shift_month-1)
+                const shifts = userShift.filter(shift=>shift.shift_day===day.dayNumber && day.month === shift.shift_month-1)
                     setShowShift(shifts)
                     setSelectedCell(index)
             }} >{day.dayNumber} </button>
@@ -131,7 +131,7 @@ const Shift:React.FC<Props> = ({companys})=>{
     })
 
     if(loading) return <p>Loading</p>
-    const isAdmin = userShift.role === "Boss" || userShift.role === "Admin" ? true : false
+    const isAdmin = member.role === "Boss" || member.role === "Admin" ? true : false
     const displayDayShift = showShift && showShift.map(shift=><DisplayShift key={shift.shift_id} {...{shift, isAdmin, onDeleteShift, onShiftChange}} />)
     return (
         <>
@@ -153,7 +153,7 @@ const Shift:React.FC<Props> = ({companys})=>{
             </div>
             {selectedCell && <h1 className={style.shift_date}>
                 {shift[selectedCell].dayNumber} {MONTH[shift[selectedCell].month]}
-                {userShift.shift.length > 0 && hasChanged(initialShifts, userShift.shift, ["shift_start", "shift_end", "shift_pause"])[0] && <button type="button" className={style.shift_date_editBtn} onClick={onEditShift}><Image src={Edit} alt="edit" className={style.shift_date_editBtn_icon} /></button>}
+                {userShift.shift.length > 0 && hasChanged(initialShifts, userShift, ["shift_start", "shift_end", "shift_pause"])[0] && <button type="button" className={style.shift_date_editBtn} onClick={onEditShift}><Image src={Edit} alt="edit" className={style.shift_date_editBtn_icon} /></button>}
             </h1>}
             {displayDayShift}
             {popupMessage && <PopupAlert {...{...popupMessage, onAnimationEnd: ()=>{}}} />}

@@ -4,4 +4,5 @@ export interface Holyday{
     to: string, 
     status: string
     time: string
+    name: string
 }

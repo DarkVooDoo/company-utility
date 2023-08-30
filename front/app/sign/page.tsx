@@ -1,9 +1,9 @@
 "use client"
-import { FormEventHandler, useContext, useState } from "react"
+import { useContext, useState } from "react"
 import style from "./Sign.module.css"
-import { CreateCookie } from "@/util/lib"
 import { userContext } from "@/component/UserContext"
 import { useRouter } from "next/navigation"
+import { onSignUser } from "../actions"
 
 const Sign = ()=>{
     const router = useRouter()
@@ -11,36 +11,13 @@ const Sign = ()=>{
     const [isNewUser, setIsNewUser] = useState(false)
     const [user, setUser] = useState({email: "", password: "", firstname: "", lastname: "", confirmation: ""})
 
-    const onSignin:FormEventHandler = async (e)=>{
-        e.preventDefault()
-        if (user.confirmation === user.password && isNewUser){
-            const createUser = await fetch(`http://localhost:5000/api/user`, {
-                method: "POST",
-                headers: [["Content-Type", "application/json"]],
-                body: JSON.stringify({email: user.email, password: user.password, firstname: user.firstname, lastname: user.lastname})
-            })
-            if(createUser.status === 200){
-                router.push("/")
-            }
-        }else{
-            const signUser = await fetch(`http://localhost:5000/api/auth`, {
-                method: "POST",
-                headers: [["Content-Type", "application/json"]],
-                body: JSON.stringify({email: user.email, password: user.password})
-            })
-            if(signUser.status === 200){
-                const userCredential = await signUser.json()
-                onUserChange({user_id: userCredential.user_id, user_name: userCredential.user_name})
-                CreateCookie("auth-token", userCredential.user_token, 60*60*24*3)
-                CreateCookie("id", userCredential.user_id, 60*60*24*3)
-                CreateCookie("user_name", userCredential.user_name, 60*60*24*3)
-                router.push("/home")
-            }
-        }
-    }
     return (
         <main className={style.sign}>
-            <form onSubmit={onSignin} className={style.sign_form}>
+            <form action={async (formData)=>{
+                const user = await onSignUser(formData)
+                onUserChange(user!!)
+                router.push("/")
+            }} className={style.sign_form}>
                 <h1 style={{textAlign: "center"}}>Company</h1>
                 <p className={style.sign_form_new}>{isNewUser ? "Connexion " : "Nouveau? "}
                     <button type="button" className={style.sign_form_newBtn} onClick={()=>setIsNewUser(prev=>!prev)}>{isNewUser ? "Connectez-vous" : "Creer un compte"} </button>
@@ -72,7 +49,7 @@ const Sign = ()=>{
                 </div>}
                 <p>Mot de passe oublié?</p>
                 <div className={style.sign_button}>
-                    <button type="submit" className={style.sign_button_sign} onClick={onSignin}>Connexion</button>
+                    <button type="submit" className={style.sign_button_sign}>Connexion</button>
                 </div>
             </form>
         </main>

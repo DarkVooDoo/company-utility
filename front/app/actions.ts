@@ -3,6 +3,36 @@
 import { Profile } from "@/util/data"
 import { revalidateTag } from "next/cache"
 import {cookies} from "next/headers"
+import { redirect } from "next/navigation"
+
+export const onSignUser = async(formData: FormData)=>{
+    const email = formData.get("email")
+    const password = formData.get("password")
+    const firstname = formData.get("firstname")
+    const lastname = formData.get("lastname")
+    const confirmation = formData.get("confirmation")
+    if (confirmation && confirmation === password){
+        const createUser = await fetch(`http://localhost:5000/api/user`, {
+            method: "POST",
+            headers: [["Content-Type", "application/json"]],
+            body: JSON.stringify({email: email, password: password, firstname: firstname, lastname: lastname})
+        })
+    }else{
+        const signUser = await fetch(`http://localhost:5000/api/auth`, {
+            method: "POST",
+            headers: [["Content-Type", "application/json"]],
+            body: JSON.stringify({email: email, password: password})
+        })
+        if(signUser.status === 200){
+            const userCredential = await signUser.json()
+            cookies().set("auth-token", userCredential.user_token, {maxAge: 60*60*24*3})
+            cookies().set("user_name", userCredential.user_name, {maxAge: 60*60*24*3})
+            cookies().set("id", userCredential.user_id, {maxAge: 60*60*24*3})
+            revalidateTag("home")
+            return {user_id: userCredential.user_id, user_name: userCredential.user_name}
+        }
+    }
+}
 
 export const onCreateCompany = async (formData: FormData)=>{
     const token = cookies().get("auth-token")?.value
@@ -69,6 +99,33 @@ export const onDeleteMember = async(formData: FormData)=>{
             // setAllMembers([...allMembers.filter(member=>member.id != id)])
             revalidateTag(`company`)
         }
+    }
+}
+
+export const onRequestHolyday = async(holydayType: string | undefined, dates: string[])=>{
+    const token = cookies().get("auth-token")?.value
+    const companyId = cookies().get("company-id")?.value
+    if(token && companyId && holydayType){
+        const sendHolydayRequest = await fetch(`http://localhost:5000/api/holyday`,{
+            method: "POST",
+            headers: [["Content-Type", "application/json"], ["Authorization", token]],
+            body: JSON.stringify({from: dates[0], to: dates[1], companyId: companyId, type: holydayType})
+        })
+        if (sendHolydayRequest.status === 200){
+            revalidateTag("holyday")
+        }
+
+    }
+}
+
+export const onDeleteHolyday = async(formData: FormData)=>{
+    const reject = await fetch(`http://localhost:5000/api/holyday`, {
+        method: "DELETE",
+        headers: [["Content-Type", "application/json"]],
+        body: JSON.stringify({id: formData.get("id")})
+    })
+    if (reject.status === 200){
+        revalidateTag("holyday")
     }
 }
 
