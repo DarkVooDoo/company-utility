@@ -1,9 +1,10 @@
-package model
+package db
 
 import (
 	"database/sql"
 	"log"
 	"os"
+	"time"
 
 	_ "github.com/lib/pq"
 )
@@ -15,6 +16,8 @@ func DBInit() *sql.DB {
 		return database
 	}
 	db, err := sql.Open("postgres", os.Getenv("con_string"))
+	db.SetMaxOpenConns(30)
+	db.SetConnMaxIdleTime(time.Second * 5)
 	database = db
 	if err != nil {
 		log.Println(err)

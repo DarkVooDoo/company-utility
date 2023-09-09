@@ -4,10 +4,13 @@ import {ROLE} from "@/util/lib"
 
 import Link from "next/link"
 import Image from "next/image"
+import user from "@/public/user.webp"
 import leftArrow from "@/public/left-arrow.webp"
 
 import style from "./style.module.css"
 import UserHolydayCard from "@/component/UserHolydayCard/component"
+import { Holyday } from "@/util/type"
+import JobCard from "@/component/JobCard/component"
 
 interface Props{
     params:{id: string}
@@ -37,10 +40,27 @@ const Test = [
     }
 ]
 
+const JOBS = [
+    {
+        id: "sq",
+        name: "React Dev H/F",
+        about: `about the job kol its cool`,
+        c_id: "322",
+        c_name: "Connected"
+    },
+    {
+        id: "sq23",
+        name: "Plongeur H/F",
+        about: `test its just a about the jib`,
+        c_id: "232",
+        c_name: "Connected"
+    }
+]
+
 const Dashboard = async ({params:{id}}:Props)=>{
     const company = await GetMyCompany(id) as  {
         role: {id: string, role: ROLE},
-        name: string, adresse: string, holyday_pending: {id: string, from: string, to: string, status: string, name: string, time: string}[], 
+        name: string, adresse: string, holyday_pending: Holyday[], 
         members: {id: string, name: string, role: string}[]
     }
     const shift = Test.map(shift=>(
@@ -51,13 +71,22 @@ const Dashboard = async ({params:{id}}:Props)=>{
             <p>{shift.shift_pause} </p>
         </div>
     ))
+    const job = JOBS.map(job=><JobCard {...{...job}} />)
     const pendingHolyday = company.holyday_pending.map(holyday=><UserHolydayCard key={holyday.id} {...{holyday, role: company.role}} />)
     return (
-        <main>
-            <h1>{company.name}</h1>
-            <p>Adresse {company.adresse}</p>
-            <h1>Planning Aujourd'hui</h1>
-            {/* {shift} */}
+        <main className={style.dashboard}>
+            <div className={style.dashboard_company}>
+                <Image src={user} alt="photo" />
+                <div>
+                    <h1>{company.name}</h1>
+                    <p>Adresse {company.adresse}</p>
+                </div>
+            </div>
+            <div className={style.dashboard_job}>
+                <h1>Mes Annonces</h1>
+                <Link href={`/dashboard/${id}/new-annonce`} className={style.dashboard_holydays_link}>Noveau <Image src={leftArrow} alt="fleche" className={style.dashboard_holydays_link_arrow} /> </Link>
+            </div>
+            {job}
             <div className={style.dashboard_holydays}>
                 <div className={style.dashboard_holydays_header}>
                     <h1>Congés</h1>

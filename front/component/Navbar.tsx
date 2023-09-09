@@ -9,14 +9,19 @@ import Image from "next/image"
 import User from "@/public/user.webp"
 import LeftArrow from "@/public/left-arrow.webp"
 import bell from "@/public/bell.svg"
+import logo from "@/public/logo.webp"
+import search from "@/public/search.webp"
 
 import style from "@/style/Navbar.module.css"
 import { closeDialogOnBackdropClick } from "@/util/lib"
 
 const Navbar:React.FC<{notif: {id: string, message: string, date: string}[] | []}> = ({notif})=>{
     const router = useRouter()
+    const inputRef = useRef<HTMLInputElement>(null)
     const sideBarRef = useRef<HTMLDialogElement>(null)
     const notifRef = useRef<HTMLDivElement>(null)
+    const [searchText, setSearchText] = useState("")
+    const [onSearch, setOnSearch] = useState(false)
     const [user, onUserChange] = useContext(userContext)
     const [showNotif, setShowNotif] = useState(false)
     
@@ -47,8 +52,7 @@ const Navbar:React.FC<{notif: {id: string, message: string, date: string}[] | []
 
 useEffect(()=>{
     const dialog = sideBarRef.current
-    if (dialog) closeDialogOnBackdropClick(dialog)
-    
+    if (dialog) closeDialogOnBackdropClick(dialog)   
 },[])
 
 const onLogOff = ()=>{
@@ -60,7 +64,6 @@ const onLogOff = ()=>{
     onCloseSideBar()
     router.push("/sign")
 }
-
 const notifs = notif.map(notif=>(
     <div className={style.navbar_notifPopup_notif} key={notif.id}>
             <button type="button" className={style.navbar_notifPopup_notif_deleteBtn} onClick={()=>onDeleteNotif(notif.id)}>X</button>
@@ -71,7 +74,23 @@ const notifs = notif.map(notif=>(
 
     return (
         <nav className={style.navbar}>
-            <Link href="/">Home</Link>
+            <Link href="/"><Image src={logo} alt="home" /></Link>
+            <div className={`${style.navbar_search}`}>
+                <div className={`${style.navbar_search_box}`}>
+                    <input type="text" ref={inputRef}
+                    className={`${style.navbar_search_bar} ${onSearch ? style.bar_fullwidth : ""}`} name="search" id="search" 
+                    placeholder="Recherche un annonce" required autoComplete="off"
+                    onChange={({currentTarget:{value}})=>setSearchText(value)}
+                    onKeyDown={(e)=>{
+                        if(e.key === "Enter") router.push(`/search?q=${searchText}`)
+                    }}
+                    onBlur={(e)=>{e.currentTarget.classList.remove(style.bar_fullwidth)}} />
+                    {<button type="button" className={style.navbar_search_icon} onClick={()=>{
+                        setOnSearch(prev=>!prev)
+                        !onSearch ? inputRef.current?.focus() : inputRef.current?.blur()
+                    }}><Image src={search} alt="search" className={style.navbar_search_icon_i} /></button>}
+                </div>
+            </div>
             <div className={style.navbar_navigation}>
                 {user.user_id !== "" ? 
                     <>
@@ -90,6 +109,7 @@ const notifs = notif.map(notif=>(
                 </div>
                 <Link href="/shift" className={style.navbar_sideBar_link} onClick={onCloseSideBar}>Planning</Link>
                 <Link href={`/profile`} className={style.navbar_sideBar_link} onClick={onCloseSideBar}>Profile</Link>
+                <Link href={`/message`} className={style.navbar_sideBar_link} onClick={onCloseSideBar}>Message</Link>
                 <button type="button" onClick={onLogOff} className={style.navbar_sideBar_logoffBtn} >Log Off</button>
             </dialog>
             {showNotif && <div ref={notifRef} className={style.navbar_notifPopup}>

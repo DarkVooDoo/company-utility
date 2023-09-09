@@ -3,15 +3,27 @@ package model
 import (
 	"errors"
 	"log"
+	"work/db"
 	"work/util"
 )
+
+type ProInterface interface {
+	CreateCompany(company util.CreateCompany, userToken string) error
+	GetEntreprises(userToken string, requestType string) ([]util.Company, error)
+	GetSingleEntreprise(companyId string, userToken string) (util.Company, error)
+	CompanyEmployee(companyId string) ([]util.CompanyUser, error)
+}
+
+type Pro struct {
+	ProInterface
+}
 
 func CreateCompany(company util.CreateCompany, userToken string) error {
 	user, tokenError := VerifyToken(userToken)
 	if tokenError != nil {
 		return errors.New("token error")
 	}
-	db := DBInit()
+	db := db.DBInit()
 	tx, _ := db.Begin()
 	result := tx.QueryRow(`INSERT INTO Company (company_name, company_adresse, company_postal, company_user_id) VALUES($1,$2,$3,$4) RETURNING company_id`, company.Name, company.Adresse, company.Postal, user.User_id)
 	var companyId string
@@ -29,7 +41,7 @@ func GetEntreprises(userToken string, requestType string) ([]util.Company, error
 	if tokenError != nil {
 		return []util.Company{}, errors.New("error token")
 	}
-	db := DBInit()
+	db := db.DBInit()
 	var myCompany []util.Company = []util.Company{}
 	var id, name, adresse string
 	var postal uint
@@ -68,7 +80,7 @@ func GetSingleEntreprise(companyId string, userToken string) (util.Company, erro
 	if err != nil {
 		return util.Company{}, errors.New("error")
 	}
-	db := DBInit()
+	db := db.DBInit()
 	result := db.QueryRow(`SELECT company_id, company_name, company_adresse, company_postal FROM Company WHERE company_id=$1 AND company_user_id=$2`, companyId, user.User_id)
 	member, errMember := db.Query(`SELECT member_id, user_firstname, member_role FROM member LEFT JOIN Users ON user_id=member_user_id WHERE member_company_id=$1`, companyId)
 	pendingHolydays, pendingErr := GetPendingHolydays(companyId)
@@ -87,7 +99,7 @@ func GetSingleEntreprise(companyId string, userToken string) (util.Company, erro
 }
 
 func CompanyEmployee(companyId string) ([]util.CompanyUser, error) {
-	var db = DBInit()
+	var db = db.DBInit()
 	var companyUser []util.CompanyUser
 	var name, role, id string
 	result, err := db.Query(`SELECT CONCAT(user_firstname,' ', user_lastname), member_role, user_id FROM Member LEFT JOIN Users ON user_id=member_user_id WHERE member_company_id=$1`, companyId)

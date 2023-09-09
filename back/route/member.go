@@ -2,36 +2,30 @@ package route
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"work/model"
 	"work/util"
 )
 
-func MemberRoute(res http.ResponseWriter, req *http.Request) {
-	util.EnableCors(res, "http://localhost:3000")
-	var router HandlerInterface = Handler{Req: req, Res: res}
-	router.POST(res, req, func(body []byte) {
+var MemberRoute = func(response http.ResponseWriter, request *http.Request) {
+	var route = Route{Response: response, Request: request, Cors: "http://localhost:3000"}
+	route.POST(func() {
 		var newMember util.NewMember
-		json.Unmarshal(body, &newMember)
-		if newUser, err := model.AddNewMember(newMember, req.Header.Get("Authorization")); err != nil {
-			log.Println(err)
-			http.Error(res, "bad request", http.StatusBadRequest)
-		} else {
-			body, _ := json.Marshal(newUser)
-			res.Header().Add("Content-Type", "application/json")
-			res.Write(body)
+		user, err := route.VerifyToken()
+		if err != nil {
+			http.Error(response, "forbidden", http.StatusForbidden)
 		}
+		json.Unmarshal(route.Payload, &newMember)
+		model.AddNewMember(user.User_id, newMember)
 	})
 
-	router.DELETE(res, req, func(body []byte) {
-		var deleteMember util.DeleteMember
-		json.Unmarshal(body, &deleteMember)
-		if err := model.DeleteMember(deleteMember, req.Header.Get("Authorization")); err != nil {
-			log.Println(err)
-			http.Error(res, "bad request", http.StatusBadRequest)
-		} else {
-			res.Write([]byte("Deleted"))
+	route.DELETE(func() {
+		var memberDelete util.DeleteMember
+		user, err := route.VerifyToken()
+		if err != nil {
+			http.Error(response, "forbidden", http.StatusForbidden)
 		}
+		json.Unmarshal(route.Payload, &memberDelete)
+		model.DeleteMember(user.User_id, memberDelete)
 	})
 }

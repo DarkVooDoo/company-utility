@@ -4,11 +4,13 @@
 # Idée
     - Tracker les jours travaillées
     - les hours travaillées par mois
+    - Calculer les heures de travail en temps reel
+    - signer a la fin des chaque shift et au commencement
     - Les Entreprise peuvent mettre des annonces
-    - Demande des congés
     - Team talk
     - recevoir des messages
     - logger
+    - rapport bug and gain 1 month premium access
 
 
 # TODO

@@ -5,7 +5,7 @@ const MONTHS = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet"
 
 export type ROLE = "User" | "Admin" | "Boss"
 
-export const BACKEND_HOST = process.env.NODE_ENV === "development" ? "127.0.0.1" : "back"
+export const BACKEND_HOST = process.env.NODE_ENV === "development" ? "http://127.0.0.1" : "back"
 
 export const GetYearDays = (year: number, month: number)=>{
 
@@ -42,7 +42,7 @@ export const CreateCookie = (cookieName: string, value: string, maxAge: number, 
 export const GetCookie = (cookieName: string):string | undefined=>{
     const selectedCookie = document.cookie.split(";").map(cookie=>cookie.trim()).filter(cookie=>cookie.startsWith(cookieName))[0]
     if(selectedCookie){
-        return selectedCookie.split("=")[1]
+        return decodeURI(selectedCookie.split("=")[1])
     }
     return undefined
 }

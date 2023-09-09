@@ -8,31 +8,30 @@ import (
 )
 
 func AuthRoute(res http.ResponseWriter, req *http.Request) {
-	util.EnableCors(res, "http://localhost:3000")
-	var router HandlerInterface = Handler{Req: req, Res: res}
-
-	router.GET(res, req, func() {
-		auth := req.Header.Get("Authorization")
+	var route = Route{Request: req, Response: res, Cors: "http://localhost:3000"}
+	route.GET(func() {
+		auth := route.Request.Header.Get("Authorization")
 		user, err := model.VerifyToken(auth)
 		if err != nil {
 			http.Error(res, "unathorized", http.StatusUnauthorized)
 		} else {
 			body, _ := json.Marshal(user)
-			res.Write(body)
+			route.Response.Header().Set("Content-Type", "application/json")
+			route.Response.Write(body)
 		}
 	})
 
-	router.POST(res, req, func(body []byte) {
+	route.POST(func() {
 		var user util.SignUserPayloadStruct
-		json.Unmarshal(body, &user)
+		json.Unmarshal(route.Payload, &user)
 		returnedUser, err := model.SignInUser(user)
 		if err != nil {
-			http.Error(res, "request error", 400)
-		} else {
-			payload, _ := json.Marshal(returnedUser)
-			res.Header().Add("Content-Type", "application/json")
-			res.Write(payload)
+			http.Error(route.Response, "request error", http.StatusBadRequest)
+			return
 		}
-	})
+		payload, _ := json.Marshal(returnedUser)
+		route.Response.Header().Add("Content-Type", "application/json")
+		route.Response.Write(payload)
 
+	})
 }

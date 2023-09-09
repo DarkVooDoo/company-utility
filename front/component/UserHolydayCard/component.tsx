@@ -42,10 +42,14 @@ const UserHolydayCard:React.FC<Props> = ({holyday, role: r})=>{
                 <div className={style.holyday_content_status_bubble} style={statusBubbleColor} /><p>{holyday.status} </p>
             </div>
             {r.role !== "User" && <div className={style.holyday_content_controls}>
-                <form action={onRejectHolyday}>
+                <form action={(formData)=>{
+                    onRejectHolyday(formData, holyday.user)
+                }}>
                     <button type="submit" className={style.holyday_content_controls_rejectBtn} name="id" value={holyday.id} >Refusé</button>
                 </form>
-                <form action={onAcceptHolyday}>
+                <form action={(formData: FormData)=>{
+                    onAcceptHolyday(formData, holyday.user)
+                }}>
                     <button type="submit" className={style.holyday_content_controls_acceptBtn} name="id" value={holyday.id}>Accepté</button>
                 </form>
             </div>}

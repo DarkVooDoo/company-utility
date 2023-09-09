@@ -1,4 +1,3 @@
-
 import {onModifyProfile} from "@/app/actions"
 
 import style from "./profile.module.css"

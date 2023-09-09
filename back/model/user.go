@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 	"time"
+	"work/db"
 	"work/util"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -16,7 +17,7 @@ const (
 )
 
 func SignInUser(conn util.SignUserPayloadStruct) (util.ReturnedTokenStruct, error) {
-	var db = DBInit()
+	var db = db.DBInit()
 	var row *sql.Row
 	var id, name, password string
 	row = db.QueryRow(`SELECT user_id, CONCAT(user_firstname, ' ', LEFT(user_lastname, 1), '.') as user_name, user_password FROM Users WHERE user_email=$1 AND user_password=$2`, conn.Email, conn.Password)
@@ -69,7 +70,7 @@ func VerifyToken(token string) (util.ReturnedTokenStruct, error) {
 func CreateUser(newAccount util.CreateUserStruct) error {
 	newAccount.Firstname = strings.ToUpper(newAccount.Firstname[0:1]) + newAccount.Firstname[1:]
 	newAccount.Lastname = strings.ToUpper(newAccount.Lastname[0:1]) + newAccount.Lastname[1:]
-	db := DBInit()
+	db := db.DBInit()
 	result, err := db.Exec(`INSERT INTO Users (user_email, user_lastname, user_firstname, user_password) VALUES($1,$2,$3,$4)`, newAccount.Email, newAccount.Lastname, newAccount.Firstname, newAccount.Password)
 	affected, _ := result.RowsAffected()
 	if err != nil && affected == 0 {
@@ -83,7 +84,7 @@ func GetUserProfile(userToken string) (util.UserProfile, error) {
 	if err != nil {
 		return util.UserProfile{}, errors.New("error")
 	}
-	db := DBInit()
+	db := db.DBInit()
 	var id, firstname, lastname, adresse, postal, email, joined string
 	row := db.QueryRow(`SELECT user_id, TO_CHAR(user_joined, 'TMMonth-YYYY'), user_lastname, user_firstname, user_email, user_adresse, user_postal FROM Users WHERE user_id=$1`, user.User_id)
 	row.Scan(&id, &joined, &lastname, &firstname, &email, &adresse, &postal)
@@ -96,7 +97,7 @@ func ModifyProfile(profile util.UserProfile, userToken string) (util.UserProfile
 	if tokenErr != nil {
 		return util.UserProfile{}, errors.New("error")
 	}
-	db := DBInit()
+	db := db.DBInit()
 	row := db.QueryRow(`UPDATE Users SET user_firstname=$1, user_lastname=$2, user_adresse=$3, user_postal=$4 WHERE user_id=$5 
 	RETURNING user_id, TO_CHAR(user_joined, 'Month-YYYY'), user_lastname, user_firstname, user_email, user_adresse, user_postal`, profile.Firstname, profile.Lastname, profile.Adresse, profile.Postal, user.User_id)
 	if err := row.Scan(&id, &joined, &lastname, &firstname, &email, &adresse, &postal); err != nil {
@@ -106,7 +107,7 @@ func ModifyProfile(profile util.UserProfile, userToken string) (util.UserProfile
 }
 
 func GetUserRole(userId string, companyId string) util.Role {
-	db := DBInit()
+	db := db.DBInit()
 	var mRole, mId string
 	role := util.Role{}
 	member := db.QueryRow(`SELECT member_role, member_user_id FROM Member LEFT JOIN Company ON company_user_id=member_user_id WHERE member_user_id=$1 AND company_id=$2`, userId, companyId)

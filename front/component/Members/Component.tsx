@@ -46,7 +46,6 @@ const Actions:React.FC<Props> = ({members})=>{
                 }}><Image src={close} alt="Fermer" style={{width: "100%", height: "100%"}} /> </button></h1>
                 <form action={async (formData)=>{
                     const newUser = await onNewMember(formData)
-                    if (newUser) members = [newUser, ...members]
                 }} className={style.dialog_email}>
                     <input type="text" name="email" id="email" autoComplete="off" placeholder="Nouveau employé email" className={style.dialog_email_input} />
                 </form>

@@ -3,11 +3,12 @@ package model
 import (
 	"errors"
 	"log"
+	"work/db"
 	util "work/util"
 )
 
 func CreateShift(planning []util.ShiftStruct) error {
-	var db = DBInit()
+	var db = db.DBInit()
 	for _, user := range planning {
 		for _, date := range user.Shift_date {
 			_, err := db.Exec("INSERT INTO Shift (shift_date, shift_start, shift_end, shift_pause, shift_user_id, shift_company_id) VALUES($1,$2,$3,$4,$5,$6)", date, user.Shift_start, user.Shift_end, user.Shift_pause, user.User_id, user.Company_id)
@@ -25,7 +26,7 @@ func GetUserShift(userToken string, companyId string, from string, to string) (u
 	if errToken != nil {
 		return util.ShiftResponse{}, errors.New("token error")
 	}
-	var db = DBInit()
+	var db = db.DBInit()
 	var uId, shiftId, name, start, end string
 	var day, month, pause uint16
 	var shift []util.ShiftStruct = []util.ShiftStruct{}
@@ -45,7 +46,7 @@ func GetUserShift(userToken string, companyId string, from string, to string) (u
 }
 
 func ModifyShift(newShift []util.ModifyShiftStruct) error {
-	db := DBInit()
+	db := db.DBInit()
 	for _, shift := range newShift {
 		_, err := db.Exec(`UPDATE Shift SET shift_start=$1, shift_end=$2, shift_pause=$3 WHERE shift_id=$4`, shift.Start, shift.End, shift.Pause, shift.Id)
 		if err != nil {
@@ -56,7 +57,7 @@ func ModifyShift(newShift []util.ModifyShiftStruct) error {
 }
 
 func DeleteShift(id string) error {
-	db := DBInit()
+	db := db.DBInit()
 	_, err := db.Exec(`DELETE FROM Shift WHERE shift_id=$1`, id)
 	if err != nil {
 		return errors.New("error")
@@ -71,7 +72,7 @@ func GetDayShift(userToken string, companyId string, date string) (util.TodayShi
 	if tokenErr != nil {
 		return util.TodayShift{}, errors.New("error")
 	}
-	db := DBInit()
+	db := db.DBInit()
 	row := db.QueryRow(`SELECT shift_start, shift_end, shift_pause FROM Member LEFT JOIN Shift ON member_user_id=shift_user_id AND member_company_id=shift_company_id WHERE member_user_id=$1 AND member_company_id=$2 AND shift_date=$3`, user.User_id, companyId, date)
 	err := row.Scan(&start, &end, &pause)
 	if err != nil {

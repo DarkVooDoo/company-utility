@@ -31,10 +31,13 @@ export const middleware = async (request: NextRequest)=>{
             }
         }
     }
-    
+    if(!request.nextUrl.pathname.startsWith("/sign") && !request.nextUrl.pathname.startsWith("/")){
+        console.log(request.nextUrl.pathname)
+        return NextResponse.redirect(new URL("/sign", request.url))
+    }
 }
  
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ['/', '/shift/:path*', "/profile/:path*", "/home/:path*", "/sign"],
+  matcher: ['/', '/shift/:path*', "/profile/:path*", "/home/:path*", "/sign", "/dashboard/:path*"],
 }

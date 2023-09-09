@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"time"
 	"work/route"
 )
 
@@ -18,14 +19,25 @@ var Routes map[string]func(http.ResponseWriter, *http.Request) = map[string]func
 	"/api/shift":   route.ShiftRoute,
 	"/api/notif":   route.NotificationRoute,
 	"/api/holyday": route.HolydayRoute,
+	"/api/search":  route.SearchRoute,
+	"/api/tracker": route.TrackerRoute,
+	"/api/job":     route.NewJobRoute,
+	"/ws":          route.WebsocketRoute,
 }
 
 func main() {
+
 	mux := http.NewServeMux()
 	for route, funcHandler := range Routes {
 		mux.HandleFunc(route, funcHandler)
 	}
-	log.Println("Server PORT: " + PORT)
-	http.ListenAndServe(":"+PORT, mux)
-
+	s := &http.Server{
+		Addr:        ":5000",
+		Handler:     mux,
+		IdleTimeout: time.Second * 10,
+	}
+	if err := s.ListenAndServe(); err != nil {
+		log.Fatal("server crash")
+	}
+	log.Println("Server Started PORT" + PORT)
 }

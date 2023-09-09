@@ -7,11 +7,15 @@ import (
 	util "work/util"
 )
 
-func ProRoute(res http.ResponseWriter, req *http.Request) {
-	util.EnableCors(res, "http://localhost:3000")
-	var handler HandlerInterface = Handler{Res: res, Req: req}
+type Prorouter struct {
+	Route
+	Api model.Pro
+}
 
-	handler.GET(res, req, func() {
+func ProRoute(res http.ResponseWriter, req *http.Request) {
+	var route = Route{Response: res, Request: req, Cors: "http://localhost:3000"}
+
+	route.GET(func() {
 		userToken := req.Header.Get("Authorization")
 		if req.URL.Query().Has("companyId") {
 			company, err := model.GetSingleEntreprise(req.URL.Query().Get("companyId"), userToken)
@@ -35,10 +39,10 @@ func ProRoute(res http.ResponseWriter, req *http.Request) {
 		}
 	})
 
-	handler.POST(res, req, func(body []byte) {
+	route.POST(func() {
 		var companyData util.CreateCompany
 		token := req.Header.Get("Authorization")
-		json.Unmarshal(body, &companyData)
+		json.Unmarshal(route.Payload, &companyData)
 		err := model.CreateCompany(companyData, token)
 		if err != nil {
 			http.Error(res, "error creating company", http.StatusBadRequest)

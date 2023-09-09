@@ -1,13 +1,17 @@
-/* .dashboard_membersBtn_link{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 8rem;
-    height: 8rem;
-    border-radius: 10px;
-    border: 1px solid black;
-} */
+.dashboard > *{
+    margin-bottom: var(--Row-Margin);
+}
 
+.dashboard_company{
+    display: flex;
+    gap: .5rem;
+    margin-top: var(--Row-Margin);
+}
+
+.dashboard_job{
+    display: flex;
+    justify-content: space-between;
+}
 
 .dashboard_holydays > *{
     margin-bottom: var(--Row-Margin);
@@ -22,6 +26,7 @@
 .dashboard_holydays_all{
     max-height: 30vh;
     overflow-y: scroll;
+    padding: .5rem;
 }
 
 .dashboard_holydays_all_box > *{
@@ -31,7 +36,13 @@
 .dashboard_holydays_link{
     display: flex;
     align-items: center;
+    height: 2rem;
     gap: .3rem;
+    font-weight: bold;
+    color: var(--Primary-Color);
+    padding: .3rem;
+    border: 1px solid var(--Primary-Color);
+    border-radius: 5px;
 }
 
 .dashboard_holydays_link_arrow{

@@ -35,7 +35,7 @@ const MyCompanys:React.FC<Props> = ({companys, type, onCompanyChange = ()=>{}})=
     },[])
 
     const company = companys.map(company=>(
-        <div key={company.id} style={{outline: selectedCompany === company.id ? "1px solid black" : "1px solid transparent"}} className={style.shift_company_box} onClick={()=>onCompanyClick(company.id)}>
+        <div key={company.id} style={{boxShadow: selectedCompany === company.id ? "0px 0px 10px 0px var(--Primary-Color)" : "0px 0px 3px 0px var(--Primary-Color)"}} className={style.shift_company_box} onClick={()=>onCompanyClick(company.id)}>
             <Image src={Company} alt="entreprise" className={style.shift_company_box_icon} />
             <h4>Entreprise</h4>
             <h3>{company.name} </h3>

@@ -1,6 +1,8 @@
 package util
 
-import "github.com/golang-jwt/jwt/v5"
+import (
+	"github.com/golang-jwt/jwt/v5"
+)
 
 type ShiftResponse struct {
 	Role  Role          `json:"role"`
@@ -141,10 +143,43 @@ type Holyday struct {
 	To     string `json:"to"`
 	Time   string `json:"time"`
 	Status string `json:"status"`
+	User   string `json:"user"`
 	Name   string `json:"name"`
 }
 
 type JWTokenInterface struct {
 	User UserJWT
 	jwt.RegisteredClaims
+}
+
+type SearchStruct struct {
+	Id   string `json:"id"`
+	Name string `json:"name"`
+}
+
+type SearchResult struct {
+	UseCount     uint           `json:"user_amount"`
+	CompanyCount uint           `json:"company_amount"`
+	Users        []SearchStruct `json:"users"`
+	Companys     []SearchStruct `json:"companys"`
+}
+
+type CurrentShiftStatus struct {
+	Id     string `json:"id"`
+	State  string `json:"state"`
+	HourId string `json:"hourId"`
+}
+
+type UpdateCurrentShift struct {
+	Company string `json:"companyId"`
+	Shift   string `json:"shiftId"`
+	Hour    string `json:"hourId"`
+	State   string `json:"state"`
+}
+
+type NewJob struct {
+	Title       string `json:"title"`
+	Description string `json:"desc"`
+	About       string `json:"about"`
+	Expire      string `json:"expire"`
 }

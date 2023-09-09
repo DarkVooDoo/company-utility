@@ -3,7 +3,7 @@
 import { ChangeEventHandler, useEffect, useRef, useState } from "react"
 
 import style from "./style.module.css"
-import { GetCookie, closeDialogOnBackdropClick } from "@/util/lib"
+import { closeDialogOnBackdropClick } from "@/util/lib"
 import Calendar from "../Calendar"
 import { Holyday } from "@/util/type"
 import UserHolydayCard from "../UserHolydayCard/component"

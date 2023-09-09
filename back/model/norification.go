@@ -1,35 +1,37 @@
 package model
 
 import (
-	"errors"
+	"encoding/json"
+	"work/db"
 	"work/util"
 )
 
-func GetNotifications(userToken string) ([]util.Notification, error) {
+func GetNotifications(userToken string) []byte {
+	user, tokenErr := VerifyToken(userToken)
+	if tokenErr != nil {
+		return nil
+	}
 	var id, message, date string
 	var myNotification []util.Notification = []util.Notification{}
-	user, err := VerifyToken(userToken)
-	if err != nil {
-		return []util.Notification{}, errors.New("error")
-	}
-	db := DBInit()
+	db := db.DBInit()
 	rows, err := db.Query(`SELECT alert_id, alert_message, TO_CHAR(AGE(NOW(), alert_date), 'YY-MM-DD-HH24-MI-SS') FROM Alert WHERE alert_user_id=$1`, user.User_id)
 	if err != nil {
-		return []util.Notification{}, errors.New("error")
+		return nil
 	}
 	for rows.Next() {
 		rows.Scan(&id, &message, &date)
 		formatedDate := "Il y a " + util.GetFormatedDate(date)
 		myNotification = append(myNotification, util.Notification{Id: id, Message: message, Date: formatedDate})
 	}
-	return myNotification, nil
+	body, _ := json.Marshal(myNotification)
+	return body
 }
 
-func DeleteNotification(id string) error {
-	db := DBInit()
+func DeleteNotification(id string) []byte {
+	db := db.DBInit()
 	_, err := db.Exec(`DELETE FROM Alert WHERE alert_id=$1`, id)
 	if err != nil {
-		return errors.New("forbidden")
+		return nil
 	}
-	return nil
+	return []byte("Success")
 }

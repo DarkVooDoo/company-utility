@@ -19,6 +19,7 @@ interface CalendarProps {
 }  
 
 const Calendar:React.FC<CalendarProps> = ({onChange, className, type = "single", currentUser, currentCompany})=>{
+    const [tDay, month, year] = new Date().toLocaleDateString().split("/")
     const [date, setDate] = useState({year: new Date().getFullYear(), month: new Date().getMonth(), daySelected: new Set<number>()})
     const [shift, setShift] = useState<{shift: {shift_day: number, shift_month: number, user_id: string}[]}>({shift: []})
     const [calendar, setCalendar] = useState<{isCurrentMonth: boolean, dayNumber: number, month: number}[]>([])
@@ -49,13 +50,18 @@ const Calendar:React.FC<CalendarProps> = ({onChange, className, type = "single",
 
     const days = calendar.map((day,index)=>{
         const sortedDate = between.sort()
-        const today = `${date.year}-${day.month < 9 ? '0'+(day.month+1) : (day.month+1)}-${day.dayNumber < 10 ? '0'+day.dayNumber : day.dayNumber}`
-        const isBetween = sortedDate.length === 2 ? today < sortedDate[0] || today > sortedDate[1] : true
-        const firstChoice = between[0] === today
-        const isDayDisable = day.isCurrentMonth && shift && shift.shift.findIndex(myShift=>myShift.shift_day === day.dayNumber && myShift.user_id === currentUser) === -1 ? false : true
+        const calendarDay = `${date.year}-${day.month < 9 ? '0'+(day.month+1) : (day.month+1)}-${day.dayNumber < 10 ? '0'+day.dayNumber : day.dayNumber}`
+        const isBetween = sortedDate.length === 2 ? calendarDay < sortedDate[0] || calendarDay > sortedDate[1] : true
+        const firstChoice = between[0] === calendarDay
+        let isDayDisable: boolean
+        if (type === "single"){
+            isDayDisable = day.isCurrentMonth && shift && shift.shift.findIndex(myShift=>myShift.shift_day === day.dayNumber && myShift.user_id === currentUser) === -1 ? false : true
+        }else{
+            isDayDisable = calendarDay < `${year}-${month}-${tDay}` || !day.isCurrentMonth ? true : false
+        }
         return (
             <button disabled={isDayDisable} type="button" key={index} 
-            className={`${style.calendar_day} ${firstChoice && style.between_active} ${type === 'between' ? !isBetween ? style.between_active : "" : `${seletedDays.has(day.dayNumber) && day.isCurrentMonth ? style.active : ""}` }`}
+            className={`${style.calendar_day} ${firstChoice && style.between_active} ${type === 'between' ? !isBetween && day.isCurrentMonth ? style.between_active : "" : `${seletedDays.has(day.dayNumber) && day.isCurrentMonth ? style.active : ""}` }`}
             onClick={(e)=>{
                 if(type === "single"){
                     seletedDays.has(day.dayNumber) ? seletedDays.delete(day.dayNumber) : seletedDays.add(day.dayNumber)
@@ -67,8 +73,8 @@ const Calendar:React.FC<CalendarProps> = ({onChange, className, type = "single",
                     })
                     onChange(dates)
                 }else{
-                    between.push(today)
-                    if (between.length > 2) setBetWeen([today])
+                    between.push(calendarDay)
+                    if (between.length > 2) setBetWeen([calendarDay])
                     else setBetWeen([...between])
                     onChange(between.sort())
                 }

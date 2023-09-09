@@ -69,3 +69,13 @@ dialog{
 ::backdrop{
   background-color: rgba(190, 190, 190, .5);
 }
+
+/* @media (prefers-color-scheme: dark) {
+  *{
+    color: white;
+  }
+  body {
+    background-color: black;
+    color: white;
+  }
+} */

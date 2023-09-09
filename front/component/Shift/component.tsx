@@ -173,7 +173,7 @@ const DisplayShift:React.FC<{shift: ShiftTypes, isAdmin: boolean, onDeleteShift:
                 <h3>{shift.user_name} </h3>
                 {isAdmin && <Image src={trash} alt="supprimer" className={style.shift_display_shift_name_supprimer} onClick={()=>onDeleteShift(shift.shift_id)} />}
             </div>
-            <div> 
+            <div>  
                 <p className={style.shift_display_label}>Commence</p>
                 <input type="time" name="start" value={start} className={style.shift_display_content} readOnly={isAdmin ? false : true}
                 onChange={({currentTarget: {value}})=>{

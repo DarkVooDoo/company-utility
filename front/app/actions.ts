@@ -1,9 +1,12 @@
 "use server"
 
+import cryto from "crypto"
 import { Profile } from "@/util/data"
+import { BACKEND_HOST } from "@/util/lib"
 import { revalidateTag } from "next/cache"
 import {cookies} from "next/headers"
-import { redirect } from "next/navigation"
+import { encode } from "punycode"
+import { CurrentShift } from "@/util/type"
 
 export const onSignUser = async(formData: FormData)=>{
     const email = formData.get("email")
@@ -12,13 +15,13 @@ export const onSignUser = async(formData: FormData)=>{
     const lastname = formData.get("lastname")
     const confirmation = formData.get("confirmation")
     if (confirmation && confirmation === password){
-        const createUser = await fetch(`http://localhost:5000/api/user`, {
+        const createUser = await fetch(`${BACKEND_HOST}:5000/api/user`, {
             method: "POST",
             headers: [["Content-Type", "application/json"]],
             body: JSON.stringify({email: email, password: password, firstname: firstname, lastname: lastname})
         })
     }else{
-        const signUser = await fetch(`http://localhost:5000/api/auth`, {
+        const signUser = await fetch(`${BACKEND_HOST}:5000/api/auth`, {
             method: "POST",
             headers: [["Content-Type", "application/json"]],
             body: JSON.stringify({email: email, password: password})
@@ -38,7 +41,7 @@ export const onCreateCompany = async (formData: FormData)=>{
     const token = cookies().get("auth-token")?.value
     const info = {name: formData.get("name"), adresse: formData.get("adresse"), postal: parseInt(formData.get("postal")!!.toString())}
     if (token){
-        const createCompany = await fetch(`http://localhost:5000/api/pro`,{
+        const createCompany = await fetch(`${BACKEND_HOST}/api/pro`,{
             method: "POST",
             headers: [["Content-Type", "application/json"], ["Authorization", token]],
             body: JSON.stringify({...info})
@@ -53,7 +56,7 @@ export const onModifyProfile = async(formData: FormData)=>{
     const token = cookies().get("auth-token")?.value
     const user = {firstname: formData.get("firstname"), lastname: formData.get("lastname"), adresse: formData.get("adresse"), postal: formData.get("postal")}
     if (token){
-        const modifyUser = await fetch(`http://localhost:5000/api/user`,{
+        const modifyUser = await fetch(`${BACKEND_HOST}/api/user`,{
             method: "PUT",
             headers: [["Content-Type", "application/json"], ["Authorization", token]],
             body: JSON.stringify({...user})
@@ -71,16 +74,13 @@ export const onNewMember = async(formData: FormData)=>{
     const companyId = cookies().get("company-id")?.value
     const token = cookies().get("auth-token")
     if(token){
-        const addMember = await fetch(`http://localhost:5000/api/member`,{
+        const addMember = await fetch(`${BACKEND_HOST}/api/member`,{
             method: "POST",
             headers: [["Content-Type", "application/json"], ["Authorization", token.value]],
             body: JSON.stringify({email, companyId, role: "User"})
         })
         if (addMember.status === 200) {
-            const newMember = await addMember.json() as {id: string, name: string, role: string}
-            // setAllMembers(members=>([...members, {id: newMember.id, name: newMember.name, role: newMember.role}]))
             revalidateTag(`company`)
-            return newMember
         }
     }
 }
@@ -90,7 +90,7 @@ export const onDeleteMember = async(formData: FormData)=>{
     const companyId = cookies().get("company-id")?.value
     const memberId = formData.get("delete")
     if (token){
-        const deleteMember = await fetch(`http://localhost:5000/api/member`,{
+        const deleteMember = await fetch(`${BACKEND_HOST}/api/member`,{
             method: "DELETE",
             headers: [["Content-Type", "application/json"], ["Authorization", token]],
             body: JSON.stringify({id: memberId, companyId})
@@ -106,7 +106,7 @@ export const onRequestHolyday = async(holydayType: string | undefined, dates: st
     const token = cookies().get("auth-token")?.value
     const companyId = cookies().get("company-id")?.value
     if(token && companyId && holydayType){
-        const sendHolydayRequest = await fetch(`http://localhost:5000/api/holyday`,{
+        const sendHolydayRequest = await fetch(`${BACKEND_HOST}/api/holyday`,{
             method: "POST",
             headers: [["Content-Type", "application/json"], ["Authorization", token]],
             body: JSON.stringify({from: dates[0], to: dates[1], companyId: companyId, type: holydayType})
@@ -119,7 +119,7 @@ export const onRequestHolyday = async(holydayType: string | undefined, dates: st
 }
 
 export const onDeleteHolyday = async(formData: FormData)=>{
-    const reject = await fetch(`http://localhost:5000/api/holyday`, {
+    const reject = await fetch(`${BACKEND_HOST}/api/holyday`, {
         method: "DELETE",
         headers: [["Content-Type", "application/json"]],
         body: JSON.stringify({id: formData.get("id")})
@@ -129,24 +129,90 @@ export const onDeleteHolyday = async(formData: FormData)=>{
     }
 }
 
-export const onRejectHolyday = async(formData: FormData)=>{
-    const reject = await fetch(`http://localhost:5000/api/holyday`, {
+export const onRejectHolyday = async(formData: FormData, userId: string)=>{
+    const reject = await fetch(`${BACKEND_HOST}/api/holyday`, {
         method: "PUT",
         headers: [["Content-Type", "application/json"]],
-        body: JSON.stringify({id: formData.get("id"), type: "reject"})
+        body: JSON.stringify({id: formData.get("id"), type: "reject", userId})
     })
     if (reject.status === 200){
         revalidateTag("company")
     }
 }
 
-export const onAcceptHolyday = async(formData: FormData)=>{
-    const accept = await fetch(`http://localhost:5000/api/holyday`, {
+export const onAcceptHolyday = async(formData: FormData, userId: string)=>{
+    const accept = await fetch(`${BACKEND_HOST}/api/holyday`, {
         method: "PUT",
         headers: [["Content-Type", "application/json"]],
-        body: JSON.stringify({id: formData.get("id"), type: "accept"})
+        body: JSON.stringify({id: formData.get("id"), type: "accept", userId})
     })
     if (accept.status === 200){
         revalidateTag("company")
     }
+}
+
+export const onStartShift = async(formData: FormData)=>{
+    const companyId = cookies().get("company-id")?.value
+    const token = cookies().get("auth-token")?.value
+    const data = formData.get("shift")
+    if(token){
+        const currentShift = await fetch(`http://localhost:5000/api/tracker`,{
+            method: "POST",
+            headers: [["Content-Type", "application/json"], ["Authorization", token]],
+            body: JSON.stringify({companyId, state: data ? data.toString().split(",")[2] : undefined, shiftId: data ? data?.toString().split(",")[0] : undefined})
+        })
+        if (currentShift.status === 200) revalidateTag("tracker")
+    }
+    
+}
+
+export const onEndShift = async(formData: FormData)=>{
+    const companyId = cookies().get("company-id")?.value
+    const token = cookies().get("auth-token")?.value
+    const [shiftId, hourId, state] = formData.get("shift")!!.toString().split(",")
+    if(token){
+        const endShift = await fetch(`http://localhost:5000/api/tracker`,{
+            method: "POST",
+            headers: [["Content-Type", "application/json"], ["Authorization", token]],
+            body: JSON.stringify({companyId, shiftId, hourId, state})
+        })
+        if (endShift.status === 200) revalidateTag("tracker")
+    }
+    
+}
+
+export const onPauseShift = async(formData: FormData)=>{
+    const companyId = cookies().get("company-id")?.value
+    const token = cookies().get("auth-token")?.value
+    const [shiftId, hourId] = formData.get("shift")!!.toString().split(",")
+    if(token){
+        const pauseShift = await fetch(`http://localhost:5000/api/tracker`,{
+            method: "PUT",
+            headers: [["Content-Type", "application/json"], ["Authorization", token]],
+            body: JSON.stringify({companyId, shiftId, hourId})
+        })
+        if (pauseShift.status === 200) revalidateTag("tracker")
+    }
+}
+
+export const onCreateJob = async(formData: FormData)=>{
+    const data = getFormValues(formData.entries())
+    const token = cookies().get("auth-token")?.value
+    if (token){
+        const createJob = await fetch(`${BACKEND_HOST}:5000/api/job`,{
+            method: "POST",
+            headers: [["Content-Type", "application/json"], ["Authorization", token]],
+            body: JSON.stringify(data)
+        })
+    }
+}
+
+const getFormValues = (data: IterableIterator<[string, FormDataEntryValue]>)=>{
+    const values:{[key: string]: any} = {}
+    let cursor = data.next()
+    while(!cursor.done){
+        values[cursor.value[0]] = cursor.value[1]
+        cursor = data.next()
+    }
+    return values
 }
