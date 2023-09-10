@@ -1,0 +1,75 @@
+.dashboard_membersBtn_link{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 8rem;
+    height: 8rem;
+    border-radius: 10px;
+    border: 1px solid black;
+}
+
+.member_header{
+    margin-bottom: var(--Row-Margin);
+}
+
+.member_newEmail{
+    margin-bottom: var(--Row-Margin);
+    height: 2.5rem;
+}
+
+.member_newInput_input{
+    height: 100%;
+    width: 100%;
+    padding: 0 5px;
+    border-radius: 5px;
+    background-color: rgb(200,200,200);
+}
+
+.member{
+    display: grid;
+    grid-template-areas: 
+    "name name name role"
+    "delete delete delete delete";
+    padding: .5rem;
+    width: 100%;
+    border: 1px solid var(--Primary-Color);
+    border-radius: 10px;
+    margin-bottom: var(--Row-Margin);
+}
+
+.member_name, .member_role, .member_hours{
+    margin-bottom: var(--Row-Margin);
+}
+
+.member_name{
+    grid-area: name;
+}
+
+.member_name_text{
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.member_role{
+    grid-area: role;
+}
+
+.member_delete{
+    grid-area: delete;
+}
+
+.member_deleteBtn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 2.5rem;
+    border-radius: 5px;
+    border:1px solid var(--Primary-Color);
+    margin-right: .3rem;
+}
+
+.dialog_member_deleteBtn_icon{
+    height: 50%;
+    width: 50%;
+}

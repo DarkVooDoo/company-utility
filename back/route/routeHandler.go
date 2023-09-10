@@ -78,6 +78,15 @@ func (r *Route) PUT(handler func()) {
 	}
 }
 
+func (r *Route) PATCH(handler func()) {
+	if r.Request.Method == http.MethodPatch {
+		util.EnableCors(r.Response, r.Cors)
+		body, _ := io.ReadAll(r.Request.Body)
+		r.Payload = body
+		handler()
+	}
+}
+
 func (r *Route) DELETE(handler func()) {
 	if r.Request.Method == http.MethodDelete {
 		util.EnableCors(r.Response, r.Cors)

@@ -109,7 +109,7 @@ func ModifyProfile(profile util.UserProfile, userToken string) (util.UserProfile
 func GetUserRole(userId string, companyId string) util.Role {
 	db := db.DBInit()
 	var mRole, mId string
-	role := util.Role{}
+	var role = util.Role{}
 	member := db.QueryRow(`SELECT member_role, member_user_id FROM Member LEFT JOIN Company ON company_user_id=member_user_id WHERE member_user_id=$1 AND company_id=$2`, userId, companyId)
 	member.Scan(&mRole, &mId)
 	role = util.Role{Role: mRole, Id: mId}

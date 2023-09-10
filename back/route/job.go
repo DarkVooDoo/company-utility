@@ -11,7 +11,7 @@ import (
 var NewJobRoute = func(response http.ResponseWriter, request *http.Request) {
 	var route = Route{Response: response, Request: request, Cors: "http://localhost:3000"}
 	route.GET(func() {
-		body, err := model.GetUserHours()
+		body, err := model.GetCompanyUserHours("232")
 		if err != nil {
 			http.Error(route.Response, "forbidden", http.StatusForbidden)
 			return

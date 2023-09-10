@@ -109,6 +109,13 @@ const notifs = notif.map(notif=>(
                 </div>
                 <Link href="/shift" className={style.navbar_sideBar_link} onClick={onCloseSideBar}>Planning</Link>
                 <Link href={`/profile`} className={style.navbar_sideBar_link} onClick={onCloseSideBar}>Profile</Link>
+                <button className={style.navbar_sideBar_companys}>
+                    <p>My Entreprises</p>
+                    <div className={style.navbar_sideBar_companys_more}>
+                        <p>Hello</p>
+                        <p>Rotonde</p>
+                    </div>
+                </button>
                 <Link href={`/message`} className={style.navbar_sideBar_link} onClick={onCloseSideBar}>Message</Link>
                 <button type="button" onClick={onLogOff} className={style.navbar_sideBar_logoffBtn} >Log Off</button>
             </dialog>

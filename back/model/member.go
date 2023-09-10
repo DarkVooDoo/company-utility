@@ -3,13 +3,35 @@ package model
 import (
 	"encoding/json"
 	"errors"
+	"log"
 	"work/db"
 	"work/util"
 )
 
-type Member interface {
-	AddNewMember()
-	DeleteMember()
+func GetMembers(companyId string, userId string) ([]byte, error) {
+	db := db.DBInit()
+	var mId, mName, mRole string
+	var members []util.Member = []util.Member{}
+	member, errMember := db.Query(`SELECT member_id, user_firstname, member_role FROM member LEFT JOIN Users ON user_id=member_user_id WHERE member_company_id=$1`, companyId)
+	if errMember != nil {
+		return nil, errors.New("error")
+	}
+	for member.Next() {
+		member.Scan(&mId, &mName, &mRole)
+		members = append(members, util.Member{Id: mId, Name: mName, Role: mRole})
+	}
+
+	return json.Marshal(members)
+}
+
+func ChangeMemberRole(member util.Role) error {
+	db := db.DBInit()
+	_, err := db.Exec(`UPDATE Member SET member_role=$1 WHERE member_id=$2`, member.Role, member.Id)
+	if err != nil {
+		log.Println(err)
+		return errors.New("error")
+	}
+	return nil
 }
 
 func AddNewMember(userId string, member util.NewMember) ([]byte, error) {

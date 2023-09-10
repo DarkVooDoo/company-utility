@@ -9,12 +9,6 @@ import (
 	"work/util"
 )
 
-type Hour struct {
-	Day     string `json:"day"`
-	Seconds uint   `json:"seconds"`
-	Hours   string `json:"hours"`
-}
-
 func GetCurrentShift(userId string, companyId string) ([]byte, error) {
 	var id, state, hourId string
 	db := db.DBInit()
@@ -37,7 +31,6 @@ func UpdateCurrentShift(userId string, shift util.UpdateCurrentShift) error {
 			tx.Commit()
 			return nil
 		}
-		log.Println(shift.Hour)
 		_, err := tx.Exec(`UPDATE Hour SET hour_end=NOW() WHERE hour_id=$1`, shift.Hour)
 		if err != nil {
 			log.Println(err)
@@ -67,26 +60,26 @@ func PauseCurrentShift(userId string, shift util.UpdateCurrentShift) error {
 	return nil
 }
 
-func GetUserHours() ([]byte, error) {
+func GetCompanyUserHours(companyId string) ([]byte, error) {
 	db := db.DBInit()
 	var day string
 	var second float32
-	var eliminateDoublon map[string]Hour = map[string]Hour{}
-	var hour []Hour = []Hour{}
-	hours, err := db.Query(`SELECT TO_CHAR(hour_start, 'DD-MM'), EXTRACT(EPOCH FROM AGE(hour_end, hour_start)) FROM Tracker RIGHT JOIN Hour ON hour_tracker_id=tracker_id WHERE tracker_state='Finis'`)
+	var eliminateDoublon map[string]util.Hour = map[string]util.Hour{}
+	var hour []util.Hour = []util.Hour{}
+	hours, err := db.Query(`SELECT TO_CHAR(hour_start, 'DD-MM'), EXTRACT(EPOCH FROM AGE(hour_end, hour_start)) FROM Tracker RIGHT JOIN Hour 
+	ON hour_tracker_id=tracker_id WHERE tracker_state='Finis' AND tracker_company_id=$1`, companyId)
 	if err != nil {
 		log.Println(err)
 		return nil, errors.New("error")
 	}
 	for hours.Next() {
 		hours.Scan(&day, &second)
-		eliminateDoublon[day] = Hour{Day: day, Seconds: eliminateDoublon[day].Seconds + uint(second)}
+		eliminateDoublon[day] = util.Hour{Day: day, Seconds: eliminateDoublon[day].Seconds + uint(second)}
 	}
 	for _, value := range eliminateDoublon {
 		value.Hours = SecondsFormatted(value.Seconds)
 		hour = append(hour, value)
 	}
-	log.Println(hour)
 	body, _ := json.Marshal(hour)
 	return body, nil
 

@@ -1,6 +1,5 @@
 import Actions from "@/component/Members/Component"
 import { GetMyCompany } from "@/util/data"
-import {ROLE} from "@/util/lib"
 
 import Link from "next/link"
 import Image from "next/image"
@@ -9,7 +8,6 @@ import leftArrow from "@/public/left-arrow.webp"
 
 import style from "./style.module.css"
 import UserHolydayCard from "@/component/UserHolydayCard/component"
-import { Holyday } from "@/util/type"
 import JobCard from "@/component/JobCard/component"
 
 interface Props{
@@ -58,11 +56,7 @@ const JOBS = [
 ]
 
 const Dashboard = async ({params:{id}}:Props)=>{
-    const company = await GetMyCompany(id) as  {
-        role: {id: string, role: ROLE},
-        name: string, adresse: string, holyday_pending: Holyday[], 
-        members: {id: string, name: string, role: string}[]
-    }
+    const company = await GetMyCompany(id)
     const shift = Test.map(shift=>(
         <div>
             <h1>{shift.user_name} </h1>
@@ -72,14 +66,14 @@ const Dashboard = async ({params:{id}}:Props)=>{
         </div>
     ))
     const job = JOBS.map(job=><JobCard {...{...job}} />)
-    const pendingHolyday = company.holyday_pending.map(holyday=><UserHolydayCard key={holyday.id} {...{holyday, role: company.role}} />)
+    const pendingHolyday = company?.holyday_pending.map(holyday=><UserHolydayCard key={holyday.id} {...{holyday, role: company.role}} />)
     return (
         <main className={style.dashboard}>
             <div className={style.dashboard_company}>
                 <Image src={user} alt="photo" />
                 <div>
-                    <h1>{company.name}</h1>
-                    <p>Adresse {company.adresse}</p>
+                    <h1>{company?.name}</h1>
+                    <p>Adresse {company?.adresse}</p>
                 </div>
             </div>
             <div className={style.dashboard_job}>
@@ -96,7 +90,8 @@ const Dashboard = async ({params:{id}}:Props)=>{
                     {pendingHolyday}
                 </div>
             </div>
-            <Actions {...{members: company.members}} />
+            {/* <Actions {...{members: company.members}} /> */}
+            <Link href={`/dashboard/${id}/employees`} >Users</Link>
         </main>
     )
 }

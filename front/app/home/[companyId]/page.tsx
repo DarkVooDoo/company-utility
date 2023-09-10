@@ -16,13 +16,8 @@ const HomeCompany = async ()=>{
     const shift = await GetTodayShift() as {start: string, end: string, pause: number}
     const holydays = await GetHolyday() as Holyday[] || []
     const currentShift = await GetCurrentShift()
-    const getHours = await GetHours()
-    const test = getHours.map(hour=>(
-        <p key={hour.day}>{hour.day}: {hour.hours} </p>
-    ))
     return (
         <div> 
-            {test}
             <div className={style.landpage_shiftHeader}>
                 <h1 className={style.landpage_shiftHeader_text}>Aujourd'hui</h1>
                 <Link href="/shift" className={style.landpage_shiftHeader_link}>Mon Planning</Link>

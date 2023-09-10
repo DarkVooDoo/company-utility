@@ -161,6 +161,20 @@
     justify-content: center;
 }
 
+.navbar_sideBar_companys{
+    position: relative;
+}
+
+.navbar_sideBar_companys_more{
+    position: absolute;
+    right: 25ch;
+    top: 0;
+    background-color: red;
+    z-index: 79;
+    height: 20vh;
+    width: 6rem;
+}
+
 .navbar_sideBar_logoffBtn{
     width: 100%;
     height: 2.5rem;

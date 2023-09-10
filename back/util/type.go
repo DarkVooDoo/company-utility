@@ -64,7 +64,6 @@ type Company struct {
 	Adresse        string    `json:"adresse"`
 	Postal         uint      `json:"postal"`
 	Role           Role      `json:"role"`
-	Members        []Member  `json:"members"`
 	HolydayPending []Holyday `json:"holyday_pending"`
 }
 
@@ -182,4 +181,10 @@ type NewJob struct {
 	Description string `json:"desc"`
 	About       string `json:"about"`
 	Expire      string `json:"expire"`
+}
+
+type Hour struct {
+	Day     string `json:"day"`
+	Seconds uint   `json:"seconds"`
+	Hours   string `json:"hours"`
 }

@@ -1,6 +1,5 @@
 .header_box{
     position: relative;
-    width: fit-content;
 }
 
 .header_box_current, .header_month_list_month{
@@ -12,7 +11,6 @@
 
 .header_box_current{
     border: 1px solid darkgray;
-    min-width: 12ch;
 } 
 
 .header_box_list{ 
@@ -23,6 +21,7 @@
     min-height: fit-content;
     max-height: calc(2.5rem*4);
     width: 100%;
+    padding: 0 .5rem;
     overflow: scroll;
     z-index: 10;
 }

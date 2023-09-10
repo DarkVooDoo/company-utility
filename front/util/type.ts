@@ -13,3 +13,16 @@ export interface CurrentShift {
     state: string
     hourId: string
 }
+
+export type ROLE = "User" | "Admin" | "Boss"
+
+export interface Entreprise {
+    role: {id: string, role: ROLE},
+    name: string, adresse: string, 
+    holyday_pending: Holyday[]
+}
+export interface Member {
+    id: string
+    name: string,
+    role: string
+}
