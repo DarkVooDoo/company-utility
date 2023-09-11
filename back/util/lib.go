@@ -1,6 +1,7 @@
 package util
 
 import (
+	"math"
 	"net/http"
 	"strconv"
 	"strings"
@@ -21,4 +22,9 @@ func GetFormatedDate(date string) string {
 		}
 	}
 	return ""
+}
+
+func RoundFloat(val float64, precision uint) float64 {
+	ratio := math.Pow(10, float64(precision))
+	return math.Round(val*ratio) / ratio
 }

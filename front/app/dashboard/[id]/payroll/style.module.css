@@ -1,0 +1,17 @@
+.payroll_top{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.payroll_card > *, .payroll > *{
+    margin-bottom: var(--Row-Margin);
+}
+
+.payroll_card{
+    border-radius: 10px;
+    -webkit-box-shadow: 0px 0px 10px 0px var(--Primary-Color); 
+    box-shadow: 0px 0px 10px 0px var(--Primary-Color);
+    padding: .5rem;
+}
+

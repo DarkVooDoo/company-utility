@@ -75,6 +75,7 @@ type Member struct {
 
 type NewMember struct {
 	Email     string `json:"email"`
+	Worth     string `json:"worth"`
 	CompanyId string `json:"companyId"`
 	Role      string `json:"role"`
 }
@@ -184,6 +185,7 @@ type NewJob struct {
 }
 
 type Hour struct {
+	Name    string `json:"name"`
 	Day     string `json:"day"`
 	Seconds uint   `json:"seconds"`
 	Hours   string `json:"hours"`

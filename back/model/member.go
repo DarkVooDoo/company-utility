@@ -12,7 +12,7 @@ func GetMembers(companyId string, userId string) ([]byte, error) {
 	db := db.DBInit()
 	var mId, mName, mRole string
 	var members []util.Member = []util.Member{}
-	member, errMember := db.Query(`SELECT member_id, user_firstname, member_role FROM member LEFT JOIN Users ON user_id=member_user_id WHERE member_company_id=$1`, companyId)
+	member, errMember := db.Query(`SELECT member_id, CONCAT(user_firstname, ' ', user_lastname), member_role FROM member LEFT JOIN Users ON user_id=member_user_id WHERE member_company_id=$1`, companyId)
 	if errMember != nil {
 		return nil, errors.New("error")
 	}
@@ -46,7 +46,7 @@ func AddNewMember(userId string, member util.NewMember) ([]byte, error) {
 		if userError := result.Scan(&newUserId, &newUserName); userError != nil {
 			return nil, errors.New("error")
 		}
-		row := db.QueryRow(`INSERT INTO Member (member_role, member_user_id, member_company_id) VALUES($1,$2,$3) RETURNING member_role, member_id`, member.Role, newUserId, member.CompanyId)
+		row := db.QueryRow(`INSERT INTO Member (member_role, member_worth, member_user_id, member_company_id) VALUES($1,$2,$3,$4) RETURNING member_role, member_id`, member.Role, member.Worth, newUserId, member.CompanyId)
 		if err := row.Scan(&newUserRole, &newMemberId); err != nil {
 			return nil, errors.New("error")
 		}

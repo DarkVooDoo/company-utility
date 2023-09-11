@@ -1,7 +1,7 @@
 import {cookies} from "next/headers"
 import { redirect } from "next/navigation"
 import { BACKEND_HOST } from "./lib"
-import { CurrentShift, Entreprise, Member } from "./type"
+import { CurrentShift, Entreprise, Member, Payroll } from "./type"
 
 export interface Profile {
     id: string,
@@ -41,7 +41,7 @@ export const GetMyCompany = async (id: string):Promise<Entreprise | undefined>=>
     }
 }
 
-export const GetCompanys = async (type: string):Promise<{id: string, name: string, adresse: string, postal: number}[]>=>{
+export const GetCompanys = async (type: "User" | "Profile"):Promise<{id: string, name: string, adresse: string, postal: number}[]>=>{
     const token = cookies().get("auth-token")
     if (token){
         const fetchCompany = await fetch(`${BACKEND_HOST}:5000/api/pro?type=${type}`,{
@@ -138,12 +138,13 @@ export const GetMembers = async ():Promise<Member[]>=>{
     return await fetchMember.json() as Member[]
 }
 
-export const GetHours = async():Promise<{day: string, seconds: string, hours: string}[]>=>{
-    const getHours = await fetch(`${BACKEND_HOST}:5000/api/job`,{
-        next: {revalidate: 0}
+export const GetHours = async(companyId: string):Promise<Payroll[]>=>{
+    const date = new Date().toISOString().slice(0,10)
+    const getHours = await fetch(`${BACKEND_HOST}:5000/api/payroll?companyId=${companyId}&date=${date}`,{
+        next: {revalidate: 60*5}
     })
-    const hour = await getHours.json() as {day: string, seconds: string, hours: string}[]
-    return hour
+    if (getHours.status !== 200) return []
+    return await getHours.json() as Payroll[]
 }
 
 export const GetAnnonce = async()=>{

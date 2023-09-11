@@ -15,7 +15,12 @@ import search from "@/public/search.webp"
 import style from "@/style/Navbar.module.css"
 import { closeDialogOnBackdropClick } from "@/util/lib"
 
-const Navbar:React.FC<{notif: {id: string, message: string, date: string}[] | []}> = ({notif})=>{
+interface Props{
+    companys: {id: string, name: string, adresse: string, postal: number}[],
+    notif: {id: string, message: string, date: string}[] | []
+}
+
+const Navbar:React.FC<Props> = ({notif, companys})=>{
     const router = useRouter()
     const inputRef = useRef<HTMLInputElement>(null)
     const sideBarRef = useRef<HTMLDialogElement>(null)
@@ -50,26 +55,30 @@ const Navbar:React.FC<{notif: {id: string, message: string, date: string}[] | []
         if (deleteNotif.status === 200) onCloseNotif()
     }
 
-useEffect(()=>{
-    const dialog = sideBarRef.current
-    if (dialog) closeDialogOnBackdropClick(dialog)   
-},[])
+    useEffect(()=>{
+        const dialog = sideBarRef.current
+        if (dialog) closeDialogOnBackdropClick(dialog)   
+    },[])
 
-const onLogOff = ()=>{
-    onUserChange({user_id: "", user_name: ""})
-    document.cookie = "id=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
-    document.cookie = "user_name=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
-    document.cookie = "auth-token=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
-    document.cookie = "company-id=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
-    onCloseSideBar()
-    router.push("/sign")
-}
-const notifs = notif.map(notif=>(
-    <div className={style.navbar_notifPopup_notif} key={notif.id}>
+    const onLogOff = ()=>{
+        onUserChange({user_id: "", user_name: ""})
+        document.cookie = "id=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
+        document.cookie = "user_name=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
+        document.cookie = "auth-token=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
+        document.cookie = "company-id=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
+        onCloseSideBar()
+        router.push("/sign")
+    }
+    const notifs = notif.map(notif=>(
+        <div className={style.navbar_notifPopup_notif} key={notif.id}>
             <button type="button" className={style.navbar_notifPopup_notif_deleteBtn} onClick={()=>onDeleteNotif(notif.id)}>X</button>
             <p className={style.navbar_notifPopup_notif_date}>{notif.date} </p>
             <p>{notif.message} </p>
         </div>
+    ))
+
+    const company = companys.map(comp=>(
+        <Link href={`/dashboard/${comp.id}`} className={style.navbar_sideBar_companys_more_row} onClick={()=>sideBarRef.current?.close()}>- {comp.name}</Link>
     ))
 
     return (
@@ -109,13 +118,15 @@ const notifs = notif.map(notif=>(
                 </div>
                 <Link href="/shift" className={style.navbar_sideBar_link} onClick={onCloseSideBar}>Planning</Link>
                 <Link href={`/profile`} className={style.navbar_sideBar_link} onClick={onCloseSideBar}>Profile</Link>
-                <button className={style.navbar_sideBar_companys}>
-                    <p>My Entreprises</p>
-                    <div className={style.navbar_sideBar_companys_more}>
-                        <p>Hello</p>
-                        <p>Rotonde</p>
+                <div className={style.navbar_sideBar_companys}>
+                    <div className={style.navbar_sideBar_companys_btn}>
+                        <p>Mes Entreprises</p>
+                        <span>+</span>
                     </div>
-                </button>
+                    <div>
+                        {company}
+                    </div>
+                </div>
                 <Link href={`/message`} className={style.navbar_sideBar_link} onClick={onCloseSideBar}>Message</Link>
                 <button type="button" onClick={onLogOff} className={style.navbar_sideBar_logoffBtn} >Log Off</button>
             </dialog>

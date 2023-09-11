@@ -13,6 +13,9 @@
 }
 
 .member_newEmail{
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: .5rem;
     margin-bottom: var(--Row-Margin);
     height: 2.5rem;
 }
@@ -52,6 +55,11 @@
 
 .member_role{
     grid-area: role;
+}
+
+.member_role_text{
+    font-weight: bold;
+    font-size: 1.1rem;
 }
 
 .member_delete{

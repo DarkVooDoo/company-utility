@@ -6,7 +6,7 @@ import { BACKEND_HOST } from "@/util/lib"
 import { revalidateTag } from "next/cache"
 import {cookies} from "next/headers"
 import { encode } from "punycode"
-import { CurrentShift } from "@/util/type"
+import { CurrentShift, Payroll } from "@/util/type"
 
 export const onSignUser = async(formData: FormData)=>{
     const email = formData.get("email")
@@ -71,13 +71,14 @@ export const onModifyProfile = async(formData: FormData)=>{
 
 export const onNewMember = async(formData: FormData)=>{
     const email = formData.get("email")
+    const salary = formData.get("salary")
     const companyId = cookies().get("company-id")?.value
     const token = cookies().get("auth-token")
     if(token){
         const addMember = await fetch(`${BACKEND_HOST}:5000/api/member`,{
             method: "POST",
             headers: [["Content-Type", "application/json"], ["Authorization", token.value]],
-            body: JSON.stringify({email, companyId, role: "User"})
+            body: JSON.stringify({email, companyId, role: "User", worth: salary})
         })
         if (addMember.status === 200) revalidateTag(`member`)
     }
@@ -201,6 +202,15 @@ export const onPauseShift = async(formData: FormData)=>{
         })
         if (pauseShift.status === 200) revalidateTag("tracker")
     }
+}
+
+export const onGetEmployeesHours = async(date: string[])=>{
+    const companyId = cookies().get("company-id")
+    const getHours = await fetch(`${BACKEND_HOST}:5000/api/payroll?companyId=${companyId}&from=${date[0]}&to=${date[1]}`,{
+        next: {revalidate: 0}
+    })
+    if (getHours.status !== 200) return []
+    return await getHours.json() as Payroll[]
 }
 
 export const onCreateJob = async(formData: FormData)=>{

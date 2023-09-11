@@ -1,7 +1,3 @@
-.profile{
-    margin-top: var(--Row-Margin);
-}
-
 .profile > *{
     margin-bottom: var(--Row-Margin);
 }

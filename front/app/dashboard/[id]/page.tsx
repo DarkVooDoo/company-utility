@@ -10,7 +10,7 @@ import style from "./style.module.css"
 import UserHolydayCard from "@/component/UserHolydayCard/component"
 import JobCard from "@/component/JobCard/component"
 
-interface Props{
+export interface DashboardProps{
     params:{id: string}
 }
 
@@ -55,7 +55,7 @@ const JOBS = [
     }
 ]
 
-const Dashboard = async ({params:{id}}:Props)=>{
+const Dashboard = async ({params:{id}}:DashboardProps)=>{
     const company = await GetMyCompany(id)
     const shift = Test.map(shift=>(
         <div>
@@ -91,7 +91,11 @@ const Dashboard = async ({params:{id}}:Props)=>{
                 </div>
             </div>
             {/* <Actions {...{members: company.members}} /> */}
-            <Link href={`/dashboard/${id}/employees`} >Users</Link>
+            <div>
+                <Link href={`/dashboard/${id}/employees`} >Mes Employées</Link>
+                <Link href={`/dashboard/${id}/payroll`} >Mes Payments</Link>
+
+            </div>
         </main>
     )
 }

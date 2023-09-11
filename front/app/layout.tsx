@@ -4,7 +4,7 @@ import { Open_Sans } from 'next/font/google'
 
 import Navbar from "@/component/Navbar"
 import UserContext from '@/component/UserContext'
-import { GetNotification } from '@/util/data'
+import { GetCompanys, GetNotification } from '@/util/data'
 import { Suspense } from 'react'
 
 const font = Open_Sans({ subsets: ['latin'] })
@@ -18,11 +18,12 @@ export interface UserContextTypes{user_id: string, user_name: string}
 
 const RootLayout = async ({children}: {children: React.ReactNode})=> {
   const notif = await GetNotification()
+  const companys = await GetCompanys("Profile")
   return (
     <html lang="en">
       <UserContext>
         <body className={font.className}>
-          <Navbar {...{notif}} />
+          <Navbar {...{notif, companys}} />
             <Suspense fallback={<p>Loading</p>}>
               {children}
             </Suspense>

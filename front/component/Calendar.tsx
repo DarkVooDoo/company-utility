@@ -11,14 +11,15 @@ const DAYS = ["Lu", "Ma", "Me", "Je", "Ve", "Sa", "Di"]
 const seletedDays = new Set<number>()
 
 interface CalendarProps {
-    currentUser: string,
+    currentUser?: string,
     className?: string,
+    hasMin?: boolean
     type?: "between" | "single",
     currentCompany?: string,
     onChange: (dates: string[])=> void
 }  
 
-const Calendar:React.FC<CalendarProps> = ({onChange, className, type = "single", currentUser, currentCompany})=>{
+const Calendar:React.FC<CalendarProps> = ({onChange, className, type = "single", hasMin = true, currentUser, currentCompany})=>{
     const [tDay, month, year] = new Date().toLocaleDateString().split("/")
     const [date, setDate] = useState({year: new Date().getFullYear(), month: new Date().getMonth(), daySelected: new Set<number>()})
     const [shift, setShift] = useState<{shift: {shift_day: number, shift_month: number, user_id: string}[]}>({shift: []})
@@ -57,7 +58,8 @@ const Calendar:React.FC<CalendarProps> = ({onChange, className, type = "single",
         if (type === "single"){
             isDayDisable = day.isCurrentMonth && shift && shift.shift.findIndex(myShift=>myShift.shift_day === day.dayNumber && myShift.user_id === currentUser) === -1 ? false : true
         }else{
-            isDayDisable = calendarDay < `${year}-${month}-${tDay}` || !day.isCurrentMonth ? true : false
+            if (hasMin) isDayDisable = calendarDay < `${year}-${month}-${tDay}` || !day.isCurrentMonth ? true : false
+            else isDayDisable = !day.isCurrentMonth
         }
         return (
             <button disabled={isDayDisable} type="button" key={index} 

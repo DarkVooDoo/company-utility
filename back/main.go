@@ -22,6 +22,7 @@ var Routes map[string]func(http.ResponseWriter, *http.Request) = map[string]func
 	"/api/search":  route.SearchRoute,
 	"/api/tracker": route.TrackerRoute,
 	"/api/job":     route.NewJobRoute,
+	"/api/payroll": route.PayrollRoute,
 	"/ws":          route.WebsocketRoute,
 }
 

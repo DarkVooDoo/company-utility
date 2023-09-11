@@ -26,3 +26,10 @@ export interface Member {
     name: string,
     role: string
 }
+
+export interface Payroll{
+    name: string
+    total: string
+    seconds: number
+    salary: number
+}
