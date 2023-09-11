@@ -28,9 +28,9 @@ export const onSignUser = async(formData: FormData)=>{
         })
         if(signUser.status === 200){
             const userCredential = await signUser.json()
-            cookies().set("auth-token", userCredential.user_token, {maxAge: 60*60*24*3})
-            cookies().set("user_name", userCredential.user_name, {maxAge: 60*60*24*3})
-            cookies().set("id", userCredential.user_id, {maxAge: 60*60*24*3})
+            cookies().set("auth-token", userCredential.user_token, {maxAge: 60*60*5})
+            cookies().set("user_name", userCredential.user_name, {maxAge: 60*60*5})
+            cookies().set("id", userCredential.user_id, {maxAge: 60*60*5})
             revalidateTag("home")
             return {user_id: userCredential.user_id, user_name: userCredential.user_name}
         }

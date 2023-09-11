@@ -172,12 +172,19 @@
 
 .navbar_sideBar_companys_btn{
     height: 2.5rem;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.navbar_sideBar_companys_more_row{
+
+.navbar_sideBar_companys_btn_more{
+    overflow: hidden;
+    transition: all .1s linear;
+}
+
+.navbar_sideBar_companys_btn_more_row{
     height: 2.5rem;
     display: flex;
     align-items: center;

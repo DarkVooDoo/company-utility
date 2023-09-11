@@ -37,8 +37,8 @@ func CreateCompany(company util.CreateCompany, userToken string) error {
 }
 
 func GetEntreprises(userToken string, requestType string) ([]util.Company, error) {
-	user, tokenError := VerifyToken(userToken)
-	if tokenError != nil {
+	user, err := IsTokenValid(userToken)
+	if err != nil {
 		return []util.Company{}, errors.New("error token")
 	}
 	db := db.DBInit()
@@ -75,7 +75,7 @@ func GetEntreprises(userToken string, requestType string) ([]util.Company, error
 
 func GetSingleEntreprise(companyId string, userToken string) (util.Company, error) {
 
-	user, err := VerifyToken(userToken)
+	user, err := IsTokenValid(userToken)
 	if err != nil {
 		return util.Company{}, errors.New("error")
 	}

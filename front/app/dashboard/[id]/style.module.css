@@ -5,7 +5,28 @@
 .dashboard_company{
     display: flex;
     gap: .5rem;
-    margin-top: var(--Row-Margin);
+}
+
+.dashboard_links{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: .5rem;
+}
+
+.dashboard_links_btn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 3.5rem;
+    border-radius: 10px;
+    font-weight: bold;
+    background-color: var(--Primary-Color);
+}
+
+.dashboard_links_btn_icon{
+    height: 3rem;
+    width: 3rem;
+    margin-right: .5rem;
 }
 
 .dashboard_job{

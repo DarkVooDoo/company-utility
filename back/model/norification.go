@@ -7,7 +7,7 @@ import (
 )
 
 func GetNotifications(userToken string) []byte {
-	user, tokenErr := VerifyToken(userToken)
+	user, tokenErr := IsTokenValid(userToken)
 	if tokenErr != nil {
 		return nil
 	}

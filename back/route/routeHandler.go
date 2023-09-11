@@ -61,8 +61,8 @@ func (r *Route) GET(handler func()) {
 }
 
 func (r *Route) POST(handler func()) {
+	util.EnableCors(r.Response, r.Cors)
 	if r.Request.Method == http.MethodPost {
-		util.EnableCors(r.Response, r.Cors)
 		body, _ := io.ReadAll(r.Request.Body)
 		r.Payload = body
 		handler()
@@ -70,8 +70,8 @@ func (r *Route) POST(handler func()) {
 }
 
 func (r *Route) PUT(handler func()) {
+	util.EnableCors(r.Response, r.Cors)
 	if r.Request.Method == http.MethodPut {
-		util.EnableCors(r.Response, r.Cors)
 		body, _ := io.ReadAll(r.Request.Body)
 		r.Payload = body
 		handler()
@@ -79,8 +79,8 @@ func (r *Route) PUT(handler func()) {
 }
 
 func (r *Route) PATCH(handler func()) {
+	util.EnableCors(r.Response, r.Cors)
 	if r.Request.Method == http.MethodPatch {
-		util.EnableCors(r.Response, r.Cors)
 		body, _ := io.ReadAll(r.Request.Body)
 		r.Payload = body
 		handler()
@@ -88,8 +88,8 @@ func (r *Route) PATCH(handler func()) {
 }
 
 func (r *Route) DELETE(handler func()) {
+	util.EnableCors(r.Response, r.Cors)
 	if r.Request.Method == http.MethodDelete {
-		util.EnableCors(r.Response, r.Cors)
 		body, _ := io.ReadAll(r.Request.Body)
 		r.Payload = body
 		handler()

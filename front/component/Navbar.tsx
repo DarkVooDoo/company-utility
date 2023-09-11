@@ -28,6 +28,7 @@ const Navbar:React.FC<Props> = ({notif, companys})=>{
     const [searchText, setSearchText] = useState("")
     const [onSearch, setOnSearch] = useState(false)
     const [user, onUserChange] = useContext(userContext)
+    const [openEntreprise, setOpenEntreprise] = useState(false)
     const [showNotif, setShowNotif] = useState(false)
     
     const onCloseSideBar = ()=>{
@@ -78,9 +79,8 @@ const Navbar:React.FC<Props> = ({notif, companys})=>{
     ))
 
     const company = companys.map(comp=>(
-        <Link href={`/dashboard/${comp.id}`} className={style.navbar_sideBar_companys_more_row} onClick={()=>sideBarRef.current?.close()}>- {comp.name}</Link>
+        <Link key={comp.id} href={`/dashboard/${comp.id}`} className={style.navbar_sideBar_companys_btn_more_row} onClick={()=>sideBarRef.current?.close()}>- {comp.name}</Link>
     ))
-
     return (
         <nav className={style.navbar}>
             <Link href="/"><Image src={logo} alt="home" /></Link>
@@ -119,11 +119,14 @@ const Navbar:React.FC<Props> = ({notif, companys})=>{
                 <Link href="/shift" className={style.navbar_sideBar_link} onClick={onCloseSideBar}>Planning</Link>
                 <Link href={`/profile`} className={style.navbar_sideBar_link} onClick={onCloseSideBar}>Profile</Link>
                 <div className={style.navbar_sideBar_companys}>
-                    <div className={style.navbar_sideBar_companys_btn}>
+                    <button className={style.navbar_sideBar_companys_btn} onClick={(e)=>{
+                        e.stopPropagation()
+                        setOpenEntreprise(prev=>!prev)
+                    }}>
                         <p>Mes Entreprises</p>
                         <span>+</span>
-                    </div>
-                    <div>
+                    </button>
+                    <div className={`${style.navbar_sideBar_companys_btn_more}`} style={openEntreprise ? {height: company.length * 2.5+"rem", opacity: 1}: {height: 0, opacity: 0}}>
                         {company}
                     </div>
                 </div>

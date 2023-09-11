@@ -3,6 +3,8 @@ import { GetMyCompany } from "@/util/data"
 
 import Link from "next/link"
 import Image from "next/image"
+import dollar from "@/public/dollar.webp"
+import employees from "@/public/employees.webp"
 import user from "@/public/user.webp"
 import leftArrow from "@/public/left-arrow.webp"
 
@@ -76,6 +78,14 @@ const Dashboard = async ({params:{id}}:DashboardProps)=>{
                     <p>Adresse {company?.adresse}</p>
                 </div>
             </div>
+            <div className={style.dashboard_links}>
+                <Link href={`/dashboard/${id}/employees`} className={style.dashboard_links_btn} >
+                <Image src={employees} alt="dollar" className={style.dashboard_links_btn_icon} />Employées
+                </Link>
+                <Link href={`/dashboard/${id}/payroll`} className={style.dashboard_links_btn}>
+                    <Image src={dollar} alt="dollar" className={style.dashboard_links_btn_icon} />Payments
+                </Link>
+            </div>
             <div className={style.dashboard_job}>
                 <h1>Mes Annonces</h1>
                 <Link href={`/dashboard/${id}/new-annonce`} className={style.dashboard_holydays_link}>Noveau <Image src={leftArrow} alt="fleche" className={style.dashboard_holydays_link_arrow} /> </Link>
@@ -89,12 +99,6 @@ const Dashboard = async ({params:{id}}:DashboardProps)=>{
                 <div className={style.dashboard_holydays_all}>
                     {pendingHolyday}
                 </div>
-            </div>
-            {/* <Actions {...{members: company.members}} /> */}
-            <div>
-                <Link href={`/dashboard/${id}/employees`} >Mes Employées</Link>
-                <Link href={`/dashboard/${id}/payroll`} >Mes Payments</Link>
-
             </div>
         </main>
     )

@@ -20,8 +20,9 @@ export const middleware = async (request: NextRequest)=>{
                 return NextResponse.redirect(new URL("/home", request.url))
             }
             const res = NextResponse.next()
-            res.cookies.set("id", user.user_id)
-            // res.cookies.set("user_name", user.user_name)
+            res.cookies.set("auth-token", user.user_token, {maxAge: 60*60*5})
+            res.cookies.set("user_name", user.user_name, {maxAge: 60*60*5})
+            res.cookies.set("id", user.user_id, {maxAge: 60*60*5})
             return res
         }else{
             if(request.nextUrl.pathname.startsWith("/home")){

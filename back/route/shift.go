@@ -17,7 +17,7 @@ type ModifyPayload struct {
 
 var ShiftRoute = func(res http.ResponseWriter, req *http.Request) {
 
-	var route = Route{Response: res, Request: req, Cors: "http://localhost:3000"}
+	var route = &Route{Response: res, Request: req, Cors: "http://localhost:3000"}
 
 	route.GET(func() {
 		if route.Request.URL.Query().Has("cId") {
