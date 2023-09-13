@@ -22,10 +22,9 @@
 }
 
 .landpage_shift_date{
-    display: grid;
-    grid-template-columns: 1fr 2fr 3fr;
-    position: relative; 
     display: flex;
+    position: relative; 
+    align-items: center;    
     gap: 1rem;
     margin-bottom: 2rem;
 }
@@ -37,6 +36,10 @@
     width: 100%;
     background-color: black;
     content: "";
+}
+
+.landpage_shift_date_day{
+    margin-bottom: var(--Row-Margin);
 }
 
 .landpage_shift_date_startShift{

@@ -27,7 +27,7 @@ export const getUserProfile = async ():Promise<Profile>=>{
     })
 }
 
-export const GetMyCompany = async (id: string):Promise<Entreprise | undefined>=>{
+export const GetMyCompany = async (id: string):Promise<Entreprise>=>{
     const authToken = cookies().get("auth-token")?.value
     if (authToken){
         const fetchCompany = await fetch(`${BACKEND_HOST}:5000/api/pro?companyId=${id}`, {
@@ -39,6 +39,7 @@ export const GetMyCompany = async (id: string):Promise<Entreprise | undefined>=>
         }
         return await fetchCompany.json() as Entreprise
     }
+    return new Promise(resolve=>resolve({role: {id: "", role: "User"}, name: "", adresse: "", holyday_pending: []}))
 }
 
 export const GetCompanys = async (type: "User" | "Profile"):Promise<{id: string, name: string, adresse: string, postal: number}[]>=>{

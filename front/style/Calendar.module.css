@@ -67,3 +67,8 @@
 .between_active{
     background-color: var(--Primary-Color);
 }
+
+.calendar_days  .between_active:first-child{
+    background-color: black;
+}
+

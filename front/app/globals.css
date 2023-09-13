@@ -6,7 +6,7 @@
   --Mobile-Padding: .5rem;
   --Row-Margin: .5rem;
   --Navbar-Height: 3rem;
-  --Tablet-Padding: 7rem;
+  --Tablet-Padding: 4rem;
 }
 
 *{
@@ -44,8 +44,8 @@ a{
 }
 
 dialog{
-  margin: auto;
-  border: none;
+  margin: auto !important;
+  border: none !important;
 }
 
 ::-webkit-scrollbar{
@@ -69,6 +69,29 @@ dialog{
 ::backdrop{
   background-color: rgba(190, 190, 190, .5);
 }
+
+/* Medium devices (tablets, 768px and up) */
+@media screen and (min-width: 768px) { 
+  main{
+    margin: 0 var(--Tablet-Padding);
+  }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) { 
+
+}
+
+/* X-Large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) { 
+
+}
+
+/* XX-Large devices (larger desktops, 1400px and up) */
+@media (min-width: 1400px) { 
+
+}
+
 
 /* @media (prefers-color-scheme: dark) {
   *{

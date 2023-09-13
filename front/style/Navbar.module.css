@@ -178,6 +178,15 @@
     justify-content: space-between;
 }
 
+.navbar_sideBar_companys_btn_arrow{
+    height: .5rem;
+    width: .5rem;
+    border: 2px solid transparent;
+    border-bottom: 3px solid black;
+    border-right: 3px solid black;
+    transform: rotate(-135deg);
+    transition: transform .1s linear;
+}
 
 .navbar_sideBar_companys_btn_more{
     overflow: hidden;
@@ -203,3 +212,25 @@
         left: 0;
     }
 }
+
+/* Medium devices (tablets, 768px and up) */
+@media screen and (min-width: 768px) { 
+    .navbar{
+        padding: 0 var(--Tablet-Padding)
+    } 
+  }
+  
+  /* Large devices (desktops, 992px and up) */
+  @media (min-width: 992px) { 
+  
+  }
+  
+  /* X-Large devices (large desktops, 1200px and up) */
+  @media (min-width: 1200px) { 
+  
+  }
+  
+  /* XX-Large devices (larger desktops, 1400px and up) */
+  @media (min-width: 1400px) { 
+  
+  }

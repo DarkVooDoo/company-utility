@@ -86,18 +86,18 @@ const Dashboard = async ({params:{id}}:DashboardProps)=>{
                     <Image src={dollar} alt="dollar" className={style.dashboard_links_btn_icon} />Payments
                 </Link>
             </div>
-            <div className={style.dashboard_job}>
+            {/* <div className={style.dashboard_job}>
                 <h1>Mes Annonces</h1>
                 <Link href={`/dashboard/${id}/new-annonce`} className={style.dashboard_holydays_link}>Noveau <Image src={leftArrow} alt="fleche" className={style.dashboard_holydays_link_arrow} /> </Link>
             </div>
-            {job}
+            {job} */}
             <div className={style.dashboard_holydays}>
                 <div className={style.dashboard_holydays_header}>
                     <h1>Congés</h1>
                     <Link href="#" className={style.dashboard_holydays_link}>Voir les congés <Image src={leftArrow} alt="fleche" className={style.dashboard_holydays_link_arrow} /> </Link>
                 </div>
                 <div className={style.dashboard_holydays_all}>
-                    {pendingHolyday}
+                    {pendingHolyday.length > 0 ? pendingHolyday : "Zero congé a gerer"}
                 </div>
             </div>
         </main>

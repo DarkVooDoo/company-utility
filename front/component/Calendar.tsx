@@ -3,7 +3,7 @@ import style from "@/style/Calendar.module.css"
 import {useEffect, useState } from "react"
 
 import Image from "next/image"
-import left from "../public/left.webp"
+import left from "../public/left-arrow.webp"
 import right from "../public/right.webp"
 import { GetCookie, GetMonthArray, GetYearDays } from "@/util/lib"
 
@@ -49,7 +49,7 @@ const Calendar:React.FC<CalendarProps> = ({onChange, className, type = "single",
         seletedDays.clear()
     }, [currentUser])
 
-    const days = calendar.map((day,index)=>{
+    const days = calendar.map((day,index)=>{ 
         const sortedDate = between.sort()
         const calendarDay = `${date.year}-${day.month < 9 ? '0'+(day.month+1) : (day.month+1)}-${day.dayNumber < 10 ? '0'+day.dayNumber : day.dayNumber}`
         const isBetween = sortedDate.length === 2 ? calendarDay < sortedDate[0] || calendarDay > sortedDate[1] : true
@@ -63,7 +63,9 @@ const Calendar:React.FC<CalendarProps> = ({onChange, className, type = "single",
         }
         return (
             <button disabled={isDayDisable} type="button" key={index} 
-            className={`${style.calendar_day} ${firstChoice && style.between_active} ${type === 'between' ? !isBetween && day.isCurrentMonth ? style.between_active : "" : `${seletedDays.has(day.dayNumber) && day.isCurrentMonth ? style.active : ""}` }`}
+            className={`${style.calendar_day} 
+            ${firstChoice && style.between_active} 
+            ${type === 'between' ? !isBetween && day.isCurrentMonth ? style.between_active : "" : `${seletedDays.has(day.dayNumber) && day.isCurrentMonth ? style.active : ""}` }`}
             onClick={(e)=>{
                 if(type === "single"){
                     seletedDays.has(day.dayNumber) ? seletedDays.delete(day.dayNumber) : seletedDays.add(day.dayNumber)
@@ -113,7 +115,7 @@ const Calendar:React.FC<CalendarProps> = ({onChange, className, type = "single",
                             }
                         })
                         seletedDays.clear()
-                    }}><Image src={right} alt="Test" className={style.calendar_monthYear_btn_arrow} /></button>
+                    }}><Image src={left} style={{transform: "rotate(180deg)"}} alt="Test" className={style.calendar_monthYear_btn_arrow} /></button>
                 </div>
                 <div className={style.calendar_dayName}>
                     {dayNames}

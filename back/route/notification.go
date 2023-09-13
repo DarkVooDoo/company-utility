@@ -11,11 +11,10 @@ var NotificationRoute = func(response http.ResponseWriter, request *http.Request
 	route.GET(func() {
 		notif := model.GetNotifications(request.Header.Get("Authorization"))
 		if notif == nil {
-			http.Error(response, "error", http.StatusForbidden)
+			route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
 			return
 		}
-		response.Header().Add("Content-Type", "application/json")
-		response.Write(notif)
+		route.WriteJSON(http.StatusOK, notif)
 	})
 
 	route.DELETE(func() {

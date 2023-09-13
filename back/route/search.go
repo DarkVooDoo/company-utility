@@ -11,9 +11,9 @@ var SearchRoute = func(response http.ResponseWriter, request *http.Request) {
 		search := route.Request.URL.Query().Get("q")
 		body, err := model.Search(search)
 		if err != nil {
-			http.Error(response, "forbidden", http.StatusForbidden)
+			route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
+			return
 		}
-		route.Response.Header().Add("Content-Type", "application/json")
-		route.Response.Write(body)
+		route.WriteJSON(http.StatusOK, body)
 	})
 }

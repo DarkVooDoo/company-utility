@@ -13,12 +13,12 @@ func AuthRoute(res http.ResponseWriter, req *http.Request) {
 		auth := route.Request.Header.Get("Authorization")
 		user, err := model.VerifyToken(auth)
 		if err != nil {
-			http.Error(res, "unathorized", http.StatusUnauthorized)
-		} else {
-			body, _ := json.Marshal(user)
-			route.Response.Header().Set("Content-Type", "application/json")
-			route.Response.Write(body)
+			route.WriteJSON(http.StatusUnauthorized, []byte("unauthorized"))
+			return
 		}
+		body, _ := json.Marshal(user)
+		route.WriteJSON(http.StatusOK, body)
+
 	})
 
 	route.POST(func() {
@@ -26,12 +26,11 @@ func AuthRoute(res http.ResponseWriter, req *http.Request) {
 		json.Unmarshal(route.Payload, &user)
 		returnedUser, err := model.SignInUser(user)
 		if err != nil {
-			http.Error(route.Response, "request error", http.StatusBadRequest)
+			route.WriteJSON(http.StatusBadRequest, []byte("request error"))
 			return
 		}
 		payload, _ := json.Marshal(returnedUser)
-		route.Response.Header().Add("Content-Type", "application/json")
-		route.Response.Write(payload)
+		route.WriteJSON(http.StatusOK, payload)
 
 	})
 }

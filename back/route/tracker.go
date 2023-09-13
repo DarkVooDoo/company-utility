@@ -13,31 +13,31 @@ func TrackerRoute(response http.ResponseWriter, request *http.Request) {
 	route.GET(func() {
 		user, errToken := route.VerifyToken()
 		if errToken != nil {
-			http.Error(route.Response, "unauthorized", http.StatusUnauthorized)
+			route.WriteJSON(http.StatusUnauthorized, []byte("unauthorized"))
 			return
 		}
 		companyId := route.Request.URL.Query().Get("companyId")
 		currentShift, err := model.GetCurrentShift(user.User_id, companyId)
 		if err != nil {
-			http.Error(route.Response, "forbidden", http.StatusForbidden)
+			route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
+			return
 		}
-		route.Response.Header().Add("Content-Type", "application/json")
-		route.Response.Write(currentShift)
+		route.WriteJSON(http.StatusOK, currentShift)
 	})
 
 	route.POST(func() {
 		user, errToken := route.VerifyToken()
 		if errToken != nil {
-			http.Error(route.Response, "unauthorized", http.StatusUnauthorized)
+			route.WriteJSON(http.StatusUnauthorized, []byte("unauthorized"))
 			return
 		}
 		var company util.UpdateCurrentShift
 		json.Unmarshal(route.Payload, &company)
 		if dbErr := model.UpdateCurrentShift(user.User_id, company); dbErr != nil {
-			http.Error(route.Response, "forbidden", http.StatusForbidden)
+			route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
 			return
 		}
-		route.Response.Write([]byte("Success"))
+		route.WriteJSON(http.StatusOK, []byte("Success"))
 	})
 
 	route.PUT(func() {
@@ -49,7 +49,7 @@ func TrackerRoute(response http.ResponseWriter, request *http.Request) {
 		var company util.UpdateCurrentShift
 		json.Unmarshal(route.Payload, &company)
 		model.PauseCurrentShift(user.User_id, company)
-		route.Response.Write([]byte("Success"))
+		route.WriteJSON(http.StatusOK, []byte("Success"))
 
 	})
 }

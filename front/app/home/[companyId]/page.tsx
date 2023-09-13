@@ -57,8 +57,9 @@ const HomeCompany = async ()=>{
                             y="124.91429">{new Date().getDate() < 10 ? "0"+new Date().getDate() : new Date().getDate()} </tspan></text>
                         </g>
                     </svg>
-                    <h2>{new Date().getDate()} {MONTH[new Date().getMonth()]} </h2>
-                    {!currentShift ? <form action={onStartShift}>
+                    <div>
+                        <h2 className={style.landpage_shift_date_day}>{new Date().getDate()} {MONTH[new Date().getMonth()]} </h2>
+                        {!currentShift ? <form action={onStartShift}>
                         <button type="submit" name="shift" 
                             value={undefined} 
                             className={style.landpage_shift_date_startShift}>
@@ -93,7 +94,7 @@ const HomeCompany = async ()=>{
                                 </form>                    
                         </> }
                     </>}
-                    
+                    </div>
                 </div>
                 {shift ? <div className={style.landpage_shift_time}>
                     <div>
@@ -108,7 +109,7 @@ const HomeCompany = async ()=>{
                         <h3>{shift.pause} mins</h3>
                     </div>
                 </div> : <h3>Vous etes libre</h3>}
-            </div>
+            </div> 
             <Holydays {...{holydays}} />
         </div>
     )

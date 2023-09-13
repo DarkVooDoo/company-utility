@@ -14,36 +14,40 @@ var MemberRoute = func(response http.ResponseWriter, request *http.Request) {
 		companyId := route.Request.URL.Query().Get("companyId")
 		user, tokenErr := route.VerifyToken()
 		if tokenErr != nil {
-			http.Error(route.Response, "unauthorized", http.StatusUnauthorized)
+			route.WriteJSON(http.StatusUnauthorized, []byte("unauthorized"))
+
 			return
 		}
 		body, err := model.GetMembers(companyId, user.User_id)
 		if err != nil {
-			http.Error(route.Response, "forbidden", http.StatusForbidden)
+			route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
+			return
 		}
-		route.Response.Header().Add("Content-Type", "application/json")
-		route.Response.Write(body)
+		route.WriteJSON(http.StatusOK, body)
 	})
 
 	route.POST(func() {
 		var newMember util.NewMember
 		user, err := route.VerifyToken()
 		if err != nil {
-			http.Error(response, "forbidden", http.StatusForbidden)
+			route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
+			return
 		}
 		json.Unmarshal(route.Payload, &newMember)
 		model.AddNewMember(user.User_id, newMember)
-		route.Response.Write([]byte("Success"))
+		route.WriteJSON(http.StatusOK, []byte("Success"))
+
 	})
 
 	route.PATCH(func() {
 		var payload util.Role
 		json.Unmarshal(route.Payload, &payload)
 		if err := model.ChangeMemberRole(payload); err != nil {
-			http.Error(route.Response, "forbidden", http.StatusForbidden)
+			route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
 			return
 		}
-		route.Response.Write([]byte("Success"))
+		route.WriteJSON(http.StatusOK, []byte("Success"))
+
 	})
 
 	route.DELETE(func() {
@@ -54,6 +58,6 @@ var MemberRoute = func(response http.ResponseWriter, request *http.Request) {
 		}
 		json.Unmarshal(route.Payload, &memberDelete)
 		model.DeleteMember(user.User_id, memberDelete)
-		route.Response.Write([]byte("Success"))
+		route.WriteJSON(http.StatusOK, []byte("Success"))
 	})
 }

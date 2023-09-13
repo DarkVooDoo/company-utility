@@ -124,7 +124,7 @@ const Navbar:React.FC<Props> = ({notif, companys})=>{
                         setOpenEntreprise(prev=>!prev)
                     }}>
                         <p>Mes Entreprises</p>
-                        <span>+</span>
+                        <span className={style.navbar_sideBar_companys_btn_arrow} style={openEntreprise ? {transform: "rotate(45deg)"} : {}} />
                     </button>
                     <div className={`${style.navbar_sideBar_companys_btn_more}`} style={openEntreprise ? {height: company.length * 2.5+"rem", opacity: 1}: {height: 0, opacity: 0}}>
                         {company}

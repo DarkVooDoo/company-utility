@@ -27,6 +27,12 @@ type Route struct {
 	HandlerInterface
 }
 
+func (r *Route) WriteJSON(status int, body []byte) {
+	r.Response.WriteHeader(status)
+	r.Response.Header().Add("Content-Type", "application/json")
+	r.Response.Write(body)
+}
+
 func (r *Route) VerifyToken() (util.ReturnedTokenStruct, error) {
 	tkt, err := jwt.ParseWithClaims(r.Request.Header.Get("Authorization"), &util.JWTokenInterface{}, func(t *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("jwt_key")), nil

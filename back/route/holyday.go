@@ -16,11 +16,11 @@ func HolydayRoute(res http.ResponseWriter, req *http.Request) {
 			userToken := route.Request.Header.Get("Authorization")
 			holyday, err := model.GetEmployeeHolydays(companyId, userToken)
 			if err != nil {
-				http.Error(route.Response, "forbidden", http.StatusForbidden)
+				route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
+				return
 			}
 			body, _ := json.Marshal(holyday)
-			route.Response.Header().Add("Content-Type", "application/json")
-			route.Response.Write(body)
+			route.WriteJSON(http.StatusOK, body)
 		}
 	})
 
@@ -30,12 +30,11 @@ func HolydayRoute(res http.ResponseWriter, req *http.Request) {
 		json.Unmarshal(route.Payload, &requestPayload)
 		holyday, err := model.RequestHolyday(userToken, requestPayload)
 		if err != nil {
-			http.Error(route.Response, "forbidden", http.StatusForbidden)
+			route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
 			return
 		}
 		payload, _ := json.Marshal(holyday)
-		route.Response.Header().Add("Content-Type", "application/json")
-		route.Response.Write(payload)
+		route.WriteJSON(http.StatusOK, payload)
 	})
 
 	route.DELETE(func() {
@@ -44,10 +43,10 @@ func HolydayRoute(res http.ResponseWriter, req *http.Request) {
 		}
 		json.Unmarshal(route.Payload, &payload)
 		if err := model.DeleteHolyday(payload.Id); err != nil {
-			http.Error(route.Response, "forbidden", http.StatusForbidden)
+			route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
 			return
 		}
-		route.Response.Write([]byte("Success"))
+		route.WriteJSON(http.StatusOK, []byte("Success"))
 	})
 
 	route.PUT(func() {
@@ -59,13 +58,14 @@ func HolydayRoute(res http.ResponseWriter, req *http.Request) {
 		json.Unmarshal(route.Payload, &payload)
 		if payload.Type == "reject" {
 			if err := model.RejectHolyday(payload.Id, payload.User); err != nil {
-				http.Error(route.Response, "forbidden", http.StatusForbidden)
+				route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
 			}
 			return
 		}
 		if err := model.AcceptHolyday(payload.Id, payload.User); err != nil {
-			http.Error(route.Response, "forbidden", http.StatusForbidden)
+			route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
+
 		}
-		route.Response.Write([]byte("Success"))
+		route.WriteJSON(http.StatusOK, []byte("Success"))
 	})
 }

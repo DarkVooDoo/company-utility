@@ -15,11 +15,11 @@ var PayrollRoute = func(res http.ResponseWriter, req *http.Request) {
 
 		body, err := model.GetAccumulateHours(companyId, from, to)
 		if err != nil {
-			http.Error(route.Response, "forbidden", http.StatusForbidden)
+			route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
 			return
 		}
-		route.Response.Header().Add("Content-Type", "application/json")
-		route.Response.Write(body)
+		route.WriteJSON(http.StatusOK, body)
+
 	})
 
 }

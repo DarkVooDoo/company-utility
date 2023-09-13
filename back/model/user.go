@@ -25,8 +25,8 @@ func SignInUser(conn util.SignUserPayloadStruct) (util.ReturnedTokenStruct, erro
 	row = db.QueryRow(`SELECT user_id, CONCAT(user_firstname, ' ', LEFT(user_lastname, 1), '.') as user_name, user_password FROM Users WHERE user_email=$1 AND user_password=$2`, conn.Email, conn.Password)
 
 	if err := row.Scan(&id, &name, &password); id != "" || err == nil {
-		token, _ := createAuthToken(id, name, time.Second*10, "jwt_key")
-		refresh, _ := createAuthToken(id, name, time.Minute*3, "jwt_refresh_token_key")
+		token, _ := createAuthToken(id, name, Token_Duration, "jwt_key")
+		refresh, _ := createAuthToken(id, name, Refresh_Token_Duration, "jwt_refresh_token_key")
 		db.Exec(`UPDATE Users SET refresh_token=$1 WHERE user_id=$2`, refresh.Token, id)
 		user := util.ReturnedTokenStruct{
 			User_photo: "photo url",

@@ -20,22 +20,22 @@ func ProRoute(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Query().Has("companyId") {
 			company, err := model.GetSingleEntreprise(req.URL.Query().Get("companyId"), userToken)
 			if err != nil {
-				http.Error(res, "redirect", http.StatusTemporaryRedirect)
-			} else {
-				body, _ := json.Marshal(company)
-				res.Header().Add("Content-Type", "application/json")
-				res.Write(body)
+				route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
+				return
 			}
+			body, _ := json.Marshal(company)
+			route.WriteJSON(http.StatusOK, body)
+
 		} else if req.URL.Query().Has("type") {
 			cType := req.URL.Query().Get("type")
 			company, err := model.GetEntreprises(userToken, cType)
 			if err != nil {
-				http.Error(res, "forbidden", http.StatusForbidden)
-			} else {
-				body, _ := json.Marshal(company)
-				res.Header().Add("Content-Type", "application/json")
-				res.Write(body)
+				route.WriteJSON(http.StatusOK, []byte("forbidden"))
+				return
 			}
+			body, _ := json.Marshal(company)
+			route.WriteJSON(http.StatusOK, body)
+
 		}
 	})
 

@@ -11,7 +11,7 @@ const Employees = async ()=>{
         <div key={member.id} className={style.member}>
             <div className={style.member_name}>
                 <p>Nom</p>
-                <p className={style.member_name_text}>{member.name} </p>
+                <p className={style.member_name_text}>{member.name} narayanaiken</p>
             </div>
             <div className={style.member_role}>
                 <p>Role</p>
