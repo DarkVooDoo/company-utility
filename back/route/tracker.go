@@ -16,7 +16,7 @@ func TrackerRoute(response http.ResponseWriter, request *http.Request) {
 			route.WriteJSON(http.StatusUnauthorized, []byte("unauthorized"))
 			return
 		}
-		companyId := route.Request.URL.Query().Get("companyId")
+		companyId := route.GetQuery("companyId")
 		currentShift, err := model.GetCurrentShift(user.User_id, companyId)
 		if err != nil {
 			route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
@@ -50,6 +50,10 @@ func TrackerRoute(response http.ResponseWriter, request *http.Request) {
 		json.Unmarshal(route.Payload, &company)
 		model.PauseCurrentShift(user.User_id, company)
 		route.WriteJSON(http.StatusOK, []byte("Success"))
+
+	})
+
+	route.DELETE(func() {
 
 	})
 }

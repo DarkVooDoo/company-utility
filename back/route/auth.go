@@ -10,8 +10,7 @@ import (
 func AuthRoute(res http.ResponseWriter, req *http.Request) {
 	var route = Route{Request: req, Response: res, Cors: "http://localhost:3000"}
 	route.GET(func() {
-		auth := route.Request.Header.Get("Authorization")
-		user, err := model.VerifyToken(auth)
+		user, err := route.VerifyToken()
 		if err != nil {
 			route.WriteJSON(http.StatusUnauthorized, []byte("unauthorized"))
 			return

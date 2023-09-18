@@ -4,6 +4,7 @@ import Image from "next/image"
 
 import exit from "@/public/exit.svg"
 import pause from "@/public/pause.svg"
+import left from "@/public/left-arrow.webp"
 
 import style from "./style.module.css"
 import { GetTodayShift, GetHolyday, GetCurrentShift, GetHours } from "@/util/data"
@@ -20,7 +21,7 @@ const HomeCompany = async ()=>{
         <div> 
             <div className={style.landpage_shiftHeader}>
                 <h1 className={style.landpage_shiftHeader_text}>Aujourd'hui</h1>
-                <Link href="/shift" className={style.landpage_shiftHeader_link}>Mon Planning</Link>
+                <Link href="/shift" className={style.landpage_shiftHeader_link}>Mon Planning <Image src={left} alt="arrow" className={style.landpage_shiftHeader_link_arrow} /></Link>
             </div>
             <div className={style.landpage_shift}>
                 <div className={style.landpage_shift_date}>

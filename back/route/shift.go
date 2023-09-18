@@ -17,34 +17,34 @@ type ModifyPayload struct {
 
 var ShiftRoute = func(res http.ResponseWriter, req *http.Request) {
 
-	var route = &Route{Response: res, Request: req, Cors: "http://localhost:3000"}
+	var route = Route{Response: res, Request: req, Cors: "http://localhost:3000"}
 
 	route.GET(func() {
 		if route.Request.URL.Query().Has("cId") {
-			emp, err := model.Pro{}.CompanyEmployee(req.URL.Query().Get("cId"))
+			emp, err := model.CompanyEmployee(req.URL.Query().Get("cId"))
 			if err != nil {
-				http.Error(route.Response, err.Error(), http.StatusBadRequest)
-			} else {
-				payload, _ := json.Marshal(emp)
-				route.Response.Header().Set("Content-Type", "application/json")
-				route.Response.Write(payload)
+				route.WriteJSON(http.StatusBadRequest, []byte("error"))
+				return
 			}
+			body, _ := json.Marshal(emp)
+			route.WriteJSON(http.StatusOK, body)
+
 		} else if req.URL.Query().Has("companyId") {
 			token := route.Request.Header.Get("Authorization")
-			companyId := route.Request.URL.Query().Get("companyId")
-			from := route.Request.URL.Query().Get("from")
-			to := route.Request.URL.Query().Get("to")
+			companyId := route.GetQuery("companyId")
+			from := route.GetQuery("from")
+			to := route.GetQuery("to")
 			shift, err := model.GetUserShift(token, companyId, from, to)
 			if err != nil {
 				http.Error(route.Response, "not content", http.StatusNoContent)
-			} else {
-				payload, _ := json.Marshal(shift)
-				route.Response.Header().Add("Content-Type", "application/json")
-				route.Response.Write(payload)
+				return
 			}
+			payload, _ := json.Marshal(shift)
+			route.WriteJSON(http.StatusOK, payload)
+
 		} else if req.URL.Query().Has("date") {
-			companyId := route.Request.URL.Query().Get("company")
-			date := route.Request.URL.Query().Get("date")
+			companyId := route.GetQuery("company")
+			date := route.GetQuery("date")
 			shift, err := model.GetDayShift(route.Request.Header.Get("Authorization"), companyId, date)
 			if err != nil {
 				http.Error(route.Response, "forbidden", http.StatusForbidden)
@@ -61,11 +61,11 @@ var ShiftRoute = func(res http.ResponseWriter, req *http.Request) {
 		json.Unmarshal(route.Payload, &payload)
 		err := model.CreateShift(payload.Payload)
 		if err != nil {
-			http.Error(route.Response, "error creating shift", http.StatusForbidden)
-		} else {
-			route.Response.Header().Set("Content-Type", "application/json")
-			route.Response.Write(route.Payload)
+			route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
+			return
 		}
+		route.WriteJSON(http.StatusOK, route.Payload)
+
 	})
 
 	route.PUT(func() {

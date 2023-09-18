@@ -1,5 +1,4 @@
 "use client"
-
 import { useEffect, useState } from "react"
 import style from "@/app/search/style.module.css"
 
@@ -13,7 +12,7 @@ interface Props{
     companys: {id: string, name: string}[]
 }
 
-const Search:React.FC<Props> = ({user_amount, company_amount, companys = [], users = []})=>{
+const Search:React.FC<Props> = ({company_amount, companys, user_amount, users})=>{
     const [onglet, setOnglet] = useState(0)
     const [display, setDisplay] = useState<React.ReactNode>(null)
     useEffect(()=>{
@@ -28,7 +27,7 @@ const Search:React.FC<Props> = ({user_amount, company_amount, companys = [], use
         }
     }, [onglet])
     return (
-        <>
+        <> 
             <div className={style.search_amount}>
                 <button onClick={()=>{
                     setOnglet(0)}}>

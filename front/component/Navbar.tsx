@@ -122,7 +122,7 @@ const Navbar:React.FC<Props> = ({notif, companys})=>{
                     <button className={style.navbar_sideBar_companys_btn} onClick={(e)=>{
                         e.stopPropagation()
                         setOpenEntreprise(prev=>!prev)
-                    }}>
+                    }}> 
                         <p>Mes Entreprises</p>
                         <span className={style.navbar_sideBar_companys_btn_arrow} style={openEntreprise ? {transform: "rotate(45deg)"} : {}} />
                     </button>

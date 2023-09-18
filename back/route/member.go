@@ -11,14 +11,13 @@ var MemberRoute = func(response http.ResponseWriter, request *http.Request) {
 	var route = Route{Response: response, Request: request, Cors: "http://localhost:3000"}
 
 	route.GET(func() {
-		companyId := route.Request.URL.Query().Get("companyId")
-		user, tokenErr := route.VerifyToken()
+		companyId := route.GetQuery("companyId")
+		_, tokenErr := route.VerifyToken()
 		if tokenErr != nil {
 			route.WriteJSON(http.StatusUnauthorized, []byte("unauthorized"))
-
 			return
 		}
-		body, err := model.GetMembers(companyId, user.User_id)
+		body, err := model.GetMembers(companyId)
 		if err != nil {
 			route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
 			return

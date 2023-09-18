@@ -27,6 +27,10 @@ type Route struct {
 	HandlerInterface
 }
 
+func (r *Route) GetQuery(name string) string {
+	return r.Request.URL.Query().Get(name)
+}
+
 func (r *Route) WriteJSON(status int, body []byte) {
 	r.Response.WriteHeader(status)
 	r.Response.Header().Add("Content-Type", "application/json")

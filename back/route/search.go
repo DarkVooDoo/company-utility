@@ -8,7 +8,7 @@ import (
 var SearchRoute = func(response http.ResponseWriter, request *http.Request) {
 	var route = &Route{Response: response, Request: request, Cors: "http://localhost:3000"}
 	route.GET(func() {
-		search := route.Request.URL.Query().Get("q")
+		search := route.GetQuery("q")
 		body, err := model.Search(search)
 		if err != nil {
 			route.WriteJSON(http.StatusForbidden, []byte("forbidden"))

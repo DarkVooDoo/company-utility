@@ -2,6 +2,9 @@
 
 import { ChangeEventHandler, useEffect, useRef, useState } from "react"
 
+import Image from "next/image"
+import left from "@/public/left-arrow.webp"
+
 import style from "./style.module.css"
 import { closeDialogOnBackdropClick } from "@/util/lib"
 import Calendar from "../Calendar"
@@ -40,7 +43,7 @@ const Holydays:React.FC<Props> = ({holydays = []})=>{
                 <h1 className={style.holyday_header_text}>Congés</h1>
                 <button type="button" className={style.holyday_header_btn} onClick={()=>{
                     dialogRef.current!!.showModal()
-                }} >Demander un congé</button>
+                }} >Demander un congé <Image src={left} alt="arrow" className={style.holyday_header_btn_arrow} /></button>
             </div>
             {dayOff.length > 0 ? <>{dayOff} </> : <div className={style.holyday_nocontent}>
                 Vous avez aucun congé

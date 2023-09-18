@@ -15,8 +15,9 @@ const Sign = ()=>{
         <main className={style.sign}>
             <form action={async (formData)=>{
                 const user = await onSignUser(formData)
+                if (!user) return
                 onUserChange(user!!)
-                router.push("/")
+                router.push("/") 
             }} className={style.sign_form}>
                 <h1 style={{textAlign: "center"}}>Company</h1>
                 <p className={style.sign_form_new}>{isNewUser ? "Connexion " : "Nouveau? "}

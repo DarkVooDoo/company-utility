@@ -87,7 +87,7 @@ export const GetMonthArray = (year: number, monthIndex: number):CalendarArray=>{
     return {calendar, to, from}
 }
 
-export const hasChanged = <TObj extends {}, Key extends keyof TObj>(initialArray: TObj[], compareTo: TObj[], properties: Key[]):[boolean, ShiftTypes[]]=>{
+export const hasChanged = <TObj extends {}, Key extends keyof TObj>(initialArray: TObj[], compareTo: TObj[], properties: Key[]):[boolean, TObj[]]=>{
     const changes: any = []
     let hasChanged = false
     for(let i = 0; i < initialArray.length; i++){

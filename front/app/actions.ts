@@ -7,6 +7,7 @@ import { revalidateTag } from "next/cache"
 import {cookies} from "next/headers"
 import { encode } from "punycode"
 import { CurrentShift, Payroll } from "@/util/type"
+import { redirect } from "next/navigation"
 
 export const onSignUser = async(formData: FormData)=>{
     const email = formData.get("email")
@@ -34,6 +35,7 @@ export const onSignUser = async(formData: FormData)=>{
             revalidateTag("home")
             return {user_id: userCredential.user_id, user_name: userCredential.user_name}
         }
+        
     }
 }
 
@@ -233,4 +235,17 @@ const getFormValues = (data: IterableIterator<[string, FormDataEntryValue]>)=>{
         cursor = data.next()
     }
     return values
+}
+
+export const onDeleteHour = async(formData: FormData):Promise<{error: boolean}>=>{
+    const token = cookies().get("auth-token")?.value
+    const hourId = formData.get("id")
+    if(!token || !hourId) return {error: true}
+    const deleteHour = await fetch(`${BACKEND_HOST}:5000/api/payroll`, {
+        method: "DELETE",
+        headers: [["Content-Type", "application/json"], ["Authorization", token]],
+        body: JSON.stringify({id: hourId})
+    })
+    if(deleteHour.status !== 200) return {error: true}
+    return {error: false}
 }

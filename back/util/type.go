@@ -68,9 +68,10 @@ type Company struct {
 }
 
 type Member struct {
-	Id   string `json:"id"`
-	Name string `json:"name"`
-	Role string `json:"role"`
+	Id     string `json:"id"`
+	Name   string `json:"name"`
+	Role   string `json:"role"`
+	UserId string `json:"user_id"`
 }
 
 type NewMember struct {

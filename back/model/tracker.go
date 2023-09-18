@@ -65,7 +65,7 @@ func PauseCurrentShift(userId string, shift util.UpdateCurrentShift) error {
 	return nil
 }
 
-func GetDayByDayHours(companyId string) ([]byte, error) {
+func GetDayByDayHours(companyId string) ([]util.Hour, error) {
 	db := db.DBInit()
 	var name, day string
 	var second float32
@@ -85,42 +85,63 @@ func GetDayByDayHours(companyId string) ([]byte, error) {
 		value.Hours = SecondsFormatted(value.Seconds)
 		hour = append(hour, value)
 	}
-	body, _ := json.Marshal(hour)
-	return body, nil
+	return hour, nil
 }
 
+type DayShift struct {
+	Id    string `json:"id"`
+	Day   string `json:"day"`
+	Start string `json:"start"`
+	End   string `json:"end"`
+}
 type AccumulateHours struct {
-	Name    string  `json:"name"`
-	Seconds uint    `json:"seconds"`
-	Total   string  `json:"total"`
-	Salary  float64 `json:"salary"`
+	Name    string                `json:"name"`
+	Seconds uint                  `json:"seconds"`
+	Total   string                `json:"total"`
+	Shift   map[string][]DayShift `json:"shift"`
+	Salary  float64               `json:"salary"`
 }
 
-func GetAccumulateHours(companyId string, from string, to string) ([]byte, error) {
-	var id, name string
+func GetAccumulateHours(companyId string, from string, to string, userId string) (AccumulateHours, error) {
+	var id, name, start, day, end, hourId string
 	var seconds, worth float64
 	var sumHours map[string]AccumulateHours = map[string]AccumulateHours{}
-	var payrolls []AccumulateHours = []AccumulateHours{}
+	var payrolls AccumulateHours = AccumulateHours{}
+	var shiftByDay map[string][]DayShift = map[string][]DayShift{}
 	db := db.DBInit()
-	employees, err := db.Query(`SELECT user_id, CONCAT(user_firstname, ' ', user_lastname), EXTRACT(EPOCH FROM AGE(hour_end, hour_start)), hour_worth FROM Tracker RIGHT JOIN Hour 
-	ON hour_tracker_id=tracker_id RIGHT JOIN Users ON user_id=tracker_user_id WHERE tracker_state='Finis' AND tracker_company_id=$1 AND hour_start BETWEEN $2 AND $3`, companyId, from, to+" 23:59:55")
+	employees, err := db.Query(`SELECT user_id, hour_id, TO_CHAR(hour_start, 'HH24:MI'), TO_CHAR(hour_end, 'HH24:MI'), TO_CHAR(hour_start, 'DD-MM'), CONCAT(user_firstname, ' ', user_lastname), EXTRACT(EPOCH FROM AGE(hour_end, hour_start)), hour_worth FROM Tracker RIGHT JOIN Hour 
+	ON hour_tracker_id=tracker_id RIGHT JOIN Users ON user_id=tracker_user_id WHERE tracker_state='Finis' AND tracker_company_id=$1 AND hour_start BETWEEN $2 AND $3 AND user_id=$4`, companyId, from, to+" 23:59:55", userId)
 	if err != nil {
-		return nil, errors.New("error")
+		return AccumulateHours{}, errors.New("error")
 	}
 	for employees.Next() {
-		employees.Scan(&id, &name, &seconds, &worth)
+		employees.Scan(&id, &hourId, &start, &end, &day, &name, &seconds, &worth)
+		shiftByDay[day] = append(shiftByDay[day], DayShift{Id: hourId, Start: start, End: end, Day: day})
 		sumHours[id] = AccumulateHours{
 			Name:    name,
 			Seconds: uint(seconds) + sumHours[id].Seconds,
+			Shift:   shiftByDay,
 			Total:   SecondsFormatted(uint(seconds) + sumHours[id].Seconds),
 			Salary:  util.RoundFloat((worth/(60*60))*(float64(seconds)+float64(sumHours[id].Seconds)), 2),
 		}
 	}
-	for _, value := range sumHours {
-		payrolls = append(payrolls, value)
+	if len(sumHours) == 0 {
+		return AccumulateHours{}, errors.New("error")
 	}
-	body, _ := json.Marshal(payrolls)
-	return body, nil
+	for _, value := range sumHours {
+		payrolls = value
+	}
+	return payrolls, nil
+}
+
+func DeleteHour(id string) error {
+	db := db.DBInit()
+	_, err := db.Exec(`DELETE FROM Hour WHERE hour_id=$1`, id)
+	if err != nil {
+		return errors.New("error deleting")
+	}
+	return nil
+
 }
 
 func SecondsFormatted(seconds uint) string {

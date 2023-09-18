@@ -12,7 +12,7 @@ func HolydayRoute(res http.ResponseWriter, req *http.Request) {
 
 	route.GET(func() {
 		if route.Request.URL.Query().Has("companyId") {
-			companyId := route.Request.URL.Query().Get("companyId")
+			companyId := route.GetQuery("companyId")
 			userToken := route.Request.Header.Get("Authorization")
 			holyday, err := model.GetEmployeeHolydays(companyId, userToken)
 			if err != nil {

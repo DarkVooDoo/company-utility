@@ -12,9 +12,18 @@
 }
 
 .holyday_header_btn{
+    display: flex;
+    align-items: center;
+    gap: .3rem;
     border: 2px solid var(--Primary-Color);
     padding: .5rem;
     border-radius: 5px;
+}
+
+.holyday_header_btn_arrow{
+    width: 1rem;
+    height: 1rem;
+    transform: rotate(180deg);
 }
 
 .holyday_nocontent{

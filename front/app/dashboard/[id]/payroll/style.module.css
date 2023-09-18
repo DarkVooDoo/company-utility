@@ -1,17 +1,81 @@
-.payroll_top{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.payroll_top > *, .payroll_top_hours > *, .payroll_day > *, .payroll_card > *, .payroll > *{
+    margin-bottom: var(--Row-Margin);
 }
 
-.payroll_card > *, .payroll > *{
-    margin-bottom: var(--Row-Margin);
+.payroll_top_names{
+    display: flex;
+    flex-direction: column;
+    min-height: calc(3rem * 3);
+    border: 1px solid black;
+    overflow-y: scroll;
+}
+
+.payroll_top_names_btn{
+    height: 3rem;
+    border-bottom: 1px solid gray;
+    transition: all .2s linear;
+}
+
+.payroll_shift{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: .5rem;
 }
 
 .payroll_card{
     border-radius: 10px;
-    -webkit-box-shadow: 0px 0px 10px 0px var(--Primary-Color); 
-    box-shadow: 0px 0px 10px 0px var(--Primary-Color);
+    border: 1px solid black;
     padding: .5rem;
 }
 
+.payroll_card_action{
+    display: flex;
+    gap: .5rem;
+}
+
+.payroll_card_action_form{
+    width: 100%;
+}
+
+.payroll_card_action_btn{
+    border: 1px solid black;
+    height: 2.5rem;
+    width: 100%;
+}
+
+.payroll_card_action_btn_icon{
+    height: 2rem;
+    width: 2rem;
+}
+
+
+/* Medium devices (tablets, 768px and up) */
+@media screen and (min-width: 768px) { 
+    .payroll_top{
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .payroll_container{
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+  }
+  
+  /* Large devices (desktops, 992px and up) */
+  @media (min-width: 992px) { 
+  
+  }
+  
+  /* X-Large devices (large desktops, 1200px and up) */
+  @media (min-width: 1200px) { 
+  
+  }
+  
+  /* XX-Large devices (larger desktops, 1400px and up) */
+  @media (min-width: 1400px) { 
+  
+  }

@@ -23,8 +23,9 @@ export interface Entreprise {
 }
 export interface Member {
     id: string
-    name: string,
+    name: string
     role: string
+    user_id: string
 }
 
 export interface Payroll{
@@ -32,4 +33,5 @@ export interface Payroll{
     total: string
     seconds: number
     salary: number
+    shift: {[key: string]: {id: string, start: string, end: string, day: string}[]}
 }
