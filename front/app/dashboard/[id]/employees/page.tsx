@@ -4,14 +4,14 @@ import { GetMembers } from "@/util/data"
 import style from "./style.module.css"
 import ChangeUserRole from "@/component/ChangeUserRole"
 
-const Employees = async ()=>{
-    const members = await GetMembers()
+const Employees = async ({params}: {params: {id: string}})=>{
+    const members = await GetMembers(params.id)
 
     const member = members.map(member=>(
         <div key={member.id} className={style.member}>
             <div className={style.member_name}>
                 <p>Nom</p>
-                <p className={style.member_name_text}>{member.name} narayanaiken</p>
+                <p className={style.member_name_text}>{member.name}</p>
             </div>
             <div className={style.member_role}>
                 <p>Role</p>
@@ -31,7 +31,7 @@ const Employees = async ()=>{
 
             <form action={onNewMember} className={style.member_newEmail}>
                 <input type="text" name="email" id="email" autoComplete="off" placeholder="Nouveau employé email" className={style.member_newInput_input} />
-                <input type="number" name="salary" id="salary" step={".01"} className={style.member_newInput_input} placeholder="Salaire brut" />
+                <input type="number" name="salary" id="salary" step={".01"} className={style.member_newInput_input} placeholder="Salaire horaire brut" />
                 <button type="submit" style={{display: "none"}}></button>
             </form>
             <div className={style.member_container}>

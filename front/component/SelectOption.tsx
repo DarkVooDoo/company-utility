@@ -21,7 +21,7 @@ const SelectOption = <T extends unknown>({className, value, items, render}: Sele
     },[])
 
     return (
-        <div className={`${style.header_box} ${className}`}>
+        <div className={`${style.header_box} ${className}` }>
             <div className={style.header_box_current} onClick={()=>{
                 optionsRef.current?.classList.toggle(style.hidden)
             }}>{value} </div>

@@ -50,22 +50,39 @@ const Calendar:React.FC<CalendarProps> = ({onChange, className, type = "single",
     }, [currentUser])
 
     const days = calendar.map((day,index)=>{ 
-        const sortedDate = between.sort()
+        let isDayDisable: boolean
         const calendarDay = `${date.year}-${day.month < 9 ? '0'+(day.month+1) : (day.month+1)}-${day.dayNumber < 10 ? '0'+day.dayNumber : day.dayNumber}`
+        const sortedDate = between.sort()
         const isBetween = sortedDate.length === 2 ? calendarDay < sortedDate[0] || calendarDay > sortedDate[1] : true
         const firstChoice = between[0] === calendarDay
-        let isDayDisable: boolean
         if (type === "single"){
             isDayDisable = day.isCurrentMonth && shift && shift.shift.findIndex(myShift=>myShift.shift_day === day.dayNumber && myShift.user_id === currentUser) === -1 ? false : true
         }else{
             if (hasMin) isDayDisable = calendarDay < `${year}-${month}-${tDay}` || !day.isCurrentMonth ? true : false
             else isDayDisable = !day.isCurrentMonth
         }
+        let betweenFirstDay: number[] = []
+        let betweenLastDay: number[] = []
+        if(sortedDate.length === 2){
+            betweenFirstDay = sortedDate[0].split("-").map((date, index)=>{
+                if(index===1) return parseInt(date)-1
+                return parseInt(date)
+            })
+            betweenLastDay = sortedDate[1].split("-").map((date, index)=>{
+                if(index===1) return parseInt(date)-1
+                return parseInt(date)
+            })
+
+        }
+        const isFirst = betweenFirstDay[1] === day.month && betweenFirstDay[2] === day.dayNumber 
+        const isLast = betweenLastDay[1] === day.month && betweenLastDay[2] === day.dayNumber
+
         return (
             <button disabled={isDayDisable} type="button" key={index} 
             className={`${style.calendar_day} 
             ${firstChoice && style.between_active} 
             ${type === 'between' ? !isBetween && day.isCurrentMonth ? style.between_active : "" : `${seletedDays.has(day.dayNumber) && day.isCurrentMonth ? style.active : ""}` }`}
+            style={isFirst ? {borderTopLeftRadius: "25px", borderBottomLeftRadius: "25px"} : isLast ? {borderTopRightRadius: "25px", borderBottomRightRadius: "25px"} : {}}
             onClick={(e)=>{
                 if(type === "single"){
                     seletedDays.has(day.dayNumber) ? seletedDays.delete(day.dayNumber) : seletedDays.add(day.dayNumber)

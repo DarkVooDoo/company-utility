@@ -1,0 +1,11 @@
+.timer{
+    display: flex;
+}
+
+.timer_hour, .timer_next{
+    height: 1.2rem;
+}
+
+.timer_next{
+    opacity: 0;
+}

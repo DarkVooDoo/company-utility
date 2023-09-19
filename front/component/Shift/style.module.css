@@ -9,6 +9,10 @@
     margin: var(--Row-Margin) 0;
 }
 
+.header_selectMonth{
+    width: 15ch;
+}
+
 .header_planningBtn{
     height: 2.5rem;
     padding: 0 .5rem;

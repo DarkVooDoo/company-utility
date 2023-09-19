@@ -1,10 +1,52 @@
-.landpage_header{
-    height: 40vh;
-    background-color: var(--Primary-Color);
+.landpage_header > *{
+    margin-bottom: var(--Row-Margin);
 }
 
-.landpage_header_text{
+.landpage_header{
+    height: 40vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-image: url("../public/metting.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-bottom: 1px solid black;
+}
+
+.landpage_header_title{
     font-size: 2.5rem;
+}
+
+.landpage_header_sub{
+    padding: 0 var(--Mobile-Padding);
+}
+
+.landpage_header_start{
+    height: 2.5rem;
+    background-color: var(--Primary-Color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 .5rem;
+    border-radius: 5px;
+}
+
+
+.landpage_planning_header{
     text-align: center;
 }
 
+.landpage_planning_about{
+    display: flex;
+    height: 30vh;
+    align-items: center;
+    justify-content: center;
+    padding: 0 var(--Mobile-Padding);
+}
+
+.landpage_planning_about_photo{
+    height: 100%;
+    width: 100%;
+}

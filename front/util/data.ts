@@ -128,8 +128,7 @@ export const GetCurrentShift = async():Promise<CurrentShift | undefined>=>{
     return undefined
 }
 
-export const GetMembers = async ():Promise<Member[]>=>{
-    const companyId = cookies().get("company-id")?.value
+export const GetMembers = async (companyId: string):Promise<Member[]>=>{
     const token = cookies().get("auth-token")?.value
     if (!token) return []
     const fetchMember = await fetch(`${BACKEND_HOST}:5000/api/member?companyId=${companyId}`,{

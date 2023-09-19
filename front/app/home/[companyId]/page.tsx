@@ -5,6 +5,10 @@ import Image from "next/image"
 import exit from "@/public/exit.svg"
 import pause from "@/public/pause.svg"
 import left from "@/public/left-arrow.webp"
+import start from "@/public/start.webp"
+import p from "@/public/pause.webp"
+import s from "@/public/test.png"
+import stop from "@/public/stop.webp"
 
 import style from "./style.module.css"
 import { GetTodayShift, GetHolyday, GetCurrentShift, GetHours } from "@/util/data"
@@ -12,6 +16,7 @@ import { MONTH } from "@/util/lib"
 import Holydays from "@/component/Holydays/component"
 import { Holyday } from "@/util/type"
 import { onStartShift, onEndShift, onPauseShift } from "@/app/actions"
+import Timer from "@/component/Timer/component"
 
 const HomeCompany = async ()=>{
     const shift = await GetTodayShift() as {start: string, end: string, pause: number}
@@ -58,15 +63,34 @@ const HomeCompany = async ()=>{
                             y="124.91429">{new Date().getDate() < 10 ? "0"+new Date().getDate() : new Date().getDate()} </tspan></text>
                         </g>
                     </svg>
-                    <div>
+                    <div> 
                         <h2 className={style.landpage_shift_date_day}>{new Date().getDate()} {MONTH[new Date().getMonth()]} </h2>
-                        {!currentShift ? <form action={onStartShift}>
-                        <button type="submit" name="shift" 
-                            value={undefined} 
-                            className={style.landpage_shift_date_startShift}>
-                                Commencer
-                        </button>
-                        </form> : <>
+                        {shift ? <div className={style.landpage_shift_time}>
+                            <div>
+                                <Image src={s} alt="start" className={style.shift_time_content_icon} />
+                                <h3>{shift.start} </h3>
+                            </div>
+                            <div>
+                                <Image src={exit} alt="exit" className={style.shift_time_content_icon} />
+                                <h3>{shift.end} </h3>
+                            </div>
+                            <div className={style.shift_time_content}>
+                                <Image src={pause} alt="pause" className={style.shift_time_content_icon} />
+                                <h3>{shift.pause} mins</h3>
+                            </div>
+                        </div> : <h3>Vous etes libre</h3>}
+                    </div>
+                </div>
+                <div style={{display: "flex", justifyContent: "space-between"}}>
+                    {!currentShift ?
+                        <form action={onStartShift}>
+                            <button type="submit" name="shift" 
+                                value={undefined} 
+                                className={style.landpage_shift_date_startShift}>
+                                    <h4>Start</h4>
+                                    <Image src={start} alt="commencer" className={style.landpage_shift_date_startShift_icon} />
+                            </button>
+                        </form> : <div style={{display: "flex", gap: "1rem"}}>
                             {currentShift.state == "En Pause" ? <>
                                 <form action={onStartShift}>
                                     <button type="submit" name="shift" className={style.landpage_shift_date_startShift}
@@ -84,32 +108,20 @@ const HomeCompany = async ()=>{
                                 <form action={onPauseShift}>
                                     <button type="submit" name="shift" className={style.landpage_shift_date_startShift}
                                     value={[currentShift.id, currentShift.hourId, currentShift.state]}>
-                                        Pause
+                                        <h4>Pause</h4>
+                                        <Image src={p} alt="commencer" className={style.landpage_shift_date_startShift_icon} />
                                     </button>
                                 </form>
                                 <form action={onEndShift}>
                                     <button name="shift" className={style.landpage_shift_date_startShift}
                                     value={[currentShift.id, currentShift.hourId, currentShift.state]}>
-                                        Finir
+                                        <h4>Finir</h4>
+                                        <Image src={stop} alt="commencer" className={style.landpage_shift_date_startShift_icon} />
                                     </button>
                                 </form>                    
                         </> }
-                    </>}
-                    </div>
+                    </div>}
                 </div>
-                {shift ? <div className={style.landpage_shift_time}>
-                    <div>
-                        <h3>{shift.start} </h3>
-                    </div>
-                    <div>
-                        <Image src={exit} alt="exit" className={style.shift_time_content_icon} />
-                        <h3>{shift.end} </h3>
-                    </div>
-                    <div className={style.shift_time_content}>
-                        <Image src={pause} alt="pause" className={style.shift_time_content_icon} />
-                        <h3>{shift.pause} mins</h3>
-                    </div>
-                </div> : <h3>Vous etes libre</h3>}
             </div> 
             <Holydays {...{holydays}} />
         </div>

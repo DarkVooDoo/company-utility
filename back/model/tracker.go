@@ -109,7 +109,11 @@ func GetAccumulateHours(companyId string, from string, to string, userId string)
 	var payrolls AccumulateHours = AccumulateHours{}
 	var shiftByDay map[string][]DayShift = map[string][]DayShift{}
 	db := db.DBInit()
-	employees, err := db.Query(`SELECT user_id, hour_id, TO_CHAR(hour_start, 'HH24:MI'), TO_CHAR(hour_end, 'HH24:MI'), TO_CHAR(hour_start, 'DD-MM'), CONCAT(user_firstname, ' ', user_lastname), EXTRACT(EPOCH FROM AGE(hour_end, hour_start)), hour_worth FROM Tracker RIGHT JOIN Hour 
+	employees, err := db.Query(`SELECT user_id, hour_id, 
+	TO_CHAR(hour_start AT TIME ZONE 'utc' AT TIME ZONE 'Europe/Paris', 'HH24:MI'), 
+	TO_CHAR(hour_end AT TIME ZONE 'utc' AT TIME ZONE 'Europe/Paris', 'HH24:MI'), 
+	TO_CHAR(hour_start, 'DD-MM'), 
+	CONCAT(user_firstname, ' ', user_lastname), EXTRACT(EPOCH FROM AGE(hour_end, hour_start)), hour_worth FROM Tracker RIGHT JOIN Hour 
 	ON hour_tracker_id=tracker_id RIGHT JOIN Users ON user_id=tracker_user_id WHERE tracker_state='Finis' AND tracker_company_id=$1 AND hour_start BETWEEN $2 AND $3 AND user_id=$4`, companyId, from, to+" 23:59:55", userId)
 	if err != nil {
 		return AccumulateHours{}, errors.New("error")

@@ -2,7 +2,7 @@
 
 import style from "./style.module.css"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import Calendar from "@/component/Calendar"
 
 import Image from "next/image"
@@ -12,14 +12,13 @@ import { BACKEND_HOST, GetCookie } from "@/util/lib"
 import { Member, Payroll } from "@/util/type"
 import { onDeleteHour } from "@/app/actions"
 
-const Payroll = ()=>{
+const Payroll = ({params}: {params: {id: string}})=>{
     const [selectedUser, setSelectedUser] = useState<string | undefined>(undefined)
     const [members, setMembers] = useState<Member[]>([])
     const [loading, setLoading] = useState(true)
-
     useEffect(()=>{
         (async ()=>{
-            const companyId = GetCookie("company-id")
+            const companyId = params.id
             const token = GetCookie("auth-token")
             if (token){
                 const fetchMember = await fetch(`${BACKEND_HOST}:5000/api/member?companyId=${companyId}`,{
@@ -67,7 +66,6 @@ const SelectDate:React.FC<Props> = ({userId, children})=>{
         })()
      },[from, to, userId])
 
-    console.log(employees)
     const myEmployees = employees ? Object.entries(employees.shift).map(([day, shift])=>{
         const shifts = shift.map(hour=>{
             return (
@@ -86,7 +84,7 @@ const SelectDate:React.FC<Props> = ({userId, children})=>{
                             if (!error) {
                                 const id = employees.shift[day].findIndex(shift=>shift.id === hour.id)
                                 employees.shift[day].splice(id, 1)
-                                setEmployees(prevEmployees=>({...employees}))
+                                setEmployees(({...employees}))
 
                             }
                         }} className={style.payroll_card_action_form}>
@@ -124,7 +122,7 @@ const SelectDate:React.FC<Props> = ({userId, children})=>{
                 <div className={style.payroll_card}>
                     <h3>{employees.name} </h3>
                     <p><b>Heures travaillé: </b>{employees.total} </p>
-                    <p><b>Salaire:</b> {employees.salary}</p>
+                    <p><b>Salaire:</b> {employees.salary} £</p>
                 </div>
             </div> : null}
             <div className={style.payroll_top_hours}>

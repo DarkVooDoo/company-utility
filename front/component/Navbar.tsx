@@ -69,6 +69,7 @@ const Navbar:React.FC<Props> = ({notif, companys})=>{
         document.cookie = "company-id=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
         onCloseSideBar()
         router.push("/sign")
+        router.refresh()
     }
     const notifs = notif.map(notif=>(
         <div className={style.navbar_notifPopup_notif} key={notif.id}>
@@ -85,7 +86,7 @@ const Navbar:React.FC<Props> = ({notif, companys})=>{
         <nav className={style.navbar}>
             <Link href="/"><Image src={logo} alt="home" /></Link>
             <div className={`${style.navbar_search}`}>
-                <div className={`${style.navbar_search_box}`}>
+                {/* <div className={`${style.navbar_search_box}`}>
                     <input type="text" ref={inputRef}
                     className={`${style.navbar_search_bar} ${onSearch ? style.bar_fullwidth : ""}`} name="search" id="search" 
                     placeholder="Recherche un annonce" required autoComplete="off"
@@ -98,7 +99,7 @@ const Navbar:React.FC<Props> = ({notif, companys})=>{
                         setOnSearch(prev=>!prev)
                         !onSearch ? inputRef.current?.focus() : inputRef.current?.blur()
                     }}><Image src={search} alt="search" className={style.navbar_search_icon_i} /></button>}
-                </div>
+                </div> */}
             </div>
             <div className={style.navbar_navigation}>
                 {user.user_id !== "" ? 

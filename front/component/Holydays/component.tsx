@@ -48,7 +48,7 @@ const Holydays:React.FC<Props> = ({holydays = []})=>{
             {dayOff.length > 0 ? <>{dayOff} </> : <div className={style.holyday_nocontent}>
                 Vous avez aucun congé
             </div>}
-            <dialog ref={dialogRef} className={style.holyday_dialog}>
+            <dialog ref={dialogRef} className={style.holyday_dialog}> 
                 <form action={()=>{
                     onRequestHolyday(holydayType, dates)
                     dialogRef.current?.close()

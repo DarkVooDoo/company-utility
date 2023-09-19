@@ -139,6 +139,7 @@ const Shift:React.FC<Props> = ({companys})=>{
             <div className={style.header}>
                 {isAdmin && <Link href="/shift/new" className={style.header_planningBtn} >Creer un planning</Link>}
                 <SelectOption
+                    className={style.header_selectMonth}
                     value={date.month}
                     items={MONTH} 
                     render={(month)=><div key={month} className={style.header_month_list_month} onClick={()=>{

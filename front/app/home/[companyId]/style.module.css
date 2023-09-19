@@ -32,20 +32,13 @@
 }
 
 .landpage_shift_date{
-    display: flex;
-    position: relative; 
-    align-items: center;    
+    display: grid;
+    grid-template-columns: 1fr 3fr; 
+    align-items: center;
     gap: 1rem;
-    margin-bottom: 2rem;
-}
-
-.landpage_shift_date::after{
-    position: absolute;
-    bottom: -1rem;
-    height: 1px;
-    width: 100%;
-    background-color: black;
-    content: "";
+    border-bottom: 1px solid black;
+    margin-bottom: var(--Row-Margin);
+    padding: .5rem 0;
 }
 
 .landpage_shift_date_day{
@@ -54,9 +47,17 @@
 
 .landpage_shift_date_startShift{
     height: 2rem;
-    background-color: aqua;
-    padding: 0 .3rem;
+    width: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     border-radius: 5px;
+}
+
+.landpage_shift_date_startShift_icon{
+    height: 1.5rem;
+    width: 1.5rem;
 }
 
 .landpage_shift_time{

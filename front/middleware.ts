@@ -32,7 +32,8 @@ export const middleware = async (request: NextRequest)=>{
             }
         }
     }
-    if(!request.nextUrl.pathname.startsWith("/sign") || !request.nextUrl.pathname.startsWith("/")){
+    if(!request.nextUrl.pathname.startsWith("/sign") && !request.nextUrl.pathname.startsWith("/")){
+        console.log("why", request.nextUrl.pathname.startsWith("/"))
         return NextResponse.redirect(new URL("/sign", request.url))
     }
 }

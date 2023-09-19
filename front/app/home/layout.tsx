@@ -1,4 +1,5 @@
 import MyCompanys from "@/component/MyCompanys/component"
+import Timer from "@/component/Timer/component"
 import { GetCompanys } from "@/util/data"
 
 const HomeLayout:React.FC<{children: React.ReactNode}> = async ({children})=>{

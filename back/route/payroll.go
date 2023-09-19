@@ -14,7 +14,6 @@ var PayrollRoute = func(res http.ResponseWriter, req *http.Request) {
 		from := route.GetQuery("from")
 		to := route.GetQuery("to")
 		userId := route.GetQuery("uId")
-
 		hours, err := model.GetAccumulateHours(companyId, from, to, userId)
 		if err != nil {
 			route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
