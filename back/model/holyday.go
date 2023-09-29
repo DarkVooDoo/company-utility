@@ -7,29 +7,21 @@ import (
 	"work/util"
 )
 
-func RequestHolyday(userToken string, requestPayload util.HolydayRequestPayload) (util.Holyday, error) {
+func RequestHolyday(userId string, requestPayload util.HolydayRequestPayload) (util.Holyday, error) {
 	var id, from, to, status string
-	user, tokenErr := VerifyToken(userToken)
-	if tokenErr != nil {
-		return util.Holyday{}, errors.New("error")
-	}
 	db := db.DBInit()
 	row := db.QueryRow(`INSERT INTO Holyday (holyday_from, holyday_to, holyday_type, holyday_user_id, holyday_company_id) VALUES($1,$2,$3,$4,$5)
-	RETURNING holyday_id, TO_CHAR(holyday_from, 'DD-MM-YYYY'), TO_CHAR(holyday_to, 'DD-MM-YYYY'), holyday_status`, requestPayload.From, requestPayload.To, requestPayload.Type, user.User_id, requestPayload.CompanyId)
+	RETURNING holyday_id, TO_CHAR(holyday_from, 'DD-MM-YYYY'), TO_CHAR(holyday_to, 'DD-MM-YYYY'), holyday_status`, requestPayload.From, requestPayload.To, requestPayload.Type, userId, requestPayload.CompanyId)
 	if err := row.Scan(&id, &from, &to, &status); err != nil {
 		return util.Holyday{}, errors.New("error")
 	}
 	return util.Holyday{Id: id, From: from, To: to, Status: status}, nil
 }
 
-func GetEmployeeHolydays(companyId string, userToken string) ([]util.Holyday, error) {
-	user, tokenErr := VerifyToken(userToken)
-	if tokenErr != nil {
-		return []util.Holyday{}, errors.New("error")
-	}
+func GetEmployeeHolydays(companyId string, userId string) ([]util.Holyday, error) {
 	return getHolydays(`SELECT holyday_id, TO_CHAR(AGE(NOW(), holyday_sended), 'YY-MM-DD-HH24-MI-SS'), TO_CHAR(holyday_from, 'DD-MM-YYYY'),
 	TO_CHAR(holyday_to, 'DD-MM-YYYY'), holyday_status, CONCAT(user_firstname, ' ', user_lastname), holyday_user_id FROM Holyday LEFT JOIN Users ON user_id=holyday_user_id 
-	WHERE holyday_company_id=$1 AND holyday_user_id=$2`, companyId, user.User_id)
+	WHERE holyday_company_id=$1 AND holyday_user_id=$2`, companyId, userId)
 }
 
 func GetPendingHolydays(companyId string) ([]util.Holyday, error) {
@@ -38,10 +30,12 @@ func GetPendingHolydays(companyId string) ([]util.Holyday, error) {
 	ON user_id=holyday_user_id WHERE holyday_company_id=$1 AND holyday_status='En Attente'`, companyId)
 }
 
-func RejectHolyday(id string, userId string) error {
+func RejectHolyday(id string) error {
+	var userId string
 	db := db.DBInit()
 	tx, _ := db.Begin()
-	if _, err := tx.Exec(`UPDATE Holyday SET holyday_status='Refusé' WHERE holyday_id=$1`, id); err != nil {
+	row := tx.QueryRow(`UPDATE Holyday SET holyday_status='Refusé' WHERE holyday_id=$1 RETURNING holyday_user_id`, id)
+	if err := row.Scan(&userId); err != nil {
 		tx.Rollback()
 		return errors.New("error")
 	}
@@ -53,10 +47,12 @@ func RejectHolyday(id string, userId string) error {
 	return nil
 }
 
-func AcceptHolyday(id string, userId string) error {
+func AcceptHolyday(id string) error {
+	var userId string
 	db := db.DBInit()
 	tx, _ := db.Begin()
-	if _, err := tx.Exec(`UPDATE Holyday SET holyday_status='Validé' WHERE holyday_id=$1`, id); err != nil {
+	row := tx.QueryRow(`UPDATE Holyday SET holyday_status='Validé' WHERE holyday_id=$1 RETURNING holyday_user_id`, id)
+	if err := row.Scan(&userId); err != nil {
 		tx.Rollback()
 		return errors.New("error")
 	}

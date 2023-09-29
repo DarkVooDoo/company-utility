@@ -1,0 +1,50 @@
+.payroll > *, .payroll_day > *, .payroll_shift > *, .payroll_resume > *, .payroll_resume_gain > *{
+    margin-bottom: var(--Row-Margin);
+}
+
+
+
+.payroll_card{
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: .5rem;
+}
+
+
+.payroll_resume{
+    height: calc(100vw / 2);
+    width: 100%;
+    display: flex;
+    padding: 25px;
+    justify-content: center;
+    flex-direction: column;
+    background-color: var(--Primary-Color);
+    border-radius: 25px;
+}
+
+.payroll_resume_gain{
+    display: flex;
+    justify-content: space-between;
+}
+
+.payroll_resume_gain_value{
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+.select{
+    width: fit-content;
+    border: none;
+    background-color: transparent;
+    font-size: 1.5rem;
+}
+
+.select_option{
+    background-color: var(--Primary-Color);
+    font-size: .9rem;
+    list-style: none;
+}
+
+select:focus-visible{
+    outline: none;
+}

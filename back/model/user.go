@@ -3,7 +3,6 @@ package model
 import (
 	"database/sql"
 	"errors"
-	"log"
 	"os"
 	"strings"
 	"time"
@@ -64,40 +63,6 @@ func IsTokenValid(token string) (util.ReturnedTokenStruct, error) {
 	return util.ReturnedTokenStruct{}, errors.New("token error")
 }
 
-func VerifyToken(token string) (util.ReturnedTokenStruct, error) {
-	tkt, _ := jwt.ParseWithClaims(token, &util.JWTokenInterface{}, func(t *jwt.Token) (interface{}, error) {
-		return []byte(os.Getenv("jwt_key")), nil
-	})
-	if tkt.Valid {
-		claim, _ := tkt.Claims.(*util.JWTokenInterface)
-		return createAuthToken(claim.User.User_id, claim.User.User_Name, Token_Duration, "jwt_key")
-	} else {
-		log.Println("Getting refresh token from db")
-		var refreshToken string
-		token := tkt.Claims.(*util.JWTokenInterface)
-		db := db.DBInit()
-		row := db.QueryRow(`SELECT refresh_token FROM Users WHERE user_id=$1`, token.User.User_id)
-		if row.Scan(&refreshToken) != nil {
-			log.Println("error grabbing refresh token")
-			return util.ReturnedTokenStruct{}, errors.New("unathorized")
-		}
-		log.Println("checking if refresh token is valid")
-		tkt, _ := jwt.ParseWithClaims(refreshToken, &util.JWTokenInterface{}, func(t *jwt.Token) (interface{}, error) {
-			return []byte(os.Getenv("jwt_refresh_token_key")), nil
-		})
-		if tkt.Valid {
-			log.Println("refresh token is valid and inserting to db")
-			refreshToken, err := createAuthToken(token.User.User_id, token.User.User_Name, Refresh_Token_Duration, "jwt_refresh_token_key")
-			if err != nil {
-				return util.ReturnedTokenStruct{}, errors.New("unathorized")
-			}
-			db.Exec(`UPDATE Users SET refresh_token=$1 WHERE user_id=$2`, refreshToken.Token, refreshToken.User_id)
-			return createAuthToken(token.User.User_id, token.User.User_Name, Token_Duration, "jwt_key")
-		}
-		return util.ReturnedTokenStruct{}, errors.New("unathorized")
-	}
-}
-
 func CreateUser(newAccount util.CreateUserStruct) error {
 	newAccount.Firstname = strings.ToUpper(newAccount.Firstname[0:1]) + newAccount.Firstname[1:]
 	newAccount.Lastname = strings.ToUpper(newAccount.Lastname[0:1]) + newAccount.Lastname[1:]
@@ -110,27 +75,19 @@ func CreateUser(newAccount util.CreateUserStruct) error {
 	return nil
 }
 
-func GetUserProfile(userToken string) (util.UserProfile, error) {
-	user, err := VerifyToken(userToken)
-	if err != nil {
-		return util.UserProfile{}, errors.New("error")
-	}
+func GetUserProfile(userId string) (util.UserProfile, error) {
 	db := db.DBInit()
 	var id, firstname, lastname, adresse, postal, email, joined string
-	row := db.QueryRow(`SELECT user_id, TO_CHAR(user_joined, 'TMMonth-YYYY'), user_lastname, user_firstname, user_email, user_adresse, user_postal FROM Users WHERE user_id=$1`, user.User_id)
+	row := db.QueryRow(`SELECT user_id, TO_CHAR(user_joined, 'TMMonth-YYYY'), user_lastname, user_firstname, user_email, user_adresse, user_postal FROM Users WHERE user_id=$1`, userId)
 	row.Scan(&id, &joined, &lastname, &firstname, &email, &adresse, &postal)
 	return util.UserProfile{Id: id, Joined: joined, Firstname: firstname, Lastname: lastname, Adresse: adresse, Postal: postal, Email: email}, nil
 }
 
-func ModifyProfile(profile util.UserProfile, userToken string) (util.UserProfile, error) {
+func ModifyProfile(profile util.UserProfile, userId string) (util.UserProfile, error) {
 	var id, firstname, lastname, adresse, postal, email, joined string
-	user, tokenErr := VerifyToken(userToken)
-	if tokenErr != nil {
-		return util.UserProfile{}, errors.New("error")
-	}
 	db := db.DBInit()
 	row := db.QueryRow(`UPDATE Users SET user_firstname=$1, user_lastname=$2, user_adresse=$3, user_postal=$4 WHERE user_id=$5 
-	RETURNING user_id, TO_CHAR(user_joined, 'Month-YYYY'), user_lastname, user_firstname, user_email, user_adresse, user_postal`, profile.Firstname, profile.Lastname, profile.Adresse, profile.Postal, user.User_id)
+	RETURNING user_id, TO_CHAR(user_joined, 'Month-YYYY'), user_lastname, user_firstname, user_email, user_adresse, user_postal`, profile.Firstname, profile.Lastname, profile.Adresse, profile.Postal, userId)
 	if err := row.Scan(&id, &joined, &lastname, &firstname, &email, &adresse, &postal); err != nil {
 		return util.UserProfile{}, errors.New("error happends")
 	}

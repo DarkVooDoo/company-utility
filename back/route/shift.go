@@ -8,7 +8,8 @@ import (
 )
 
 type PayloadStruct struct {
-	Payload []util.ShiftStruct `json:"payload"`
+	Planning []util.CreateShift `json:"planning"`
+	Company  string             `json:"companyId"`
 }
 
 type ModifyPayload struct {
@@ -17,54 +18,61 @@ type ModifyPayload struct {
 
 var ShiftRoute = func(res http.ResponseWriter, req *http.Request) {
 
-	var route = Route{Response: res, Request: req, Cors: "http://localhost:3000"}
+	var route = Route{Response: res, Request: req, Cors: "http://localhost:5173"}
 
 	route.GET(func() {
 		if route.Request.URL.Query().Has("cId") {
 			emp, err := model.CompanyEmployee(req.URL.Query().Get("cId"))
 			if err != nil {
-				route.WriteJSON(http.StatusBadRequest, []byte("error"))
+				route.WriteJSON(http.StatusBadRequest, ResponseError{Msg: "bad request"})
 				return
 			}
-			body, _ := json.Marshal(emp)
-			route.WriteJSON(http.StatusOK, body)
-
+			route.WriteJSON(http.StatusOK, emp)
 		} else if req.URL.Query().Has("companyId") {
-			token := route.Request.Header.Get("Authorization")
+			user, errToken := route.VerifyToken()
+			if errToken != nil {
+				route.WriteJSON(http.StatusUnauthorized, ResponseError{Msg: "unauthorized"})
+				return
+			}
 			companyId := route.GetQuery("companyId")
 			from := route.GetQuery("from")
 			to := route.GetQuery("to")
-			shift, err := model.GetUserShift(token, companyId, from, to)
+			shift, err := model.GetUserShift(user.User_id, companyId, from, to)
 			if err != nil {
-				http.Error(route.Response, "not content", http.StatusNoContent)
+				route.WriteJSON(http.StatusNoContent, ResponseError{Msg: "not content"})
 				return
 			}
-			payload, _ := json.Marshal(shift)
-			route.WriteJSON(http.StatusOK, payload)
+			route.WriteJSON(http.StatusOK, shift)
 
 		} else if req.URL.Query().Has("date") {
-			companyId := route.GetQuery("company")
-			date := route.GetQuery("date")
-			shift, err := model.GetDayShift(route.Request.Header.Get("Authorization"), companyId, date)
-			if err != nil {
-				http.Error(route.Response, "forbidden", http.StatusForbidden)
+			_, tokenErr := route.VerifyToken()
+			if tokenErr != nil {
+				route.WriteJSON(http.StatusForbidden, ResponseError{Msg: "forbidden"})
 				return
 			}
-			body, _ := json.Marshal(shift)
-			route.Response.Header().Add("Content-Type", "application/json")
-			route.Response.Write(body)
+			companyId := route.GetQuery("company")
+			date := route.GetQuery("date")
+			id := route.GetQuery("id")
+			shift, err := model.GetDayShift(id, companyId, date)
+			if err != nil {
+				route.WriteJSON(http.StatusForbidden, ResponseError{Msg: "forbidden"})
+				return
+			}
+			route.WriteJSON(http.StatusOK, shift)
 		}
 	})
 
 	route.POST(func() {
 		var payload PayloadStruct
-		json.Unmarshal(route.Payload, &payload)
-		err := model.CreateShift(payload.Payload)
+		if err := json.Unmarshal(route.Payload, &payload); err != nil {
+			route.WriteJSON(http.StatusForbidden, ResponseError{Msg: "forbidden"})
+		}
+		err := model.CreateShift(payload.Planning, payload.Company)
 		if err != nil {
-			route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
+			route.WriteJSON(http.StatusForbidden, ResponseError{Msg: "forbidden"})
 			return
 		}
-		route.WriteJSON(http.StatusOK, route.Payload)
+		route.WriteJSON(http.StatusOK, "kek")
 
 	})
 
@@ -73,10 +81,11 @@ var ShiftRoute = func(res http.ResponseWriter, req *http.Request) {
 		json.Unmarshal(route.Payload, &newShift)
 		err := model.ModifyShift(newShift.Shifts)
 		if err != nil {
-			http.Error(route.Response, "bad request", http.StatusBadRequest)
-		} else {
-			route.Response.Write([]byte("Success"))
+			route.WriteJSON(http.StatusBadRequest, ResponseError{Msg: "bad request"})
+			return
 		}
+		route.WriteJSON(http.StatusOK, ResponseError{Msg: "Success"})
+
 	})
 
 	route.DELETE(func() {
@@ -85,10 +94,10 @@ var ShiftRoute = func(res http.ResponseWriter, req *http.Request) {
 		}
 		json.Unmarshal(route.Payload, &delete)
 		if err := model.DeleteShift(delete.Id); err != nil {
-			http.Error(route.Response, "forbidden", http.StatusForbidden)
-		} else {
-			route.Response.Write([]byte("Success"))
+			route.WriteJSON(http.StatusForbidden, ResponseError{Msg: "forbidden"})
+			return
 		}
+		route.WriteJSON(http.StatusOK, ResponseError{Msg: "Success"})
 	})
 
 }

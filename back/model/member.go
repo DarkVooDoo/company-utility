@@ -8,20 +8,20 @@ import (
 	"work/util"
 )
 
-func GetMembers(companyId string) ([]byte, error) {
+func GetMembers(companyId string) ([]util.Member, error) {
 	db := db.DBInit()
 	var mId, mName, mRole, userId string
 	var members []util.Member = []util.Member{}
 	member, errMember := db.Query(`SELECT member_id, CONCAT(user_firstname, ' ', user_lastname), member_role, member_user_id FROM member LEFT JOIN Users ON user_id=member_user_id WHERE member_company_id=$1`, companyId)
 	if errMember != nil {
-		return nil, errors.New("error")
+		return []util.Member{}, errors.New("error")
 	}
 	for member.Next() {
 		member.Scan(&mId, &mName, &mRole, &userId)
 		members = append(members, util.Member{Id: mId, Name: mName, Role: mRole, UserId: userId})
 	}
 
-	return json.Marshal(members)
+	return members, nil
 }
 
 func ChangeMemberRole(member util.Role) error {

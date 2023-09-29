@@ -8,42 +8,47 @@ import (
 )
 
 var UserRoute = func(res http.ResponseWriter, req *http.Request) {
-	var router = Route{Request: req, Response: res, Cors: "http://localhost:3000"}
+	var route = Route{Request: req, Response: res, Cors: "http://localhost:3000"}
 
-	router.GET(func() {
-		userToken := req.Header.Get("Authorization")
-		profile, error := model.GetUserProfile(userToken)
-		body, err := json.Marshal(profile)
-		if err != nil || error != nil {
-			http.Error(res, "error from the server", http.StatusForbidden)
-		} else {
-			res.Header().Add("Content-Type", "application/json")
-			res.Write(body)
+	route.GET(func() {
+		user, err := route.VerifyToken()
+		if err != nil {
+			route.WriteJSON(http.StatusUnauthorized, ResponseError{Msg: "unauthorized"})
+			return
 		}
+		profile, er := model.GetUserProfile(user.User_id)
+		if er != nil {
+			route.WriteJSON(http.StatusForbidden, ResponseError{Msg: "forbidden"})
+			return
+		}
+		route.WriteJSON(http.StatusOK, profile)
+
 	})
 
-	router.POST(func() {
+	route.POST(func() {
 		var newUser util.CreateUserStruct
-		json.Unmarshal(router.Payload, &newUser)
+		json.Unmarshal(route.Payload, &newUser)
 		err := model.CreateUser(newUser)
 		if err != nil {
-			http.Error(res, "bad request", http.StatusBadRequest)
+			route.WriteJSON(http.StatusBadRequest, ResponseError{Msg: "bad request"})
 		} else {
 			res.Write([]byte("User created"))
 		}
 	})
 
-	router.PUT(func() {
-		var modifyUser util.UserProfile
-		userToken := req.Header.Get("Authorization")
-		json.Unmarshal(router.Payload, &modifyUser)
-		updateUser, err := model.ModifyProfile(modifyUser, userToken)
-		if err != nil {
-			http.Error(res, "Forbidden", http.StatusForbidden)
+	route.PUT(func() {
+		user, tokenErr := route.VerifyToken()
+		if tokenErr != nil {
+			route.WriteJSON(http.StatusUnauthorized, ResponseError{Msg: "unauthorized"})
 			return
 		}
-		payload, _ := json.Marshal(updateUser)
-		res.Header().Add("Content-Type", "application/json")
-		res.Write(payload)
+		var modifyUser util.UserProfile
+		json.Unmarshal(route.Payload, &modifyUser)
+		updateUser, err := model.ModifyProfile(modifyUser, user.User_id)
+		if err != nil {
+			route.WriteJSON(http.StatusForbidden, ResponseError{Msg: "bad request"})
+			return
+		}
+		route.WriteJSON(http.StatusOK, updateUser)
 	})
 }

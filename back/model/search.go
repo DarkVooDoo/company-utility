@@ -1,13 +1,12 @@
 package model
 
 import (
-	"encoding/json"
 	"errors"
 	"work/db"
 	"work/util"
 )
 
-func Search(search string) ([]byte, error) {
+func Search(search string) (util.SearchResult, error) {
 	db := db.DBInit()
 	var user []util.SearchStruct = []util.SearchStruct{}
 	var company []util.SearchStruct = []util.SearchStruct{}
@@ -15,7 +14,7 @@ func Search(search string) ([]byte, error) {
 	var userCount, companyCount uint
 	users, err := db.Query(`SELECT user_id, CONCAT(user_firstname, ' ', user_lastname), COUNT(user_id) FROM Users WHERE user_ts_search @@ to_tsquery('french', $1) GROUP BY user_id`, search)
 	if err != nil {
-		return nil, errors.New("Forbidden")
+		return util.SearchResult{}, errors.New("Forbidden")
 	}
 	for users.Next() {
 		users.Scan(&id, &name, &userCount)
@@ -23,7 +22,7 @@ func Search(search string) ([]byte, error) {
 	}
 	companys, errCompany := db.Query(`SELECT company_id, company_name, COUNT(company_id) FROM Company WHERE company_ts_search @@ to_tsquery('french', $1) GROUP BY company_id`, search)
 	if errCompany != nil {
-		return nil, errors.New("Forbidden")
+		return util.SearchResult{}, errors.New("Forbidden")
 	}
 	for companys.Next() {
 		companys.Scan(&id, &name, &companyCount)
@@ -35,6 +34,5 @@ func Search(search string) ([]byte, error) {
 		Users:        user,
 		Companys:     company,
 	}
-	body, _ := json.Marshal(result)
-	return body, nil
+	return result, nil
 }

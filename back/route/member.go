@@ -14,12 +14,12 @@ var MemberRoute = func(response http.ResponseWriter, request *http.Request) {
 		companyId := route.GetQuery("companyId")
 		_, tokenErr := route.VerifyToken()
 		if tokenErr != nil {
-			route.WriteJSON(http.StatusUnauthorized, []byte("unauthorized"))
+			route.WriteJSON(http.StatusUnauthorized, ResponseError{Msg: "unauthorized"})
 			return
 		}
 		body, err := model.GetMembers(companyId)
 		if err != nil {
-			route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
+			route.WriteJSON(http.StatusForbidden, ResponseError{Msg: "forbidden"})
 			return
 		}
 		route.WriteJSON(http.StatusOK, body)
@@ -29,12 +29,15 @@ var MemberRoute = func(response http.ResponseWriter, request *http.Request) {
 		var newMember util.NewMember
 		user, err := route.VerifyToken()
 		if err != nil {
-			route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
+			route.WriteJSON(http.StatusForbidden, ResponseError{Msg: "forbidden"})
 			return
 		}
 		json.Unmarshal(route.Payload, &newMember)
-		model.AddNewMember(user.User_id, newMember)
-		route.WriteJSON(http.StatusOK, []byte("Success"))
+		_, er := model.AddNewMember(user.User_id, newMember)
+		if er != nil {
+			route.WriteJSON(http.StatusBadRequest, ResponseError{Msg: "bad request"})
+		}
+		route.WriteJSON(http.StatusOK, ResponseError{Msg: "Success"})
 
 	})
 
@@ -42,10 +45,10 @@ var MemberRoute = func(response http.ResponseWriter, request *http.Request) {
 		var payload util.Role
 		json.Unmarshal(route.Payload, &payload)
 		if err := model.ChangeMemberRole(payload); err != nil {
-			route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
+			route.WriteJSON(http.StatusForbidden, ResponseError{Msg: "forbidden"})
 			return
 		}
-		route.WriteJSON(http.StatusOK, []byte("Success"))
+		route.WriteJSON(http.StatusOK, ResponseError{Msg: "Success"})
 
 	})
 
@@ -57,6 +60,6 @@ var MemberRoute = func(response http.ResponseWriter, request *http.Request) {
 		}
 		json.Unmarshal(route.Payload, &memberDelete)
 		model.DeleteMember(user.User_id, memberDelete)
-		route.WriteJSON(http.StatusOK, []byte("Success"))
+		route.WriteJSON(http.StatusOK, ResponseError{Msg: "Success"})
 	})
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 	"work/route"
 )
@@ -36,10 +37,28 @@ func main() {
 		Handler:     mux,
 		IdleTimeout: time.Second * 10,
 	}
+	go cronJob("0", "0", "*", "*", "*")
 	if err := s.ListenAndServe(); err != nil {
 		log.Fatal("server crash")
 	}
-	log.Println("Server Started PORT" + PORT)
+}
+
+func cronJob(minute string, hour string, monthDay string, month string, weekDay string) {
+	for {
+		time.Sleep(time.Minute * 1)
+		date := time.Now()
+		if weekDay == strconv.Itoa(int(date.Weekday())) || weekDay == "*" {
+			if weekDay == strconv.Itoa(int(date.Month())) || month == "*" {
+				if monthDay == strconv.Itoa(date.Day()) || monthDay == "*" {
+					if hour == strconv.Itoa(date.Hour()) || hour == "*" {
+						if minute == strconv.Itoa(date.Minute()) || minute == "*" {
+							log.Println(date.Format(time.DateTime))
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 // func tcpTest() {

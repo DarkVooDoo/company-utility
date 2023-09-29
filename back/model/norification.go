@@ -1,12 +1,12 @@
 package model
 
 import (
-	"encoding/json"
+	"errors"
 	"work/db"
 	"work/util"
 )
 
-func GetNotifications(userToken string) []byte {
+func GetNotifications(userToken string) []util.Notification {
 	user, tokenErr := IsTokenValid(userToken)
 	if tokenErr != nil {
 		return nil
@@ -23,15 +23,14 @@ func GetNotifications(userToken string) []byte {
 		formatedDate := "Il y a " + util.GetFormatedDate(date)
 		myNotification = append(myNotification, util.Notification{Id: id, Message: message, Date: formatedDate})
 	}
-	body, _ := json.Marshal(myNotification)
-	return body
+	return myNotification
 }
 
-func DeleteNotification(id string) []byte {
+func DeleteNotification(id string) error {
 	db := db.DBInit()
 	_, err := db.Exec(`DELETE FROM Alert WHERE alert_id=$1`, id)
 	if err != nil {
-		return nil
+		return errors.New("error")
 	}
-	return []byte("Success")
+	return nil
 }

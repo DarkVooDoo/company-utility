@@ -8,33 +8,39 @@ import (
 )
 
 func HolydayRoute(res http.ResponseWriter, req *http.Request) {
-	var route = Route{Request: req, Response: res, Cors: "http://localhost:3000"}
+	var route = Route{Request: req, Response: res, Cors: "http://localhost:5173"}
 
 	route.GET(func() {
 		if route.Request.URL.Query().Has("companyId") {
-			companyId := route.GetQuery("companyId")
-			userToken := route.Request.Header.Get("Authorization")
-			holyday, err := model.GetEmployeeHolydays(companyId, userToken)
-			if err != nil {
-				route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
+			user, tokenErr := route.VerifyToken()
+			if tokenErr != nil {
+				route.WriteJSON(http.StatusUnauthorized, ResponseError{Msg: "unauthorized"})
 				return
 			}
-			body, _ := json.Marshal(holyday)
-			route.WriteJSON(http.StatusOK, body)
+			companyId := route.GetQuery("companyId")
+			holyday, err := model.GetEmployeeHolydays(companyId, user.User_id)
+			if err != nil {
+				route.WriteJSON(http.StatusForbidden, ResponseError{Msg: "forbidden"})
+				return
+			}
+			route.WriteJSON(http.StatusOK, holyday)
 		}
 	})
 
 	route.POST(func() {
-		userToken := route.Request.Header.Get("Authorization")
-		var requestPayload util.HolydayRequestPayload
-		json.Unmarshal(route.Payload, &requestPayload)
-		holyday, err := model.RequestHolyday(userToken, requestPayload)
-		if err != nil {
-			route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
+		user, tokenErr := route.VerifyToken()
+		if tokenErr != nil {
+			route.WriteJSON(http.StatusUnauthorized, []byte("unauthorized"))
 			return
 		}
-		payload, _ := json.Marshal(holyday)
-		route.WriteJSON(http.StatusOK, payload)
+		var requestPayload util.HolydayRequestPayload
+		json.Unmarshal(route.Payload, &requestPayload)
+		holyday, err := model.RequestHolyday(user.User_id, requestPayload)
+		if err != nil {
+			route.WriteJSON(http.StatusForbidden, ResponseError{Msg: "forbidden"})
+			return
+		}
+		route.WriteJSON(http.StatusOK, holyday)
 	})
 
 	route.DELETE(func() {
@@ -43,29 +49,28 @@ func HolydayRoute(res http.ResponseWriter, req *http.Request) {
 		}
 		json.Unmarshal(route.Payload, &payload)
 		if err := model.DeleteHolyday(payload.Id); err != nil {
-			route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
+			route.WriteJSON(http.StatusForbidden, ResponseError{Msg: "forbidden"})
 			return
 		}
-		route.WriteJSON(http.StatusOK, []byte("Success"))
+		route.WriteJSON(http.StatusOK, ResponseError{Msg: "Success"})
 	})
 
 	route.PUT(func() {
 		var payload struct {
 			Id   string `json:"id"`
 			Type string `json:"type"`
-			User string `json:"userId"`
 		}
 		json.Unmarshal(route.Payload, &payload)
 		if payload.Type == "reject" {
-			if err := model.RejectHolyday(payload.Id, payload.User); err != nil {
-				route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
+			if err := model.RejectHolyday(payload.Id); err != nil {
+				route.WriteJSON(http.StatusForbidden, ResponseError{Msg: "forbidden"})
 			}
 			return
 		}
-		if err := model.AcceptHolyday(payload.Id, payload.User); err != nil {
-			route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
-
+		if err := model.AcceptHolyday(payload.Id); err != nil {
+			route.WriteJSON(http.StatusForbidden, ResponseError{Msg: "forbidden"})
+			return
 		}
-		route.WriteJSON(http.StatusOK, []byte("Success"))
+		route.WriteJSON(http.StatusOK, ResponseError{Msg: "Success"})
 	})
 }

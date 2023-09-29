@@ -20,34 +20,38 @@ func ProRoute(res http.ResponseWriter, req *http.Request) {
 		if req.URL.Query().Has("companyId") {
 			company, err := model.GetSingleEntreprise(req.URL.Query().Get("companyId"), userToken)
 			if err != nil {
-				route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
+				route.WriteJSON(http.StatusForbidden, ResponseError{Msg: "forbidden"})
 				return
 			}
-			body, _ := json.Marshal(company)
-			route.WriteJSON(http.StatusOK, body)
+			route.WriteJSON(http.StatusOK, company)
 
 		} else if req.URL.Query().Has("type") {
 			cType := req.URL.Query().Get("type")
 			company, err := model.GetEntreprises(userToken, cType)
 			if err != nil {
-				route.WriteJSON(http.StatusOK, []byte("forbidden"))
+				route.WriteJSON(http.StatusBadRequest, ResponseError{Msg: "bad request"})
 				return
 			}
-			body, _ := json.Marshal(company)
-			route.WriteJSON(http.StatusOK, body)
+			route.WriteJSON(http.StatusOK, company)
 
 		}
 	})
 
 	route.POST(func() {
+		user, tokenError := route.VerifyToken()
+		if tokenError != nil {
+			route.WriteJSON(http.StatusUnauthorized, ResponseError{Msg: "unauthorized"})
+			return
+		}
 		var companyData util.CreateCompany
-		token := req.Header.Get("Authorization")
 		json.Unmarshal(route.Payload, &companyData)
-		err := model.CreateCompany(companyData, token)
+		err := model.CreateCompany(companyData, user.User_id)
 		if err != nil {
-			http.Error(res, "error creating company", http.StatusBadRequest)
+			route.WriteJSON(http.StatusBadRequest, ResponseError{Msg: "bad request"})
+			return
 		} else {
-			res.Write([]byte("Success"))
+			route.WriteJSON(http.StatusOK, ResponseError{Msg: "Success"})
+
 		}
 	})
 

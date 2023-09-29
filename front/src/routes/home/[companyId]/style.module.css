@@ -1,0 +1,211 @@
+.landpage_shiftHeader{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.landpage_shiftHeader_text{
+    font-size: 1.2rem;
+}
+
+.landpage_shiftHeader_link{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--Primary-Color);
+    padding: .5rem;
+    border-radius: 5px;
+    gap: .3rem;
+}
+
+.landpage_shiftHeader_link_arrow{
+    width: 1rem;
+    height: 1rem;
+    transform: rotate(180deg);
+}
+
+.landpage_shift{
+    padding: 1rem;
+    border-radius: 10px;
+    background-color: var(--Primary-Color);
+    margin: var(--Row-Margin) 0;
+}
+
+.landpage_shift_date{
+    display: grid;
+    grid-template-columns: 1fr 3fr; 
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid black;
+    margin-bottom: var(--Row-Margin);
+    padding: .5rem 0;
+}
+
+.landpage_shift_date_day{
+    margin-bottom: var(--Row-Margin);
+}
+
+.landpage_shift_date_startShift{
+    height: 2rem;
+    width: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+}
+
+.landpage_shift_date_startShift_icon{
+    height: 1.5rem;
+    width: 1.5rem;
+}
+
+.landpage_shift_time{
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--Row-Margin);
+}
+
+.shift_time_content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.shift_time_content_icon{
+    height: 3rem;
+    width: 3rem;
+}
+
+
+.user_actions{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: .5rem;
+    justify-content: center;
+}
+
+.user_actions_box{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 6rem;
+    width: 100%;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+
+
+/* HolyDay */
+
+.holyday > *{
+    margin-bottom: var(--Row-Margin);    
+}
+
+.holyday_header{
+    display: flex;
+    justify-content: space-between;
+}
+
+.holyday_header_text{
+    font-size: 1.2rem;
+}
+
+.holyday_header_btn{
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+    border: 2px solid var(--Primary-Color);
+    padding: .5rem;
+    border-radius: 5px;
+}
+
+.holyday_header_btn_arrow{
+    width: 1rem;
+    height: 1rem;
+    transform: rotate(180deg);
+}
+
+.holyday_nocontent{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.holyday_nocontent{
+    height: 5rem;
+    border-radius: 10px;
+    border: 2px solid var(--Primary-Color);
+}
+
+.holyday_dialog{
+    margin: auto;
+    border-radius: 10px;
+    padding: .5rem;
+}
+
+.holyday_dialog_form > *{
+    margin-bottom: var(--Row-Margin);
+}
+
+.holyday_type{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: .5rem;
+}
+
+.holyday_dialog_radio{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+.holyday_dialog_radio_label{
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.holyday_dialog_radio_infoBtn{
+    position: relative;
+    height: 1rem;
+    width: 1rem;
+    background-color: lightgray;
+    border-radius: 50%;
+}
+
+
+.holyday_dialog_radio_infoBtn::after{
+    content: attr(data-title);
+    position: absolute;
+    left: 10px;
+    top: 1.1rem;
+    width: 20ch;
+    height: 4rem;
+    background-color: rgba(0, 0, 0, 1);
+    color: white;
+    text-align: left;
+    padding: .3rem;
+    border-radius: 5px;
+    overflow: scroll;
+    display: none;
+    z-index: 11;
+    
+}
+
+.holyday_dialog_radio_infoBtn:hover::after {
+    display: block;
+}
+
+.holyday_dialog_sendBtn{
+    padding: .7rem;
+    background-color: var(--Primary-Color);
+    border-radius: 5px;
+    float: right;
+}

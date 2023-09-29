@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log"
 	"strconv"
+	"strings"
 	"work/db"
 	"work/util"
 )
@@ -102,7 +103,44 @@ type AccumulateHours struct {
 	Salary  float64               `json:"salary"`
 }
 
-func GetAccumulateHours(companyId string, from string, to string, userId string) (AccumulateHours, error) {
+func GetAccumulateHours(companyId string, date string, userId string) (AccumulateHours, error) {
+	var id, name, start, day, end, hourId string
+	var seconds, worth float64
+	var sumHours map[string]AccumulateHours = map[string]AccumulateHours{}
+	var payrolls AccumulateHours = AccumulateHours{}
+	var shiftByDay map[string][]DayShift = map[string][]DayShift{}
+	var yearMonth = strings.Split(date, "-")
+	db := db.DBInit()
+	employees, err := db.Query(`SELECT user_id, hour_id, 
+	TO_CHAR(hour_start AT TIME ZONE 'utc' AT TIME ZONE 'Europe/Paris', 'HH24:MI'), 
+	TO_CHAR(hour_end AT TIME ZONE 'utc' AT TIME ZONE 'Europe/Paris', 'HH24:MI'), 
+	TO_CHAR(hour_start, 'DD-MM'), 
+	CONCAT(user_firstname, ' ', user_lastname), EXTRACT(EPOCH FROM AGE(hour_end, hour_start)), hour_worth FROM Tracker RIGHT JOIN Hour 
+	ON hour_tracker_id=tracker_id RIGHT JOIN Users ON user_id=tracker_user_id WHERE tracker_state='Finis' AND tracker_company_id=$1 AND EXTRACT('MONTH' FROM hour_start) = $2 AND user_id=$3`, companyId, yearMonth[1], userId)
+	if err != nil {
+		return AccumulateHours{}, errors.New("error")
+	}
+	for employees.Next() {
+		employees.Scan(&id, &hourId, &start, &end, &day, &name, &seconds, &worth)
+		shiftByDay[day] = append(shiftByDay[day], DayShift{Id: hourId, Start: start, End: end, Day: day})
+		sumHours[id] = AccumulateHours{
+			Name:    name,
+			Seconds: uint(seconds) + sumHours[id].Seconds,
+			Shift:   shiftByDay,
+			Total:   SecondsFormatted(uint(seconds) + sumHours[id].Seconds),
+			Salary:  util.RoundFloat((worth/(60*60))*(float64(seconds)+float64(sumHours[id].Seconds)), 2),
+		}
+	}
+	if len(sumHours) == 0 {
+		return AccumulateHours{Name: name, Seconds: 0, Total: "", Shift: map[string][]DayShift{}, Salary: 0}, nil
+	}
+	for _, value := range sumHours {
+		payrolls = value
+	}
+	return payrolls, nil
+}
+
+func GetAccumulateHoursFromTo(companyId string, from string, to string, userId string) (AccumulateHours, error) {
 	var id, name, start, day, end, hourId string
 	var seconds, worth float64
 	var sumHours map[string]AccumulateHours = map[string]AccumulateHours{}

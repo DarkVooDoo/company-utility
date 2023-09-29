@@ -7,11 +7,11 @@ import (
 )
 
 var NotificationRoute = func(response http.ResponseWriter, request *http.Request) {
-	var route = &Route{Response: response, Request: request, Cors: "http://localhost:3000"}
+	var route = &Route{Response: response, Request: request, Cors: "http://localhost:5173"}
 	route.GET(func() {
 		notif := model.GetNotifications(request.Header.Get("Authorization"))
 		if notif == nil {
-			route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
+			route.WriteJSON(http.StatusForbidden, ResponseError{Msg: "forbidden"})
 			return
 		}
 		route.WriteJSON(http.StatusOK, notif)
@@ -22,6 +22,10 @@ var NotificationRoute = func(response http.ResponseWriter, request *http.Request
 			Id string `json:"id"`
 		}
 		json.Unmarshal(route.Payload, &deletePayload)
-		response.Write(model.DeleteNotification(deletePayload.Id))
+		if err := model.DeleteNotification(deletePayload.Id); err != nil {
+			route.WriteJSON(http.StatusBadRequest, ResponseError{Msg: "bad request"})
+			return
+		}
+		route.WriteJSON(http.StatusOK, ResponseError{Msg: "Success"})
 	})
 }

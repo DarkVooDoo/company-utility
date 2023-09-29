@@ -16,16 +16,24 @@ type TodayShift struct {
 }
 
 type ShiftStruct struct {
+	User_id     string `json:"user_id"`
+	User_name   string `json:"user_name"`
+	Shift_id    string `json:"shift_id"`
+	Shift_date  string `json:"shift_date"`
+	Shift_start string `json:"shift_start"`
+	Shift_end   string `json:"shift_end"`
+	Shift_day   uint16 `json:"shift_day"`
+	Shift_month uint16 `json:"shift_month"`
+	Shift_pause uint16 `json:"shift_pause"`
+}
+
+type CreateShift struct {
 	User_id     string   `json:"user_id"`
 	User_name   string   `json:"user_name"`
-	Shift_id    string   `json:"shift_id"`
 	Shift_date  []string `json:"shift_date"`
 	Shift_start string   `json:"shift_start"`
 	Shift_end   string   `json:"shift_end"`
-	Shift_day   uint16   `json:"shift_day"`
-	Shift_month uint16   `json:"shift_month"`
-	Shift_pause uint16   `json:"shift_pause"`
-	Company_id  string   `json:"company_id"`
+	Shift_pause uint     `json:"shift_pause"`
 }
 
 type NewShiftCalendarPayload struct {
@@ -53,9 +61,9 @@ type CreateCompany struct {
 }
 
 type CompanyUser struct {
-	User_id   string `json:"user_id"`
-	User_name string `json:"user_name"`
-	User_role string `json:"user_role"`
+	User_id   string `json:"id"`
+	User_name string `json:"name"`
+	User_role string `json:"role"`
 }
 
 type Company struct {

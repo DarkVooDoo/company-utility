@@ -7,20 +7,29 @@ import (
 )
 
 var PayrollRoute = func(res http.ResponseWriter, req *http.Request) {
-	route := Route{Response: res, Request: req, Cors: "http://localhost:3000"}
+	route := Route{Response: res, Request: req, Cors: "http://localhost:5173"}
 
 	route.GET(func() {
 		companyId := route.GetQuery("companyId")
-		from := route.GetQuery("from")
-		to := route.GetQuery("to")
 		userId := route.GetQuery("uId")
-		hours, err := model.GetAccumulateHours(companyId, from, to, userId)
-		if err != nil {
-			route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
-			return
+		if req.URL.Query().Has("date") {
+			date := route.GetQuery("date")
+			hours, err := model.GetAccumulateHours(companyId, date, userId)
+			if err != nil {
+				route.WriteJSON(http.StatusForbidden, ResponseError{Msg: "forbidden"})
+				return
+			}
+			route.WriteJSON(http.StatusOK, hours)
+		} else {
+			from := route.GetQuery("from")
+			to := route.GetQuery("to")
+			hours, err := model.GetAccumulateHoursFromTo(companyId, from, to, userId)
+			if err != nil {
+				route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
+				return
+			}
+			route.WriteJSON(http.StatusOK, hours)
 		}
-		body, _ := json.Marshal(hours)
-		route.WriteJSON(http.StatusOK, body)
 
 	})
 
@@ -30,9 +39,9 @@ var PayrollRoute = func(res http.ResponseWriter, req *http.Request) {
 		}
 		json.Unmarshal(route.Payload, &hour)
 		if err := model.DeleteHour(hour.Id); err != nil {
-			route.WriteJSON(http.StatusForbidden, []byte("forbidden"))
+			route.WriteJSON(http.StatusForbidden, ResponseError{Msg: "forbidden"})
 		}
-		route.Response.Write([]byte("success"))
+		route.WriteJSON(http.StatusOK, ResponseError{Msg: "Success"})
 	})
 
 }

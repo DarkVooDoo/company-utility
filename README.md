@@ -10,6 +10,7 @@
     - Team talk
     - recevoir des messages
     - logger
+    - Api Key
     - rapport bug and gain 1 month premium access
 
 

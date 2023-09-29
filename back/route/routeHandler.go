@@ -1,6 +1,7 @@
 package route
 
 import (
+	"encoding/json"
 	"errors"
 	"io"
 	"net/http"
@@ -14,9 +15,13 @@ import (
 
 type HandlerInterface interface {
 	GET(handler func())
-	POST(handler func(payload []byte))
-	PUT(handler func(payload []byte))
-	DELETE(handler func(payload []byte))
+	POST(handler func())
+	PUT(handler func())
+	DELETE(handler func())
+}
+
+type ResponseError struct {
+	Msg string
 }
 
 type Route struct {
@@ -31,9 +36,10 @@ func (r *Route) GetQuery(name string) string {
 	return r.Request.URL.Query().Get(name)
 }
 
-func (r *Route) WriteJSON(status int, body []byte) {
+func (r *Route) WriteJSON(status int, st interface{}) {
 	r.Response.WriteHeader(status)
 	r.Response.Header().Add("Content-Type", "application/json")
+	body, _ := json.Marshal(st)
 	r.Response.Write(body)
 }
 

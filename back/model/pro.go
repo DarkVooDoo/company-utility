@@ -2,7 +2,6 @@ package model
 
 import (
 	"errors"
-	"log"
 	"work/db"
 	"work/util"
 )
@@ -18,17 +17,13 @@ type Pro struct {
 	ProInterface
 }
 
-func CreateCompany(company util.CreateCompany, userToken string) error {
-	user, tokenError := VerifyToken(userToken)
-	if tokenError != nil {
-		return errors.New("token error")
-	}
+func CreateCompany(company util.CreateCompany, userId string) error {
 	db := db.DBInit()
 	tx, _ := db.Begin()
-	result := tx.QueryRow(`INSERT INTO Company (company_name, company_adresse, company_postal, company_user_id) VALUES($1,$2,$3,$4) RETURNING company_id`, company.Name, company.Adresse, company.Postal, user.User_id)
+	result := tx.QueryRow(`INSERT INTO Company (company_name, company_adresse, company_postal, company_user_id) VALUES($1,$2,$3,$4) RETURNING company_id`, company.Name, company.Adresse, company.Postal, userId)
 	var companyId string
 	scanError := result.Scan(&companyId)
-	_, err := tx.Exec(`INSERT INTO Member (member_role, member_user_id, member_company_id) VALUES ($1, $2, $3)`, "Boss", user.User_id, companyId)
+	_, err := tx.Exec(`INSERT INTO Member (member_role, member_user_id, member_company_id) VALUES ($1, $2, $3)`, "Boss", userId, companyId)
 	if err != nil || scanError != nil {
 		tx.Rollback()
 		return errors.New("error creating company")
@@ -48,7 +43,7 @@ func GetEntreprises(userToken string, requestType string) ([]util.Company, error
 	if requestType == "Profile" {
 		company, err := db.Query(`SELECT company_id, company_name, company_adresse, company_postal FROM Company WHERE company_user_id=$1`, user.User_id)
 		if err != nil {
-			log.Println(err)
+			// log.Println(err)
 			return myCompany, errors.New("error")
 		} else {
 			for company.Next() {
@@ -60,7 +55,7 @@ func GetEntreprises(userToken string, requestType string) ([]util.Company, error
 	} else {
 		company, err := db.Query(`SELECT company_id, company_name, company_adresse, company_postal FROM Member LEFT JOIN Company ON member_company_id=company_id WHERE member_user_id=$1`, user.User_id)
 		if err != nil {
-			log.Println(err)
+			// log.Println(err)
 			return myCompany, errors.New("error")
 		} else {
 			for company.Next() {

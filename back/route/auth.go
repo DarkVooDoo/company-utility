@@ -12,11 +12,10 @@ func AuthRoute(res http.ResponseWriter, req *http.Request) {
 	route.GET(func() {
 		user, err := route.VerifyToken()
 		if err != nil {
-			route.WriteJSON(http.StatusUnauthorized, []byte("unauthorized"))
+			route.WriteJSON(http.StatusUnauthorized, ResponseError{Msg: "unauthorized"})
 			return
 		}
-		body, _ := json.Marshal(user)
-		route.WriteJSON(http.StatusOK, body)
+		route.WriteJSON(http.StatusOK, user)
 
 	})
 
@@ -25,11 +24,10 @@ func AuthRoute(res http.ResponseWriter, req *http.Request) {
 		json.Unmarshal(route.Payload, &user)
 		returnedUser, err := model.SignInUser(user)
 		if err != nil {
-			route.WriteJSON(http.StatusBadRequest, []byte("request error"))
+			route.WriteJSON(http.StatusBadRequest, ResponseError{Msg: "bad request"})
 			return
 		}
-		payload, _ := json.Marshal(returnedUser)
-		route.WriteJSON(http.StatusOK, payload)
+		route.WriteJSON(http.StatusOK, returnedUser)
 
 	})
 }
