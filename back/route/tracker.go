@@ -34,6 +34,7 @@ func TrackerRoute(response http.ResponseWriter, request *http.Request) {
 	})
 
 	route.POST(func() {
+
 		user, errToken := route.VerifyToken()
 		if errToken != nil {
 			route.WriteJSON(http.StatusUnauthorized, ResponseError{Msg: "unauthorized"})

@@ -1,7 +1,6 @@
 package model
 
 import (
-	"encoding/json"
 	"errors"
 	"log"
 	"strconv"
@@ -10,16 +9,15 @@ import (
 	"work/util"
 )
 
-func GetCurrentShift(userId string, companyId string) ([]byte, error) {
+func GetCurrentShift(userId string, companyId string) (util.CurrentShiftStatus, error) {
 	var id, state, hourId string
 	db := db.DBInit()
 	row := db.QueryRow(`SELECT tracker_id, tracker_state, hour_id FROM Tracker LEFT JOIN Hour ON tracker_id=hour_tracker_id WHERE tracker_state=$1 OR hour_end IS NULL OR tracker_state=$2 AND tracker_user_id=$3 AND tracker_company_id=$4`, "En Cours", "En Pause", userId, companyId)
 	if err := row.Scan(&id, &state, &hourId); err != nil {
-		return []byte(""), errors.New("error")
+		return util.CurrentShiftStatus{}, errors.New("error")
 	}
 	shift := util.CurrentShiftStatus{Id: id, State: state, HourId: hourId}
-	body, _ := json.Marshal(shift)
-	return body, nil
+	return shift, nil
 }
 
 func UpdateCurrentShift(userId string, shift util.UpdateCurrentShift) error {
@@ -33,7 +31,7 @@ func UpdateCurrentShift(userId string, shift util.UpdateCurrentShift) error {
 	if shift.Shift != "" {
 		if shift.State == "En Pause" {
 			tx.Exec(`UPDATE Tracker SET tracker_state=$1 WHERE tracker_id=$2`, "En Cours", shift.Shift)
-			tx.Exec(`INSERT INTO Hour (hour_start, hour_worth, hour_tracker_id) VALUES(NOW(),$1)`, salary, shift.Shift)
+			tx.Exec(`INSERT INTO Hour (hour_start, hour_worth, hour_tracker_id) VALUES(NOW(),$1, $2)`, salary, shift.Shift)
 			tx.Commit()
 			return nil
 		}

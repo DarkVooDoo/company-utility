@@ -55,4 +55,21 @@ func ProRoute(res http.ResponseWriter, req *http.Request) {
 		}
 	})
 
+	route.DELETE(func() {
+		var delete struct {
+			Id string `json:"id"`
+		}
+		_, err := route.VerifyToken()
+		if err != nil {
+			route.WriteJSON(http.StatusUnauthorized, ResponseError{Msg: "unauthorized"})
+			return
+		}
+		json.Unmarshal(route.Payload, &delete)
+		if err := model.DeleteCompany(delete.Id); err != nil {
+			route.WriteJSON(http.StatusBadRequest, ResponseError{Msg: "bad request"})
+			return
+		}
+		route.WriteJSON(http.StatusOK, []byte("Success"))
+	})
+
 }

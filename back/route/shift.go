@@ -52,7 +52,7 @@ var ShiftRoute = func(res http.ResponseWriter, req *http.Request) {
 			}
 			companyId := route.GetQuery("company")
 			date := route.GetQuery("date")
-			id := route.GetQuery("id")
+			id := route.GetQuery("userId")
 			shift, err := model.GetDayShift(id, companyId, date)
 			if err != nil {
 				route.WriteJSON(http.StatusForbidden, ResponseError{Msg: "forbidden"})

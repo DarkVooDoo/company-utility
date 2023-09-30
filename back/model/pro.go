@@ -104,3 +104,12 @@ func CompanyEmployee(companyId string) ([]util.CompanyUser, error) {
 	}
 	return companyUser, nil
 }
+
+func DeleteCompany(id string) error {
+	db := db.DBInit()
+	_, err := db.Exec(`DELETE FROM Company WHERE company_id=$1`, id)
+	if err != nil {
+		return errors.New("error")
+	}
+	return nil
+}
