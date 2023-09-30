@@ -58,7 +58,7 @@ const Profile = component$(()=>{
                     <input class={style.profile_input_ele} required type="number" name="postal" id="postal" autoComplete="off" value={prof.value.postal} />
                 </div>
                 {/* <button class={style.button} type="submit" disabled={modifyProfile.isRunning ? true : false}>Modifier {modifyProfile.isRunning && <Loading alt="loading" class={style.btn_loading} />}</button> */}
-                <ButtonWithState {...{className: style.button, state: modifyProfile.isRunning, text: "Modifier", type: "submit"}} />
+                <ButtonWithState {...{clasStyle: style.button, state: modifyProfile.isRunning, text: "Modifier", type: "submit"}} />
                 {/* {notification && <PopupAlert {...{...notification, onAnimationEnd: ()=>{
                     setNotification(undefined)
                 }}} />} */}

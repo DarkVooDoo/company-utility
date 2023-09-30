@@ -9,7 +9,6 @@
 }
 
 .calendar{
-    position: relative;
     width: 20rem;
     background-color: lightgray;
     border-radius: 10px;
@@ -72,3 +71,6 @@
     background-color: black;
 }
 
+.disabledDay:disabled{
+    color: darkgray
+}

@@ -1,8 +1,7 @@
-import { Slot, component$, useSignal, $, QwikMouseEvent } from "@builder.io/qwik"
-import { Link, routeAction$, routeLoader$, z, zod$ } from "@builder.io/qwik-city"
+import { Slot, component$, useSignal, $, type QwikMouseEvent } from "@builder.io/qwik"
+import { DocumentHead, Link, routeLoader$} from "@builder.io/qwik-city"
 
 import style from "./style.module.css"
-import { BACKEND_HOST } from "~/lib/util"
 
 const LINKS = [
     {
@@ -60,5 +59,9 @@ const ProfileLayout = component$(()=>{
         </div>
     )
 })
+
+export const head:DocumentHead ={
+    title: "Profile"
+}
 
 export default ProfileLayout

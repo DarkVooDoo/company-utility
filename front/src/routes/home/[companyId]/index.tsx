@@ -1,15 +1,16 @@
 import { component$, useSignal, $ } from "@builder.io/qwik"
-import { Link, routeLoader$} from "@builder.io/qwik-city"
+import { Form, Link, routeAction$, routeLoader$} from "@builder.io/qwik-city"
 import { BACKEND_HOST, MONTH, closeDialogOnBackdropClick } from "~/lib/util"
 
 import Left from "~/media/left-arrow.webp?jsx"
+import Start from "~/media/start.webp?jsx"
 
 import style from "./style.module.css"
 
 import UserHolydayCard from "~/components/UserHolydayCard/component"
 import Calendar from "~/components/Calendar/component"
 import { useRequestHolyday } from "../layout"
-import { Holyday } from "~/lib/types"
+import type { CurrentShift, Holyday } from "~/lib/types"
 
 const INFOS = {
     paye: `Vous bénéficiez des congés payés quel que soit votre contrat de travail 
@@ -44,10 +45,69 @@ export const useGetMyHolydays = routeLoader$(async(req)=>{
     return []
 })
 
+export const useGetCurrentShift = routeLoader$(async(req):Promise<CurrentShift | undefined>=>{
+    const token = req.cookie.get("auth-token")?.value
+    const companyId = req.cookie.get("company-id")?.value
+    if (!token || !companyId) return
+    const shift = await fetch(`${BACKEND_HOST}:5000/api/tracker?companyId=${companyId}`,{
+        headers: [["Authorization", token]]
+    })
+    if (shift.status == 200){
+        const currentShift = await shift.json() as CurrentShift
+        return currentShift
+    }
+    return undefined
+    
+})
+
+export const useStartShift = routeAction$(async (form, req)=>{
+    const companyId = req.cookie.get("company-id")?.value
+    const token = req.cookie.get("auth-token")?.value
+    const {shift, id: shiftId, state, hourId} = form
+    console.log(shiftId, shift, state, hourId)
+    if(token){
+        await fetch(`http://localhost:5000/api/tracker`,{
+            method: "POST",
+            headers: [["Content-Type", "application/json"], ["Authorization", token]],
+            body: JSON.stringify({companyId, state: shift ?  undefined : state, shiftId: shift ? undefined : shiftId, hourId: shift ? undefined : hourId})
+        })
+    }
+})
+
+export const useEndShift = routeAction$(async(form, req)=>{
+    const companyId = req.cookie.get("company-id")?.value
+    const token = req.cookie.get("auth-token")?.value
+    const {id: shiftId, state, hourId} = form
+    if(token){
+        await fetch(`http://localhost:5000/api/tracker`,{
+            method: "POST",
+            headers: [["Content-Type", "application/json"], ["Authorization", token]],
+            body: JSON.stringify({companyId, shiftId, hourId, state})
+        })
+    }
+})
+
+export const usePauseShift = routeAction$(async(form, req)=>{
+    const companyId = req.cookie.get("company-id")?.value
+    const token = req.cookie.get("auth-token")?.value
+    const {id: shiftId, hourId} = form
+    if(token){
+        await fetch(`http://localhost:5000/api/tracker`,{
+            method: "PUT",
+            headers: [["Content-Type", "application/json"], ["Authorization", token]],
+            body: JSON.stringify({companyId, shiftId, hourId})
+        })
+    }
+})
+
 const Home = component$(()=>{
     const requestHolyday = useRequestHolyday()
     const holyday = useGetMyHolydays()
+    const startShift = useStartShift()
+    const pauseShift = usePauseShift()
+    const endShift = useEndShift()
     const todayShift = useGetTodayShift()
+    const currentShift = useGetCurrentShift()
     const dialogRef = useSignal<HTMLDialogElement>()
     const holydayType = useSignal<string>()
     const dates = useSignal<string[]>([])
@@ -116,53 +176,53 @@ const Home = component$(()=>{
                     </div>
                 </div>
                 <div style={{display: "flex", justifyContent: "space-between"}}>
-                    {/* {!currentShift ?
-                        <form action={onStartShift}>
+                    {!currentShift.value ?
+                        <Form action={startShift}>
                             <button type="submit" name="shift" 
                                 value={undefined} 
                                 class={style.landpage_shift_date_startShift}>
                                     <h4>Start</h4>
-                                    <Image src={start} alt="commencer" class={style.landpage_shift_date_startShift_icon} />
+                                    <Start alt="commencer" class={style.landpage_shift_date_startShift_icon} />
                             </button>
-                        </form> : <div style={{display: "flex", gap: "1rem"}}>
-                            {currentShift.state == "En Pause" ? <>
-                                <form action={onStartShift}>
-                                    <button type="submit" name="shift" class={style.landpage_shift_date_startShift}
-                                    value={[currentShift.id, currentShift.hourId, currentShift.state]}>
+                        </Form> : <div style={{display: "flex", gap: "1rem"}}>
+                            {currentShift.value.state == "En Pause" ? <>
+                                    <button name="shift" class={style.landpage_shift_date_startShift} onClick$={ ()=>{
+                                        console.log(currentShift.value)
+                                         startShift.submit({...currentShift.value})
+                                    }}>
                                         Reprendre
                                     </button>
-                                </form>
-                                <form action={onEndShift}>
-                                    <button name="shift" class={style.landpage_shift_date_startShift}
-                                    value={[currentShift.id, currentShift.hourId, currentShift.state]}>
+                                    <button name="shift" class={style.landpage_shift_date_startShift} onClick$={()=>{
+                                        endShift.submit({...currentShift.value})
+                                    }}>
                                         Finir
                                     </button>
-                                </form> </>
+                                </>
                             : <>
-                                <form action={onPauseShift}>
-                                    <button type="submit" name="shift" class={style.landpage_shift_date_startShift}
-                                    value={[currentShift.id, currentShift.hourId, currentShift.state]}>
-                                        <h4>Pause</h4>
-                                        <Image src={p} alt="commencer" class={style.landpage_shift_date_startShift_icon} />
-                                    </button>
-                                </form>
-                                <form action={onEndShift}>
-                                    <button name="shift" class={style.landpage_shift_date_startShift}
-                                    value={[currentShift.id, currentShift.hourId, currentShift.state]}>
-                                        <h4>Finir</h4>
-                                        <Image src={stop} alt="commencer" class={style.landpage_shift_date_startShift_icon} />
-                                    </button>
-                                </form>                    
+                                <button name="shift" class={style.landpage_shift_date_startShift} onClick$={async ()=>{
+                                        await pauseShift.submit({...currentShift.value})
+                                    }}>
+                                    <h4>Pause</h4>
+                                    {/* <Image src={p} alt="commencer" class={style.landpage_shift_date_startShift_icon} /> */}
+                                </button>
+                                <button name="shift" class={style.landpage_shift_date_startShift} onClick$={async()=>{
+                                        await endShift.submit({...currentShift.value})
+                                    }}>
+                                    <h4>Finir</h4>
+                                    {/* <Image src={stop} alt="commencer" class={style.landpage_shift_date_startShift_icon} /> */}
+                                </button>
                         </> }
-                    </div>} */}
+                    </div>}
                 </div>
             </div> 
             <div class={style.holyday}>
                 <div class={style.holyday_header}>
                     <h1 class={style.holyday_header_text}>Congés</h1>
                     <button type="button" class={style.holyday_header_btn} onClick$={()=>{
-                        dialogRef.value!!.showModal()
-                        closeDialogOnBackdropClick(dialogRef.value!!)
+                        if (dialogRef.value){
+                            dialogRef.value.showModal()
+                            closeDialogOnBackdropClick(dialogRef.value)
+                        }
                     }} >Demander un congé <Left alt="arrow" class={style.holyday_header_btn_arrow} /></button>
                 </div>
                 {holyday.value.length > 0 ? <>{dayOff} </> : <div class={style.holyday_nocontent}>
@@ -170,7 +230,7 @@ const Home = component$(()=>{
                 </div>}
                 <dialog ref={dialogRef} class={style.holyday_dialog}> 
                     <div class={style.holyday_dialog_form}>
-                        <Calendar {...{currentUser: "",type: "between", onChange}} />
+                        <Calendar {...{currentUser: "",type: "between", onChange, hasMin: true}} />
                         <div class={style.holyday_type}>
                             <div class={style.holyday_dialog_radio}>
                                 <p>Congé Payé <button class={style.holyday_dialog_radio_infoBtn} data-title={INFOS.paye}>!</button></p>

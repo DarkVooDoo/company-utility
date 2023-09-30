@@ -1,7 +1,7 @@
-import { RequestHandler, routeLoader$, useNavigate } from "@builder.io/qwik-city"
+import { useNavigate } from "@builder.io/qwik-city"
 import style from "./style.module.css"
-import { component$, useSignal, $, useTask$, useVisibleTask$ } from "@builder.io/qwik"
-import { BACKEND_HOST, CreateCookie, GetCookie } from "~/lib/util"
+import { component$, useSignal, $, useVisibleTask$ } from "@builder.io/qwik"
+import { CreateCookie, GetCookie } from "~/lib/util"
 
 interface Props{
     companys: {id: string, name: string, adresse: string, postal: number}[],

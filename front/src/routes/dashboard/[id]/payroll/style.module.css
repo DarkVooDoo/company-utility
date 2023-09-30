@@ -23,9 +23,20 @@
 }
 
 .payroll_card{
+    display: flex;
+    justify-content: space-between;
     border-radius: 10px;
     border: 1px solid black;
     padding: .5rem;
+}
+
+.payroll_card_resume > *{
+    margin-bottom: var(--Row-Margin);
+}
+
+.payroll_card_name{
+    height: 2rem;
+    border: none;
 }
 
 .payroll_card_action{

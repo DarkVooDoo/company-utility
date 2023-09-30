@@ -32,19 +32,9 @@
     font-weight: bold;
 }
 
-.select{
+/* .select{
     width: fit-content;
     border: none;
     background-color: transparent;
     font-size: 1.5rem;
-}
-
-.select_option{
-    background-color: var(--Primary-Color);
-    font-size: .9rem;
-    list-style: none;
-}
-
-select:focus-visible{
-    outline: none;
-}
+} */

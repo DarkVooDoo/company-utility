@@ -105,7 +105,7 @@ const NewShift = component$(()=>{
                 <div class={style.shift_time_t}>
                     <p>Date</p>
                     <button class={style.shift_time_t_dateBtn} onClick$={()=>showCalendar.value = !showCalendar.value}>Calandrier</button>
-                    {showCalendar.value && <Calendar {...{currentUser: currentMember.value.user_id, class: style.shift_time_t_calendar, onChange: onDateChange}} />}
+                    {showCalendar.value && <Calendar {...{currentUser: currentMember.value.user_id, clasStyle: style.shift_time_t_calendar, onChange: onDateChange}} />}
                 </div>  
                 <div class={style.shift_time_t}>
                     <label for="start">Commence</label>

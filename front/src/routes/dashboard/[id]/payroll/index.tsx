@@ -1,13 +1,14 @@
 import { component$, useSignal, useVisibleTask$, $ } from "@builder.io/qwik"
 
 import style from "./style.module.css"
-import { Member, Payroll } from "~/lib/types"
+import { type Member, type Payroll } from "~/lib/types"
 import { routeLoader$ } from "@builder.io/qwik-city"
 import { BACKEND_HOST, GetCookie } from "~/lib/util"
 
 import Trash from "~/media/trash.svg?jsx"
 
 import Calendar from "~/components/Calendar/component"
+import CustomSelect from "~/components/CustomSelect/component"
 
 export const useGetEmployees = routeLoader$(async (req)=>{
     const token = req.cookie.get("auth-token")?.value
@@ -21,10 +22,10 @@ export const useGetEmployees = routeLoader$(async (req)=>{
 
 const Payroll = component$(()=>{
     const members = useGetEmployees() 
-    const selectedMember = useSignal<string | undefined>(undefined)
+    const selectedMember = useSignal<{id: string, name: string} | undefined>({id: members.value[0].user_id, name: members.value[0].name})
     const employees = useSignal<Payroll>()
     const date = useSignal<string[]>([])
-    const displayMember = members.value.map(member=><button key={member.id} class={style.payroll_top_names_btn} style={member.user_id === selectedMember.value ? {backgroundColor: "lightgray"} : {}} onClick$={()=>selectedMember.value = member.user_id}>{member.name} </button>)
+    // const displayMember = members.value.map(member=><button key={member.id} class={style.payroll_top_names_btn} style={member.user_id === selectedMember.value?.id ? {backgroundColor: "lightgray"} : {}} onClick$={()=>selectedMember.value = {id: member.user_id, name: member.name}}>{member.name} </button>)
     
     const onDateChange = $((newDate: string[])=>{
         if (newDate.length === 2){
@@ -39,14 +40,20 @@ const Payroll = component$(()=>{
         })
         if(date.value.length === 2){
             const companyId = GetCookie("company-id")
-            const getHours = await fetch(`${BACKEND_HOST}:5000/api/payroll?companyId=${companyId}&from=${from}&to=${to}&uId=${selectedMember.value}`,{
+            const getHours = await fetch(`${BACKEND_HOST}:5000/api/payroll?companyId=${companyId}&from=${from}&to=${to}&uId=${selectedMember.value?.id}`,{
             })
             if (getHours.status !== 200) return employees.value = undefined
             const hour = await getHours.json() as Payroll
             employees.value = hour
         }
     })
-    
+
+    const renderOptions = $((item: Member)=>{
+        return(
+            <div onClick$={()=>selectedMember.value = {id: item.user_id, name: item.name}}>{item.name} </div>
+        )
+    })
+
     const myEmployees = employees.value ? Object.entries(employees.value.shift).map(([day, shift])=>{
         const shifts = shift.map(hour=>{
             return (
@@ -78,22 +85,29 @@ const Payroll = component$(()=>{
     return (
         <div>
             <div class={style.payroll_top}>
-                <div class={style.payroll}>
-                    <div class={style.payroll_top_names}>
-                        {displayMember}
+                <div class={style.payroll_card}>
+                    <div class={style.payroll_card_resume}>
+                        <p><b>Heures travaillé: </b>{employees.value?.total} </p>
+                        <p><b>Salaire:</b> {employees.value?.salary} £</p>
                     </div>
+                    <CustomSelect value={selectedMember.value?.name || "Choisir un employees"} items={members.value} position="bottom" renderOption={renderOptions}/>
+                    {/* <select name="member" id="member" class={style.payroll_card_name} onChange$={({target})=>selectedMember.value = target.value}>
+                        {members.value.map(member=><option key={member.id} value={member.user_id} >{member.name}</option>)}
+                        {["232", "Ines narayainek", "prietrus", "test", "long tsh", "best", "name"].map(member=><option key={member} value={member} >{member}</option>)}
+
+                    </select> */}
                 </div>
                 <div style={{display: "flex", justifyContent: "center"}}>
-                    <Calendar className={style.payroll_top_calendar} type="between" hasMin={false} onChange={onDateChange} />
+                    <Calendar clasStyle={style.payroll_top_calendar} type="between" hasMin={false} onChange={onDateChange} />
                 </div>
             </div>
-            {employees ? <div class={style.payroll_container} >
+            {/* {employees ? <div class={style.payroll_container} >
                 <div class={style.payroll_card}>
                     <h3>{employees.value?.name} </h3>
                     <p><b>Heures travaillé: </b>{employees.value?.total} </p>
                     <p><b>Salaire:</b> {employees.value?.salary} £</p>
                 </div>
-            </div> : null}
+            </div> : null} */}
             <div class={style.payroll_top_hours}>
                 {myEmployees}
             </div>

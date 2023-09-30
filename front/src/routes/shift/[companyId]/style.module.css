@@ -30,6 +30,11 @@
     justify-content: center;
 }
 
+.shift_header{
+    display: flex;
+    justify-content: space-between;
+}
+
 .shift_calendar{
     display: grid;
     grid-template-columns: repeat(7, 1fr);

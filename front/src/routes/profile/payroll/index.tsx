@@ -1,11 +1,10 @@
 import { component$, useSignal, useTask$, $ } from "@builder.io/qwik"
-import { DocumentHead, routeLoader$ } from "@builder.io/qwik-city"
-
-import Calendar from "~/components/Calendar/component"
+import { type DocumentHead, routeLoader$ } from "@builder.io/qwik-city"
 
 import style from "./style.module.css"
-import { BACKEND_HOST, GetCookie, MONTH } from "~/lib/util"
+import { BACKEND_HOST, MONTH } from "~/lib/util"
 import { Payroll } from "~/lib/types"
+import CustomSelect from "~/components/CustomSelect/component"
 
 export const useGetMyGains = routeLoader$((req)=>{
     const companyId = req.cookie.get("company-id")?.value
@@ -14,7 +13,7 @@ export const useGetMyGains = routeLoader$((req)=>{
 })
 
 const MyPayroll = component$(()=>{
-    const date = useSignal<string[]>([])
+    // const date = useSignal<string[]>([])
     const vars = useGetMyGains()
     const gain = useSignal<Payroll>()
     const monthSignal = useSignal(new Date().getMonth()+1)
@@ -53,14 +52,21 @@ const MyPayroll = component$(()=>{
             </details>
         )
     }) : []
-    const months = new Array(12).fill(0).map((_,month)=><option key={month} class={style.select_option} selected={month+1 === monthSignal.value ? true : false} value={month+1}>{MONTH[month]}</option>)
+    const renderMonth = $((month: number)=>(
+        <p key={month} onClick$={()=>{
+            console.log(month+1)
+            monthSignal.value = month+1
+        }}>{MONTH[month]}</p>
+    ))
+    const months = new Array(12).fill(0).map((_,month)=>month)
     return (
         <div class={style.payroll}>
             {/* <Calendar {...{type: "between", onChange: onDateChange, hasMin: false}} /> */}
             <div class={style.payroll_resume}>
-                <select name="month" id="month" class={style.select} onChange$={(e)=>monthSignal.value = parseInt(e.target.value)}>
+                {/* <select name="month" id="month" class={style.select} onChange$={(e)=>monthSignal.value = parseInt(e.target.value)}>
                     {months}
-                </select>
+                </select> */}
+                <CustomSelect value={MONTH[monthSignal.value-1]} height={2} position="bottom" items={months} renderOption={renderMonth} />
                 <div class={style.payroll_resume_gain}>
                     <div>
                         <p>Temps de travail</p>

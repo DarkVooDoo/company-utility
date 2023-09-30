@@ -1,6 +1,6 @@
 import { component$ } from "@builder.io/qwik"
 import { Form, routeAction$, routeLoader$ } from "@builder.io/qwik-city"
-import { Member } from "~/lib/types"
+import type { Member } from "~/lib/types"
 import { BACKEND_HOST } from "~/lib/util"
 
 import style from "./style.module.css"
@@ -20,14 +20,11 @@ export const useDeleteMember = routeAction$(async(form, req)=>{
     const companyId = req.cookie.get("company-id")?.value
     const { remove } = form
     if (token){
-        const deleteMember = await fetch(`${BACKEND_HOST}:5000/api/member`,{
+        await fetch(`${BACKEND_HOST}:5000/api/member`,{
             method: "DELETE",
             headers: [["Content-Type", "application/json"], ["Authorization", token]],
             body: JSON.stringify({id: remove, companyId})
         })
-        if (deleteMember.status === 200) {
-            // setAllMembers([...allMembers.filter(member=>member.id != id)])
-        }
     }
 })
 
@@ -36,24 +33,20 @@ export const useAddMember = routeAction$(async(form, req)=>{
     const companyId = req.cookie.get("company-id")?.value
     const token = req.cookie.get("auth-token")
     if(token){
-        const addMember = await fetch(`${BACKEND_HOST}:5000/api/member`,{
+        await fetch(`${BACKEND_HOST}:5000/api/member`,{
             method: "POST",
             headers: [["Content-Type", "application/json"], ["Authorization", token.value]],
             body: JSON.stringify({email, companyId, role: "User", worth: salary})
         })
-        if (addMember.status === 200) {
-
-        }
     }
 })
 
 export const useChangeMemberRole = routeAction$(async(form)=>{
-    const changeRole = await fetch(`${BACKEND_HOST}:5000/api/member`,{
+    await fetch(`${BACKEND_HOST}:5000/api/member`,{
         method: "PATCH",
         headers: [["Content-Type", "application/json"]],
         body: JSON.stringify(form)
     })
-    console.log(changeRole.status)
 })
 
 const Employees = component$(()=>{

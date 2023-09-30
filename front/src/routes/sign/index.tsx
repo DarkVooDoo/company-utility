@@ -8,7 +8,7 @@ import { DocumentHead, Form, routeAction$, useNavigate, z, zod$ } from "@builder
 export const useSigninAction = routeAction$(async (form, request)=>{
     const {email, password, lastname, confirmation, firstname} = form
     if (confirmation && confirmation === password){
-        const createUser = await fetch(`${BACKEND_HOST}:5000/api/user`, {
+        await fetch(`${BACKEND_HOST}:5000/api/user`, {
             method: "POST",
             headers: [["Content-Type", "application/json"]],
             body: JSON.stringify({email: email, password: password, firstname: firstname, lastname: lastname})
@@ -32,13 +32,13 @@ export const useSigninAction = routeAction$(async (form, request)=>{
 const Login = component$(()=>{
     const signinAction = useSigninAction()
     const nav = useNavigate()
-    const [_, changeUser] = useContext(userContext)
+    const context = useContext(userContext)
     const isNewUser = useSignal(false)
      return (
         <div class={style.sign}>
             <Form class={style.sign_form} action={signinAction} onSubmitCompleted$={(e)=>{
                 if(e.detail.status === 200){
-                    changeUser(e.detail.value.id, e.detail.value.name)
+                    context[1](e.detail.value.id, e.detail.value.name)
                     nav("/home")
                 }
             }}>

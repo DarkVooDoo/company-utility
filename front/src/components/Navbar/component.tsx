@@ -10,7 +10,7 @@ import User from "~/media/user.svg?jsx"
 import LeftArrow from "~/media/left-arrow.webp?jsx"
 
 interface Props{
-    companys: {id: string, name: string, adresse: string, postal: number}[],
+    companys: {id: string, name: string, adresse: string, postal: number}[]
     notif: {id: string, message: string, date: string}[] | []
 }
 
@@ -26,7 +26,7 @@ const Navbar = component$<Props>(({notif, companys})=>{
     
     const onOpenSideBar = $(()=>{
         dialogRef.value?.showModal()
-        closeDialogOnBackdropClick(dialogRef.value!!)
+        if(dialogRef.value) closeDialogOnBackdropClick(dialogRef.value)
     })
 
     const onCloseSideBar = $(()=>{
@@ -64,7 +64,7 @@ const Navbar = component$<Props>(({notif, companys})=>{
     })
     const notifs = myNotif.value.map(notification=>(
         <div class={style.navbar_notifPopup_notif} key={notification.id}>
-            <button type="button" class={style.navbar_notifPopup_notif_deleteBtn} onClick$={()=>onDeleteNotif(notification.id)}>X</button>
+            <button type="button" aria-label="delete notif" class={style.navbar_notifPopup_notif_deleteBtn} onClick$={()=>onDeleteNotif(notification.id)}>X</button>
             <p class={style.navbar_notifPopup_notif_date}>{notification.date} </p>
             <p>{notification.message} </p>
         </div>
@@ -76,7 +76,7 @@ const Navbar = component$<Props>(({notif, companys})=>{
 
     return (
         <nav class={style.navbar}>
-            <Link href={user.value.user_id ? "/home" : "/"}><Logo alt="home" /></Link>
+            <Link href={user.value.user_id ? "/home" : "/"}><Logo alt="home"/></Link>
             <div class={`${style.navbar_search}`}>
                 {/* <div class={`${style.navbar_search_box}`}>
                     <input type="text" ref={inputRef}
@@ -96,8 +96,8 @@ const Navbar = component$<Props>(({notif, companys})=>{
             <div class={style.navbar_navigation}>
                 {user.value.user_id !== "" ? 
                     <>
-                        <button onClick$={onOpenNotif}><Bell alt="notification" class={style.navbar_navigation_bellIcon} /> </button>
-                        <button type="button" class={style.navbar_logBtn} onClick$={onOpenSideBar} >
+                        <button aria-label="ouvrir notification" onClick$={onOpenNotif}><Bell alt="notification" class={style.navbar_navigation_bellIcon} /> </button>
+                        <button type="button" aria-label="ouvrir menu" class={style.navbar_logBtn} onClick$={onOpenSideBar} >
                             <User alt="user" class={style.navbar_logBtn_icon} />
                         </button>
                     </> : 
@@ -124,11 +124,11 @@ const Navbar = component$<Props>(({notif, companys})=>{
                     </div>
                 </div>
                 {/* <Link href={`/message`} class={style.navbar_sideBar_link} onClick$={onCloseSideBar}>Message</Link> */}
-                <button type="button" class={style.navbar_sideBar_logoffBtn} onClick$={onLogOff} >Log Off</button>
+                <button type="button" aria-label="Log off" class={style.navbar_sideBar_logoffBtn} onClick$={onLogOff} >Log Off</button>
             </dialog>
             <div class={[style.navbar_notifPopup, showNotif.value ? style.open : style.close]}>
                 <div class={style.navbar_notifPopup_header}>
-                    <button type="button" onClick$={onCloseNotif}><LeftArrow alt="close" class={style.navbar_notifPopup_closeBtn} /></button>
+                    <button type="button" aria-label="fermer les notif" onClick$={onCloseNotif}><LeftArrow alt="close" class={style.navbar_notifPopup_closeBtn} /></button>
                     <h1>Notification</h1>
                 </div>
                 {myNotif.value.length > 0 ? <>

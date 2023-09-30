@@ -3,7 +3,6 @@ import { routeLoader$ } from "@builder.io/qwik-city"
 import type { RequestHandler } from "@builder.io/qwik-city"
 
 import Navbar from "~/components/Navbar/component"
-import { Entreprise, Holyday, Profile } from "~/lib/types"
 import { BACKEND_HOST, userContext } from "~/lib/util"
 
 export const onRequest: RequestHandler = async ({pathname, cookie, redirect, next, sharedMap})=>{
@@ -84,6 +83,7 @@ export const useServerTimeLoader = routeLoader$(async ({sharedMap, cookie}) => {
   return {
     user: sharedMap.get("user") as {user_id: string, user_name: string},
     notif: [],
+    currentCompany: cookie.get("company-id")?.value
   };
   
 });
@@ -103,7 +103,7 @@ export default component$(() => {
   return (
     <>
       <main>
-        <Navbar {...{notif: notif.value.notif, companys: companys.value}}  />
+        <Navbar {...{notif: notif.value.notif, companys: companys.value, currentCompany: notif.value.currentCompany}}  />
         <div class={"container"}>
           <Slot />
         </div>

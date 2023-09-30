@@ -1,6 +1,6 @@
 import { Slot, component$ } from "@builder.io/qwik"
 import MyCompanys from "~/components/MyCompanys/component"
-import { DocumentHead, routeAction$, routeLoader$, z, zod$ } from "@builder.io/qwik-city"
+import { type DocumentHead, type RequestHandler, routeAction$, routeLoader$, z, zod$ } from "@builder.io/qwik-city"
 import { BACKEND_HOST } from "~/lib/util"
 
 export const useUserCompany = routeLoader$(async (req)=>{
@@ -13,6 +13,14 @@ export const useUserCompany = routeLoader$(async (req)=>{
     }
     return []
 })
+
+export const onGet:RequestHandler = async(req)=>{
+    const companyId = req.cookie.get("company-id")?.value
+    if(req.pathname === "/home/" && companyId){
+        throw req.redirect(308, new URL(`/home/${companyId}`, req.url).toString())
+    }
+    await req.next()
+}
 
 const HomeLayout = component$(()=>{
     const companys = useUserCompany()

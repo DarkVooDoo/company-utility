@@ -4,14 +4,14 @@ import Loading from "~/media/loading.webp?jsx"
 
 interface Props {
     type?: "submit" | "button"
-    className?: string
+    clasStyle?: string
     text: string
     state: boolean
 }
 
-const ButtonWithState = component$<Props>(({state, text, className, type = "button"})=>{
+const ButtonWithState = component$<Props>(({state, text, clasStyle, type = "button"})=>{
     return (
-        <button class={className} type="submit" disabled={state ? true : false}>Modifier {state && <Loading alt="loading" class={"btn_loading"} />}</button>
+        <button class={clasStyle} type={type} disabled={state ? true : false}>{text} {state && <Loading alt="loading" class={"btn_loading"} />}</button>
     )
 })
 

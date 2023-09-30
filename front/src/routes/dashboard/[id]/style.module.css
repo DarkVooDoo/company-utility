@@ -75,3 +75,14 @@
 .dashboard_holydays_link{
     float: right;
 }
+
+.dashboard_deleteBtn{
+    height: 2.5rem;
+    border: 2px solid red;
+    color: red;
+    border-radius: 10px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

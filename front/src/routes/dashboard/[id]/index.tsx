@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik"
-import { Link, routeLoader$, useLocation} from "@builder.io/qwik-city"
+import { Link, routeAction$, routeLoader$, useLocation, useNavigate} from "@builder.io/qwik-city"
 
 import LeftArrow from "~/media/left-arrow.webp?jsx"
 import Dollar from "~/media/dollar.webp?jsx"
@@ -10,6 +10,22 @@ import UserHolydayCard from "~/components/UserHolydayCard/component"
 import { BACKEND_HOST } from "~/lib/util"
 import { Entreprise } from "~/lib/types"
 
+export const useDeleteCompany = routeAction$(async(form, req):Promise<{success: boolean}>=>{
+    const token = req.cookie.get("auth-token")?.value
+    const {id} = form
+    if(token){
+        const deleteCompany = await fetch(`${BACKEND_HOST}:5000/api/pro`, {
+            method: "DELETE",
+            headers:[["Content-Type", "application/json"], ["Authorization", token]],
+            body: JSON.stringify({id})
+        })
+        if (deleteCompany.status === 200){
+            return Promise.resolve({success: true})
+        }
+    }
+    return Promise.resolve({success: false})
+})
+
 export const useGetCompany = routeLoader$(async(req)=>{
     const authToken = req.cookie.get("auth-token")?.value
       if (authToken){
@@ -17,15 +33,17 @@ export const useGetCompany = routeLoader$(async(req)=>{
               headers: [["Authorization", authToken]],
           })
           if (fetchCompany.status === 307){
-              req.redirect(308, "/")
+              throw req.redirect(308, "/")
           }
           return await fetchCompany.json() as Entreprise
       }
-      return {role: {id: "", role: "User"}, name: "", adresse: "", holyday_pending: []} as Entreprise
+      throw req.redirect(308, "/")
 })
 
 const Dashboard = component$(()=>{
     const {params} = useLocation()
+    const nav = useNavigate()
+    const deleteCompany = useDeleteCompany()
     const company = useGetCompany()
     // const shift = Test.map(shift=>(
     //     <div>
@@ -68,6 +86,10 @@ const Dashboard = component$(()=>{
                     {pendingHolyday.length > 0 ? pendingHolyday : "Zero congé a gerer"}
                 </div>
             </div>
+            <button class={style.dashboard_deleteBtn} onClick$={async ()=>{
+                const {value} = await deleteCompany.submit({id: company.value.id})
+                if(value.success) nav("/profile/company")
+            }}>Supprimer</button>
         </main>
     )
 })

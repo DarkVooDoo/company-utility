@@ -1,9 +1,9 @@
-import { component$, useContext, useSignal, useStore, useTask$, $, useVisibleTask$ } from "@builder.io/qwik"
+import { component$, useContext, useSignal, useStore, useTask$, $} from "@builder.io/qwik"
 import { DocumentHead, Link, routeLoader$ } from "@builder.io/qwik-city"
 import { GetMonthArray, MONTH, hasChanged, userContext } from "~/lib/util"
 
 import style from "./style.module.css"
-import { CalendarArray, ShiftTypes } from "~/lib/types"
+import { ShiftTypes } from "~/lib/types"
 
 import Trash from "~/media/trash.svg?jsx"
 import Edit from "~/media/edit.svg?jsx"
@@ -40,11 +40,11 @@ const CompanyShift = component$(()=>{
     const date = useStore({year: new Date().getFullYear(), month: new Date().getMonth()+1})
 
     const onEditShift = $(async()=>{
-        const [_, changes] = hasChanged(data.value.initialShifts, data.value.userShift.shift, ["shift_end", "shift_pause", "shift_start"])
+        const hasChange = hasChanged(data.value.initialShifts, data.value.userShift.shift, ["shift_end", "shift_pause", "shift_start"])
         const editShift = await fetch(`http://localhost:5000/api/shift`,{
             method: "PUT",
             headers: [["Content-Type", "application/json"]],
-            body: JSON.stringify({shifts: changes})
+            body: JSON.stringify({shifts: hasChange[1]})
         })
         if(editShift.status === 200 ){
             // setPopupMessage({isSuccess: true, message: "Planning modifié"})
@@ -106,7 +106,7 @@ const CompanyShift = component$(()=>{
         if (userExist != -1){
             return (
                 <button disabled={day.isCurrentMonth ? false : true} 
-                type="button" key={index} class={`${style.shift_calendar_day} ${data.value.userShift.shift[userExist].user_id === user.value.user_id ? style.shift_active : ""} ${selectedCell.value === index && style.selected}`} onClick$={()=>{
+                type="button" key={index} class={[style.shift_calendar_day, data.value.userShift.shift[userExist].user_id === user.value.user_id ? style.shift_active : "", selectedCell.value === index && style.selected]} onClick$={()=>{
                     const shifts = data.value.userShift.shift.filter(shift=>shift.shift_day === day.dayNumber && day.month === shift.shift_month-1)
                     data.value.displayedShift = [...shifts]
                     selectedCell.value = index
@@ -114,7 +114,7 @@ const CompanyShift = component$(()=>{
             )
         }
         return (
-            <button disabled={!day.isCurrentMonth} type="button" key={index} class={`${style.shift_calendar_day} ${selectedCell.value === index && style.selected}` } onClick$={()=>{
+            <button disabled={!day.isCurrentMonth} type="button" key={index} class={[style.shift_calendar_day, selectedCell.value === index && style.selected]} onClick$={()=>{
                 const shifts = data.value.userShift.shift.filter(shift=>shift.shift_day===day.dayNumber && day.month === shift.shift_month-1)
                     data.value.displayedShift = shifts
                     selectedCell.value = index
@@ -125,7 +125,7 @@ const CompanyShift = component$(()=>{
     const displayDayShift = data.value.displayedShift && data.value.displayedShift.map(shift=><DisplayShift key={shift.shift_id} {...{shift, isAdmin, onDeleteShift, onShiftChange}} />)
     return (
         <div>
-            <div>
+            <div class={style.shift_header}>
                 {isAdmin && <Link href={`/shift/${data.value.company}/new`} class={style.header_planningBtn} >Creer un planning</Link>}
                 <select name="month" id="month" onChange$={(e)=>date.month = parseInt(e.target.value)}>
                     {months}

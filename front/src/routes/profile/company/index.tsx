@@ -6,7 +6,7 @@ import MyCompanys from "~/components/MyCompanys/component"
 
 import style from "./style.module.css"
 import { BACKEND_HOST } from "~/lib/util"
-import { Entreprise } from "~/lib/types"
+import ButtonWithState from "~/components/ButtonWithState/component"
 
 export const useMyCompanys = routeLoader$(async(req)=>{
     const token = req.cookie.get("auth-token")?.value 
@@ -59,7 +59,7 @@ const Company = component$(()=>{
                     <label class={style.input_label} form="postal">Postal</label>
                 </div>
                 <div style={{display: "flex", justifyContent: "flex-end"}}>
-                    <button type="submit" class={style.button}>Creer</button>
+                    <ButtonWithState state={createCompany.isRunning} text="Creer" type="submit" clasStyle={style.button} />
                 </div>
             </Form>
             {companys.value && <MyCompanys {...{companys: companys.value, type: "Profile"}} />}

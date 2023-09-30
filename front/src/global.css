@@ -53,7 +53,7 @@ dialog{
 }
 
 button:disabled{
-  color: inherit
+  color: inherit;
 }
 
 .container{

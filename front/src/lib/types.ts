@@ -20,7 +20,7 @@ export interface Profile {
 
 export interface Entreprise {
     role: {id: string, role: ROLE},
-    name: string, adresse: string, 
+    name: string, adresse: string, id: string
     holyday_pending: Holyday[]
 }
 
@@ -59,6 +59,12 @@ export interface Member {
     name: string
     role: string
     user_id: string
+}
+
+export interface CurrentShift {
+    id: string
+    state: string
+    hourId: string
 }
 
 export type ROLE = "User" | "Admin" | "Boss"

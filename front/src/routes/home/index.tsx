@@ -1,9 +1,9 @@
-import { component$ } from "@builder.io/qwik"
+import { component$ } from "@builder.io/qwik";
 
-const Home = component$(()=>{
+const Test = component$(()=>{
     return (
-        null
+        <h1>Choisir une entreprise</h1>
     )
 })
 
-export default Home
+export default Test
