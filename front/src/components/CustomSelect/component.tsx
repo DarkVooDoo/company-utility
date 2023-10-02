@@ -29,9 +29,9 @@ const CustomSelect = component$(<T extends {}>({value, items, height = 2, width 
     return (
         <div class={style.select} style={{height: height+"rem", width: width+"rem"}}>
             <input type="text" name="name" id="name" readOnly class={style.select_display} value={value} onClick$={()=>isVisible.value = !isVisible.value} />
-            <div class={[style.select_option]} style={optionPosition()}>
+            {isVisible.value && <div class={[style.select_option]} style={optionPosition()}>
                 {items.map(item=>(renderOption(item)))}
-            </div>
+            </div>}
         </div>
     )
 })

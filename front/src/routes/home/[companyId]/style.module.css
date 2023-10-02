@@ -46,8 +46,9 @@
 }
 
 .landpage_shift_date_startShift{
-    height: 2rem;
-    width: 2rem;
+    height: 3rem;
+    width: 6rem;
+    border: 2px solid black;
     display: flex;
     flex-direction: column;
     align-items: center;

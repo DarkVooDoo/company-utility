@@ -14,7 +14,7 @@ export const useGetShift = routeLoader$(async(req)=>{
     const buildedCalendar = GetMonthArray(new Date().getFullYear(), new Date().getMonth())
     const displayedShift: ShiftTypes[] = []
     let userShift: {role: {role: string, id: string}, shift: ShiftTypes[]} = {role: {role: "User", id: "0"}, shift: []}
-    let initialShifts: Pick<ShiftTypes, "shift_start" | "shift_end" | "shift_pause">[] = [{shift_end: "", shift_pause: 32, shift_start: ""}]
+    // let initialShifts: Pick<ShiftTypes, "shift_start" | "shift_end" | "shift_pause">[] = [{shift_end: "", shift_pause: 32, shift_start: ""}]
     if (company && token){
         const fetchShift = await fetch(`http://localhost:5000/api/shift?companyId=${company}&from=${buildedCalendar.from}&to=${buildedCalendar.to}`,{
             headers: [["Authorization", token]]
@@ -25,11 +25,11 @@ export const useGetShift = routeLoader$(async(req)=>{
             const shift = await fetchShift.json() as {role: {role: string, id: string}, shift: ShiftTypes[]}
             if(shift){
                 userShift = shift
-                initialShifts = [...shift.shift]
+                // initialShifts = [...shift.shift]
             }
         }
     }
-    return {company, token, userShift, initialShifts, calendar: buildedCalendar.calendar, displayedShift}
+    return {company, token, userShift, calendar: buildedCalendar.calendar, displayedShift}
 })
 
 const CompanyShift = component$(()=>{
@@ -37,10 +37,12 @@ const CompanyShift = component$(()=>{
     const data = useGetShift()
     const selectedCell = useSignal<number>()
     const userShift = useSignal(data.value.userShift.shift)
+    const initial = useSignal(data.value.userShift.shift)
+
     const date = useStore({year: new Date().getFullYear(), month: new Date().getMonth()+1})
 
     const onEditShift = $(async()=>{
-        const hasChange = hasChanged(data.value.initialShifts, data.value.userShift.shift, ["shift_end", "shift_pause", "shift_start"])
+        const hasChange = hasChanged(initial.value, userShift.value, ["shift_end", "shift_pause", "shift_start"])
         const editShift = await fetch(`http://localhost:5000/api/shift`,{
             method: "PUT",
             headers: [["Content-Type", "application/json"]],
@@ -61,7 +63,7 @@ const CompanyShift = component$(()=>{
             const newShift = data.value.userShift.shift.filter(shift=>shift.shift_id != id)
             data.value.displayedShift = data.value.displayedShift?.filter(shift=>shift.shift_id != id)
             data.value.userShift = {...data.value.userShift, shift: newShift}
-            data.value.initialShifts = newShift
+            initial.value = newShift
         }
     })
 
@@ -76,6 +78,8 @@ const CompanyShift = component$(()=>{
         track(()=>{
             return {month: date.month, year: date.year}
         })
+        selectedCell.value = undefined
+        data.value.displayedShift = []
         const buildedCalendar = GetMonthArray(new Date().getFullYear(), date.month-1)
         data.value.calendar = buildedCalendar.calendar
         if (data.value.company && data.value.token){
@@ -88,7 +92,8 @@ const CompanyShift = component$(()=>{
                 const shift = await fetchShift.json() as {role: {role: string, id: string}, shift: ShiftTypes[]}
                 if(shift){
                     data.value.userShift = shift
-                    data.value.initialShifts = [...shift.shift]
+                    userShift.value = [...shift.shift]
+                    initial.value = [...shift.shift]
                 }
                 const calendarMonth = buildedCalendar.calendar[buildedCalendar.calendar.findIndex(calendar=>calendar.isCurrentMonth)]
                 if (calendarMonth.month === new Date().getMonth()){
@@ -124,7 +129,7 @@ const CompanyShift = component$(()=>{
     const isAdmin = data.value.userShift.role.role === "Boss" || data.value.userShift.role.role === "Admin" ? true : false
     const displayDayShift = data.value.displayedShift && data.value.displayedShift.map(shift=><DisplayShift key={shift.shift_id} {...{shift, isAdmin, onDeleteShift, onShiftChange}} />)
     return (
-        <div>
+        <div class={style.shift}>
             <div class={style.shift_header}>
                 {isAdmin && <Link href={`/shift/${data.value.company}/new`} class={style.header_planningBtn} >Creer un planning</Link>}
                 <select name="month" id="month" onChange$={(e)=>date.month = parseInt(e.target.value)}>
@@ -135,7 +140,7 @@ const CompanyShift = component$(()=>{
                 {["Lu", "Ma", "Me", "Je", "Ve", "Sa", "Di"].map(name=>(<p key={name} class={style.shift_calendar_dayName}>{name} </p>))}
                 {days}
             </div>
-            {hasChanged(data.value.initialShifts, userShift.value, ["shift_start", "shift_end", "shift_pause"])[0] ? <button type="button" class={style.shift_date_editBtn} onClick$={onEditShift}><Edit alt="edit" class={style.shift_date_editBtn_icon} /></button> : null}
+            {hasChanged(initial.value, userShift.value, ["shift_start", "shift_end", "shift_pause"])[0] ? <button type="button" class={style.shift_date_editBtn} onClick$={onEditShift}><Edit alt="edit" class={style.shift_date_editBtn_icon} /></button> : null}
             {displayDayShift}
         </div>
     )
@@ -183,7 +188,7 @@ const DisplayShift = component$<DisplayShiftProps>(({isAdmin, onDeleteShift, onS
 
 export const head:DocumentHead = ()=>{
     return {
-        title: "Test"
+        title: "Planning"
     }
 }
 

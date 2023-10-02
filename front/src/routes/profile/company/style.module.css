@@ -40,6 +40,12 @@
     font-size: .6rem;
 }
 
+.company_adresse{
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: .3rem;
+}
+
 .button{
     height: 2rem;
     padding: 0 .5rem;

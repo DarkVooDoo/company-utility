@@ -2,7 +2,6 @@ package route
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"work/model"
 	"work/util"
@@ -19,8 +18,7 @@ func TrackerRoute(response http.ResponseWriter, request *http.Request) {
 		}
 		companyId := route.GetQuery("companyId")
 		if route.Request.URL.Query().Has("date") {
-			date := route.GetQuery("date")
-			log.Println(date)
+			// date := route.GetQuery("date")
 			route.WriteJSON(http.StatusOK, user)
 		} else {
 			currentShift, err := model.GetCurrentShift(user.User_id, companyId)

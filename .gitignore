@@ -1,36 +1,4 @@
-/front/node_modules
-/front/front/.pnp
-/front/.pnp.js
 
-# testing
-/front/coverage
-
-
-# next.js
-/front/.next/
-/front/out/
-
-# production
-/front/build
-
-# misc
-/front/.DS_Store
-*.pem
-
-# debug
-/front/npm-debug.log*
-/front/yarn-debug.log*
-/front/yarn-error.log*
-
-# local env files
-/front/.env*.local
-
-# vercel
-.vercel
-
-# typescript
-/front/*.tsbuildinfo
-/front/next-env.d.ts
 
 #custom
 .vscode
@@ -42,43 +10,45 @@ Dockerfile
 #Qwik
 
 # Build
-/frontend/dist
-/frontend/lib
-/frontend/lib-types
-/frontend/server
+/front/dist
+/front/lib
+/front/lib-types
+/front/server
 
 # Development
-/frontend/node_modules
-/frontend/*.local
+/front/node_modules
+/front/*.local
 
 # Cache
-/frontend/.cache
-/frontend/.mf
-/frontend/.rollup.cache
-/frontend/tsconfig.tsbuildinfo
+/front/.cache
+/front/.mf
+/front/.rollup.cache
+/front/tsconfig.tsbuildinfo
 
 # Logs
-/frontend/logs
-/frontend/*.log
-/frontend/npm-debug.log*
-/frontend/yarn-debug.log*
-/frontend/yarn-error.log*
-/frontend/pnpm-debug.log*
-/frontend/lerna-debug.log*
+/front/logs
+/front/*.log
+/front/npm-debug.log*
+/front/yarn-debug.log*
+/front/yarn-error.log*
+/front/pnpm-debug.log*
+/front/lerna-debug.log*
 
 # Editor
-/frontend/.vscode/*
-/frontend/!.vscode/launch.json
-/frontend/!.vscode/*.code-snippets
+/front/.vscode/*
+/front/!.vscode/launch.json
+/front/!.vscode/*.code-snippets
 
-/frontend/.idea
-/frontend/.DS_Store
-/frontend/*.suo
-/frontend/*.ntvs*
-/frontend/*.njsproj
-/frontend/*.sln
-/frontend/*.sw?
+/front/.idea
+/front/.DS_Store
+/front/*.suo
+/front/*.ntvs*
+/front/*.njsproj
+/front/*.sln
+/front/*.sw?
 
 # Yarn
-/frontend/.yarn/*
-/frontend/!.yarn/releases
+/front/.yarn/*
+/front/!.yarn/releases
+
+/front/tmp

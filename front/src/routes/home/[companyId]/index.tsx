@@ -1,9 +1,10 @@
-import { component$, useSignal, $ } from "@builder.io/qwik"
+import { component$, useSignal, $, useVisibleTask$ } from "@builder.io/qwik"
 import { Form, Link, routeAction$, routeLoader$} from "@builder.io/qwik-city"
-import { BACKEND_HOST, MONTH, closeDialogOnBackdropClick } from "~/lib/util"
+import { BACKEND_HOST, MONTH, SecondsToHour, closeDialogOnBackdropClick } from "~/lib/util"
 
 import Left from "~/media/left-arrow.webp?jsx"
 import Start from "~/media/start.webp?jsx"
+import Pause from "~/media/pause.webp?jsx"
 
 import style from "./style.module.css"
 
@@ -108,11 +109,25 @@ const Home = component$(()=>{
     const endShift = useEndShift()
     const todayShift = useGetTodayShift()
     const currentShift = useGetCurrentShift()
+    const seconds = useSignal(0)
     const dialogRef = useSignal<HTMLDialogElement>()
     const holydayType = useSignal<string>()
     const dates = useSignal<string[]>([])
     const onChange = $((date: string[])=>{
         dates.value = date
+    })
+
+    useVisibleTask$(()=>{
+        if(currentShift.value?.seconds){
+            seconds.value =  currentShift.value.seconds
+            const t = setInterval(()=>{
+                seconds.value = seconds.value + 1 
+            },1000)
+            return ()=>{
+                clearInterval(t)
+            }
+        }
+        
     })
 
     const dayOff = holyday.value.map(holyday=><UserHolydayCard key={holyday.id} {...{holyday, role: {id: "0", role: "User"}}} />)
@@ -175,7 +190,8 @@ const Home = component$(()=>{
                         </div> : <h3>Vous etes libre</h3>}
                     </div>
                 </div>
-                <div style={{display: "flex", justifyContent: "space-between"}}>
+                <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                    <h1>{SecondsToHour(seconds.value || 0)}</h1>
                     {!currentShift.value ?
                         <Form action={startShift}>
                             <button type="submit" name="shift" 
@@ -187,15 +203,15 @@ const Home = component$(()=>{
                         </Form> : <div style={{display: "flex", gap: "1rem"}}>
                             {currentShift.value.state == "En Pause" ? <>
                                     <button name="shift" class={style.landpage_shift_date_startShift} onClick$={ ()=>{
-                                        console.log(currentShift.value)
                                          startShift.submit({...currentShift.value})
                                     }}>
-                                        Reprendre
+                                        <h4>Reprendre</h4>
+                                        <Start alt="commencer" class={style.landpage_shift_date_startShift_icon} />
                                     </button>
                                     <button name="shift" class={style.landpage_shift_date_startShift} onClick$={()=>{
                                         endShift.submit({...currentShift.value})
                                     }}>
-                                        Finir
+                                        <h4>Finir</h4>
                                     </button>
                                 </>
                             : <>
@@ -203,7 +219,7 @@ const Home = component$(()=>{
                                         await pauseShift.submit({...currentShift.value})
                                     }}>
                                     <h4>Pause</h4>
-                                    {/* <Image src={p} alt="commencer" class={style.landpage_shift_date_startShift_icon} /> */}
+                                    <Pause alt="pause" class={style.landpage_shift_date_startShift_icon} />
                                 </button>
                                 <button name="shift" class={style.landpage_shift_date_startShift} onClick$={async()=>{
                                         await endShift.submit({...currentShift.value})

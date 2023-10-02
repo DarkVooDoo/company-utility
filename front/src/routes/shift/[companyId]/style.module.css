@@ -30,6 +30,10 @@
     justify-content: center;
 }
 
+.shift >*{
+    margin-bottom: var(--Row-Margin);
+}
+
 .shift_header{
     display: flex;
     justify-content: space-between;

@@ -1,4 +1,4 @@
-import { component$ } from "@builder.io/qwik"
+import { component$, useSignal } from "@builder.io/qwik"
 import { DocumentHead, Form, routeAction$, routeLoader$ } from "@builder.io/qwik-city"
 import { BACKEND_HOST } from "~/lib/util"
 
@@ -34,9 +34,12 @@ export const useModifyProfile = routeAction$(async(form, req)=>{
     }
 })
 
+const Special = "#" || "*"
 const Profile = component$(()=>{
     const modifyProfile = useModifyProfile()
     const prof = useGeUsertProfile()
+    const test = useSignal("")
+
     return (
         <div>
             <h3 class={style.profile_header}>Personal info </h3>

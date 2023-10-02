@@ -105,3 +105,7 @@ export const GetYearDays = (year: number, month: number)=>{
         }
     }
 }
+
+export const SecondsToHour = (seconds: number)=>{
+    return `${Math.floor(seconds / (60*60))}:${Math.floor(seconds % (60*60) / 60)}:${seconds % 60}`
+}

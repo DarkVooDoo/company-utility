@@ -15,9 +15,6 @@
     justify-content: center;
 }
 
-/* .select_display:focus + .select_option{
-    scale: 1;
-} */
 
 .select_option{
     position: absolute;
@@ -30,6 +27,9 @@
     border-radius: 5px;
 }
 
+/* .select_display:focus-visible + .select_option{
+    display: block;
+} */
 
 .select_option > *{
     position: relative;

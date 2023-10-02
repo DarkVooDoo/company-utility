@@ -52,21 +52,16 @@ const MyPayroll = component$(()=>{
             </details>
         )
     }) : []
-    const renderMonth = $((month: number)=>(
-        <p key={month} onClick$={()=>{
-            console.log(month+1)
-            monthSignal.value = month+1
-        }}>{MONTH[month]}</p>
-    ))
-    const months = new Array(12).fill(0).map((_,month)=>month)
+    // const months = new Array(12).fill(0).map((_,month)=>month)
+    const months = new Array(12).fill(0).map((_,month)=>month).map(month=><option key={month} value={month+1} class={style.select_option} selected={monthSignal.value === month+1}>{MONTH[month]}</option>)
     return (
         <div class={style.payroll}>
             {/* <Calendar {...{type: "between", onChange: onDateChange, hasMin: false}} /> */}
             <div class={style.payroll_resume}>
-                {/* <select name="month" id="month" class={style.select} onChange$={(e)=>monthSignal.value = parseInt(e.target.value)}>
+                <select name="month" id="month" class={style.select} onChange$={(e)=>monthSignal.value = parseInt(e.target.value)}>
                     {months}
-                </select> */}
-                <CustomSelect value={MONTH[monthSignal.value-1]} height={2} position="bottom" items={months} renderOption={renderMonth} />
+                </select>
+                {/* <CustomSelect value={MONTH[monthSignal.value]} height={2} position="bottom" items={months} renderOption={renderMonth} /> */}
                 <div class={style.payroll_resume_gain}>
                     <div>
                         <p>Temps de travail</p>

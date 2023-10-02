@@ -2,7 +2,7 @@ import { component$, useSignal, $ } from "@builder.io/qwik"
 
 import style from "./style.module.css"
 import Calendar from "~/components/Calendar/component"
-import { routeAction$, routeLoader$ } from "@builder.io/qwik-city"
+import { DocumentHead, routeAction$, routeLoader$ } from "@builder.io/qwik-city"
 import { Member, NewShift } from "~/lib/types"
 
 import Trash from "~/media/trash.svg?jsx"
@@ -136,5 +136,9 @@ const NewShift = component$(()=>{
         </main>
     )
 })
+
+export const head:DocumentHead = {
+    title: "Creer des planning"
+}
 
 export default NewShift

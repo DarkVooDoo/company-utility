@@ -11,12 +11,20 @@ import (
 
 func GetCurrentShift(userId string, companyId string) (util.CurrentShiftStatus, error) {
 	var id, state, hourId string
+	var seconds uint
 	db := db.DBInit()
-	row := db.QueryRow(`SELECT tracker_id, tracker_state, hour_id FROM Tracker LEFT JOIN Hour ON tracker_id=hour_tracker_id WHERE tracker_state=$1 OR hour_end IS NULL OR tracker_state=$2 AND tracker_user_id=$3 AND tracker_company_id=$4`, "En Cours", "En Pause", userId, companyId)
+	row := db.QueryRow(`SELECT tracker_id, tracker_state, hour_id FROM Tracker LEFT JOIN Hour 
+	ON tracker_id=hour_tracker_id WHERE tracker_state=$1 OR hour_end IS NULL OR tracker_state=$2 AND tracker_user_id=$3 AND tracker_company_id=$4`, "En Cours", "En Pause", userId, companyId)
 	if err := row.Scan(&id, &state, &hourId); err != nil {
+		log.Println(err)
 		return util.CurrentShiftStatus{}, errors.New("error")
 	}
-	shift := util.CurrentShiftStatus{Id: id, State: state, HourId: hourId}
+	rowSeconds := db.QueryRow(`SELECT SUM(EXTRACT(EPOCH FROM AGE(COALESCE(hour_end, NOW()), hour_start)))::INTEGER FROM hour WHERE hour_tracker_id=$1`, id)
+	if err := rowSeconds.Scan(&seconds); err != nil {
+		log.Println(err)
+		return util.CurrentShiftStatus{}, errors.New("error")
+	}
+	shift := util.CurrentShiftStatus{Id: id, State: state, HourId: hourId, Seconds: seconds}
 	return shift, nil
 }
 

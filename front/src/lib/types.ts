@@ -65,6 +65,7 @@ export interface CurrentShift {
     id: string
     state: string
     hourId: string
+    seconds: number
 }
 
 export type ROLE = "User" | "Admin" | "Boss"

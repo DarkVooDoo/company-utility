@@ -174,9 +174,10 @@ type SearchResult struct {
 }
 
 type CurrentShiftStatus struct {
-	Id     string `json:"id"`
-	State  string `json:"state"`
-	HourId string `json:"hourId"`
+	Id      string `json:"id"`
+	State   string `json:"state"`
+	HourId  string `json:"hourId"`
+	Seconds uint   `json:"seconds"`
 }
 
 type UpdateCurrentShift struct {

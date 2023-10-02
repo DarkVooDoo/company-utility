@@ -50,13 +50,15 @@ const Company = component$(()=>{
                     <input class={style.input_ele} required type="text" name="name" id="name" autoComplete="off"/>
                     <label class={style.input_label} form="name">Nom</label>
                 </div>
-                <div class={style.input}>
-                    <input class={style.input_ele} required type="text" name="adresse" id="adresse" autoComplete="off" />
-                    <label class={style.input_label} form="name">Adresse</label>
-                </div>
-                <div class={style.input}>
-                    <input class={style.input_ele} required type="number" name="postal" id="postal" autoComplete="off" />
-                    <label class={style.input_label} form="postal">Postal</label>
+                <div class={style.company_adresse}>
+                    <div class={style.input}>
+                        <input class={style.input_ele} required type="text" name="adresse" id="adresse" autoComplete="off" />
+                        <label class={style.input_label} form="name">Adresse</label>
+                    </div>
+                    <div class={style.input}>
+                        <input class={style.input_ele} required type="number" name="postal" id="postal" autoComplete="off" />
+                        <label class={style.input_label} form="postal">Postal</label>
+                    </div>
                 </div>
                 <div style={{display: "flex", justifyContent: "flex-end"}}>
                     <ButtonWithState state={createCompany.isRunning} text="Creer" type="submit" clasStyle={style.button} />
