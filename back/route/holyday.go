@@ -2,6 +2,7 @@ package route
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"work/model"
 	"work/util"
@@ -11,19 +12,23 @@ func HolydayRoute(res http.ResponseWriter, req *http.Request) {
 	var route = Route{Request: req, Response: res, Cors: "http://localhost:5173"}
 
 	route.GET(func() {
-		if route.Request.URL.Query().Has("companyId") {
+		companyId := route.GetQuery("companyId")
+		if !route.Request.URL.Query().Has("status") {
 			user, tokenErr := route.VerifyToken()
 			if tokenErr != nil {
 				route.WriteJSON(http.StatusUnauthorized, ResponseError{Msg: "unauthorized"})
 				return
 			}
-			companyId := route.GetQuery("companyId")
 			holyday, err := model.GetEmployeeHolydays(companyId, user.User_id)
 			if err != nil {
 				route.WriteJSON(http.StatusForbidden, ResponseError{Msg: "forbidden"})
 				return
 			}
 			route.WriteJSON(http.StatusOK, holyday)
+		} else {
+			status := route.GetQuery("status")
+			log.Println(status)
+			route.WriteJSON(http.StatusOK, ResponseError{Msg: "Hello world"})
 		}
 	})
 

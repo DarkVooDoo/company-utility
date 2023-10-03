@@ -101,7 +101,7 @@ const Navbar = component$<Props>(({notif, companys})=>{
                             <User alt="user" class={style.navbar_logBtn_icon} />
                         </button>
                     </> : 
-                    <Link href="/sign">Connexion</Link>
+                    <Link href="/sign" class={style.navbar_navigation_sign}>Connexion</Link>
                 }
             </div>
             <dialog ref={dialogRef} class={style.navbar_sideBar}>

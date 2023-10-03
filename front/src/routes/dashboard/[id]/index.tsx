@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik"
-import { Link, routeAction$, routeLoader$, useLocation, useNavigate} from "@builder.io/qwik-city"
+import { DocumentHead, Link, routeAction$, routeLoader$, useLocation, useNavigate} from "@builder.io/qwik-city"
 
 import LeftArrow from "~/media/left-arrow.webp?jsx"
 import Dollar from "~/media/dollar.webp?jsx"
@@ -80,7 +80,7 @@ const Dashboard = component$(()=>{
             <div class={style.dashboard_holydays}>
                 <div class={style.dashboard_holydays_header}>
                     <h1 >Congés</h1>
-                    <Link href="#" class={style.dashboard_holydays_link}>Voir les congés <LeftArrow alt="fleche" class={style.dashboard_holydays_link_arrow} /> </Link>
+                    <Link href={`/dashboard/${params.id}/holyday`} class={style.dashboard_holydays_link}>Voir les congés <LeftArrow alt="fleche" class={style.dashboard_holydays_link_arrow} /> </Link>
                 </div>
                 <div class={style.dashboard_holydays_all}>
                     {pendingHolyday.length > 0 ? pendingHolyday : "Zero congé a gerer"}
@@ -93,5 +93,12 @@ const Dashboard = component$(()=>{
         </main>
     )
 })
+
+export const head:DocumentHead = ({resolveValue, params})=>{
+    const company = resolveValue(useGetCompany)
+    return {
+        title: `${company.name}`
+    }
+}
 
 export default Dashboard

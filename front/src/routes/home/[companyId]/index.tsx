@@ -173,7 +173,7 @@ const Home = component$(()=>{
                         </g>
                     </svg>
                     <div> 
-                        <h2 class={style.landpage_shift_date_day}>{new Date().getDate()} {MONTH[new Date().getMonth()]} </h2>
+                        <h2 class={style.landpage_shift_date_day}>{MONTH[new Date().getMonth()]} </h2>
                         {todayShift.value ? <div class={style.landpage_shift_time}>
                             <div>
                                 {/* <Image src={s} alt="start" class={style.shift_time_content_icon} /> */}

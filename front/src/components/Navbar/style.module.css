@@ -61,6 +61,17 @@
     width: calc(var(--Navbar-Height) - 1rem);
 }
 
+.navbar_navigation_sign{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(var(--Navbar-Height) - .5rem);
+    padding: 0 .5rem;
+    border: 1px solid var(--Primary-Color);
+    font-weight: bold;
+    border-radius: 10px;
+}
+
 .navbar_notifPopup > *{
     margin-bottom: var(--Row-Margin);
 }

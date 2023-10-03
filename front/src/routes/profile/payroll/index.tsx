@@ -1,4 +1,4 @@
-import { component$, useSignal, useTask$, $ } from "@builder.io/qwik"
+import { component$, useSignal, useTask$, $, useStore } from "@builder.io/qwik"
 import { type DocumentHead, routeLoader$ } from "@builder.io/qwik-city"
 
 import style from "./style.module.css"
@@ -12,15 +12,19 @@ export const useGetMyGains = routeLoader$((req)=>{
     return {company: companyId, user: userId}
 })
 
+interface KEKW {
+    month: number
+}
+
 const MyPayroll = component$(()=>{
     // const date = useSignal<string[]>([])
     const vars = useGetMyGains()
     const gain = useSignal<Payroll>()
-    const monthSignal = useSignal(new Date().getMonth()+1)
+    const monthSignal = useStore<KEKW>({month: new Date().getMonth()+1})
     useTask$(async ({track})=>{
-        track(()=>monthSignal.value)
+        track(()=>monthSignal.month)
         // userId et date
-        const fetchGain = await fetch(`${BACKEND_HOST}:5000/api/payroll?companyId=${vars.value.company}&date=2023-${monthSignal.value}&uId=${vars.value.user}`)  
+        const fetchGain = await fetch(`${BACKEND_HOST}:5000/api/payroll?companyId=${vars.value.company}&date=2023-${monthSignal.month}&uId=${vars.value.user}`)  
         const myGain = await fetchGain.json() as Payroll 
         gain.value = myGain
     })
@@ -28,6 +32,14 @@ const MyPayroll = component$(()=>{
     // const onDateChange = $((chosenDate: string[])=>{
     //     date.value = chosenDate
     // })
+
+    const renderMonth = $((month: number)=>(
+        <div class={style.payroll_resume_month} onClick$={()=>{
+            monthSignal.month = month + 1
+        }}>
+            <p>{MONTH[month]} </p>
+        </div>
+    ))
     const shift = gain.value?.shift ? Object.entries(gain.value?.shift).map(([day, shift])=>{
         const shifts = shift.map(hour=>{
             return (
@@ -52,16 +64,13 @@ const MyPayroll = component$(()=>{
             </details>
         )
     }) : []
-    // const months = new Array(12).fill(0).map((_,month)=>month)
-    const months = new Array(12).fill(0).map((_,month)=>month).map(month=><option key={month} value={month+1} class={style.select_option} selected={monthSignal.value === month+1}>{MONTH[month]}</option>)
+    const months = new Array(12).fill(0).map((_,month)=>month)
     return (
         <div class={style.payroll}>
+            <p style={{display: "none"}} onClick$={()=>{monthSignal.month = 1}}>{monthSignal.month} </p>
             {/* <Calendar {...{type: "between", onChange: onDateChange, hasMin: false}} /> */}
             <div class={style.payroll_resume}>
-                <select name="month" id="month" class={style.select} onChange$={(e)=>monthSignal.value = parseInt(e.target.value)}>
-                    {months}
-                </select>
-                {/* <CustomSelect value={MONTH[monthSignal.value]} height={2} position="bottom" items={months} renderOption={renderMonth} /> */}
+                <CustomSelect clasStyle={style.payroll_resume_select} value={MONTH[monthSignal.month - 1]} height={2} position="bottom" items={months} renderOption={renderMonth} />
                 <div class={style.payroll_resume_gain}>
                     <div>
                         <p>Temps de travail</p>

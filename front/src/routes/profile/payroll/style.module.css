@@ -22,6 +22,10 @@
     border-radius: 25px;
 }
 
+.payroll_resume_select{
+    background-color: var(--Primary-Color);
+}
+
 .payroll_resume_gain{
     display: flex;
     justify-content: space-between;

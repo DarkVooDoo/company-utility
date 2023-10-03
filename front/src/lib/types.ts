@@ -70,8 +70,14 @@ export interface CurrentShift {
 
 export type ROLE = "User" | "Admin" | "Boss"
 
+export interface Calendar {
+    isCurrentMonth: boolean
+    dayNumber: number
+    month: number
+}
+
 export interface CalendarArray{
-    calendar: {isCurrentMonth: boolean, dayNumber: number, month: number}[],
+    calendar: Calendar[],
     to: string
     from: string
 } 

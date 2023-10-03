@@ -1,5 +1,5 @@
 import { component$, Slot, useContextProvider, $, useSignal } from "@builder.io/qwik"
-import { routeLoader$ } from "@builder.io/qwik-city"
+import { routeLoader$, useLocation } from "@builder.io/qwik-city"
 import type { RequestHandler } from "@builder.io/qwik-city"
 
 import Navbar from "~/components/Navbar/component"
@@ -89,6 +89,7 @@ export const useServerTimeLoader = routeLoader$(async ({sharedMap, cookie}) => {
 });
 
 export default component$(() => {
+  const loc = useLocation()
   const notif = useServerTimeLoader()
   const companys = useMyCompanys()
   const user = useSignal(notif.value.user || {user_id: "", user_name: ""})
@@ -104,7 +105,7 @@ export default component$(() => {
     <>
       <main>
         <Navbar {...{notif: notif.value.notif, companys: companys.value, currentCompany: notif.value.currentCompany}}  />
-        <div class={"container"}>
+        <div class={loc.url.pathname === "/" ? "" : "container"} >
           <Slot />
         </div>
       </main>

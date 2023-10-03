@@ -1,27 +1,29 @@
-import { component$ } from "@builder.io/qwik";
-import { type DocumentHead } from "@builder.io/qwik-city";
+import { component$ } from "@builder.io/qwik"
+import { type DocumentHead, Link } from "@builder.io/qwik-city"
+
+import Planning from "~/media/planning.webp?jsx"
 
 import style from "./style.module.css"
 
 export default component$(() => {
   return (
-    <>
+    <div class={style.landpage}>
       <div class={style.landpage_header}>
         <h1 class={style.landpage_header_title}>Connected</h1>
-        <h3 class={style.landpage_header_sub}>Rester connecté avec vos employées</h3>
-        {/* <Link href="/sign" class={style.landpage_header_start}>Commencer</Link> */}
+        <h2 class={style.landpage_header_sub}>La meilleur solution pour votre entreprise</h2>
+        <Link href="/sign" class={style.landpage_header_start}>Commencer</Link>
       </div>
       <div class={style.landpage_planning}>
         <h1 class={style.landpage_planning_header}>Plannings</h1>
         <div class={style.landpage_planning_about}>
-          <p>Gerer les planning, congés et les heures travaillé par vos employées</p>
-          {/* <Image src={planning} alt="planning" class={style.landpage_planning_about_photo} /> */}
+          <Planning alt="planning" class={style.landpage_planning_about_photo} />
+          <h3>Gerer le planning de votre entreprise</h3>
         </div>
       </div>
       <div>
         <h1></h1>
       </div>
-    </>
+    </div>
   );
 });
 
