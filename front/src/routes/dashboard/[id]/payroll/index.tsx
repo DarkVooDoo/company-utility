@@ -2,7 +2,7 @@ import { component$, useSignal, useVisibleTask$, $ } from "@builder.io/qwik"
 
 import style from "./style.module.css"
 import { type Member, type Payroll } from "~/lib/types"
-import { routeLoader$ } from "@builder.io/qwik-city"
+import { routeLoader$, useLocation } from "@builder.io/qwik-city"
 import { BACKEND_HOST, GetCookie } from "~/lib/util"
 
 import Trash from "~/media/trash.svg?jsx"
@@ -21,6 +21,7 @@ export const useGetEmployees = routeLoader$(async (req)=>{
 })
 
 const Payroll = component$(()=>{
+    const loc = useLocation()
     const members = useGetEmployees() 
     const selectedMember = useSignal<{id: string, name: string} | undefined>({id: members.value[0].user_id, name: members.value[0].name})
     const employees = useSignal<Payroll>()
@@ -39,12 +40,16 @@ const Payroll = component$(()=>{
             return {date: date.value, member: selectedMember.value}
         })
         if(date.value.length === 2){
-            const companyId = GetCookie("company-id")
-            const getHours = await fetch(`${BACKEND_HOST}:5000/api/payroll?companyId=${companyId}&from=${from}&to=${to}&uId=${selectedMember.value?.id}`,{
-            })
-            if (getHours.status !== 200) return employees.value = undefined
-            const hour = await getHours.json() as Payroll
-            employees.value = hour
+            const companyId = loc.params.id
+            const token = GetCookie("auth-token")
+            if(token){
+                const getHours = await fetch(`${BACKEND_HOST}:5000/api/payroll?companyId=${companyId}&from=${from}&to=${to}&uId=${selectedMember.value?.id}`,{
+                    headers: [["Authorization", token]]
+                })
+                if (getHours.status !== 200) return employees.value = undefined
+                const hour = await getHours.json() as Payroll
+                employees.value = hour
+            }
         }
     })
 
@@ -90,24 +95,12 @@ const Payroll = component$(()=>{
                         <p><b>Heures travaillé: </b>{employees.value?.total} </p>
                         <p><b>Salaire:</b> {employees.value?.salary} £</p>
                     </div>
-                    <CustomSelect value={selectedMember.value?.name || "Choisir un employees"} items={members.value} position="bottom" renderOption={renderOptions}/>
-                    {/* <select name="member" id="member" class={style.payroll_card_name} onChange$={({target})=>selectedMember.value = target.value}>
-                        {members.value.map(member=><option key={member.id} value={member.user_id} >{member.name}</option>)}
-                        {["232", "Ines narayainek", "prietrus", "test", "long tsh", "best", "name"].map(member=><option key={member} value={member} >{member}</option>)}
-
-                    </select> */}
+                    <CustomSelect width={10} value={selectedMember.value?.name || "Choisir un employees"} items={members.value} position="bottom" renderOption={renderOptions}/>
                 </div>
                 <div style={{display: "flex", justifyContent: "center"}}>
-                    <Calendar clasStyle={style.payroll_top_calendar} type="between" hasMin={false} onChange={onDateChange} />
+                    <Calendar  type="between" hasMin={false} onChange={onDateChange} />
                 </div>
             </div>
-            {/* {employees ? <div class={style.payroll_container} >
-                <div class={style.payroll_card}>
-                    <h3>{employees.value?.name} </h3>
-                    <p><b>Heures travaillé: </b>{employees.value?.total} </p>
-                    <p><b>Salaire:</b> {employees.value?.salary} £</p>
-                </div>
-            </div> : null} */}
             <div class={style.payroll_top_hours}>
                 {myEmployees}
             </div>

@@ -1,9 +1,10 @@
-import { component$ } from "@builder.io/qwik"
+import { component$, $, useStore } from "@builder.io/qwik"
 import { Form, routeAction$, routeLoader$ } from "@builder.io/qwik-city"
 import type { Member } from "~/lib/types"
 import { BACKEND_HOST } from "~/lib/util"
 
 import style from "./style.module.css"
+import CustomSelect from "~/components/CustomSelect/component"
 
 export const useGetEmployees = routeLoader$(async (req)=>{
     const token = req.cookie.get("auth-token")?.value
@@ -51,37 +52,9 @@ export const useChangeMemberRole = routeAction$(async(form)=>{
 
 const Employees = component$(()=>{
     const members = useGetEmployees()
-    const onDeleteMember = useDeleteMember()
+    const signalMembers = useStore({member: members.value})
     const onNewMember = useAddMember()
-    const onChangeMemberRole = useChangeMemberRole()
-    const member = members.value.map(member=>(
-        <div key={member.id} class={style.member}>
-            <div class={style.member_name}>
-                <p>Nom</p>
-                <p class={style.member_name_text}>{member.name}</p>
-            </div>
-            <div class={style.member_role}>
-                <p>Role</p>
-                {/* {member.role === "Boss" ? <p class={style.member_role_text}>{member.role} </p> : 
-                <ChangeUserRole {...{currentRole: member.role, roles: [{role: "Admin", memberId: member.id}, {role: "User", memberId: member.id}]}} />} */}
-                {member.role === "Boss" ? <p class={style.member_role_text}>{member.role} </p> : 
-                <select name="role" class={style.member_role_select} onChange$={async(role)=>{
-                    await onChangeMemberRole.submit(JSON.parse(role.target.value))
-                }}>
-                    {[{role: "Admin", memberId: member.id}, {role: "User", memberId: member.id}].map(memberRole=>(
-                        <option key={memberRole.role} selected={member.role === memberRole.role ? true : false} class={style.member_role_select_opt}
-                        value={JSON.stringify({id: memberRole.memberId, role: memberRole.role})}>{memberRole.role}</option>
-                    ))}
-                </select>}
-            </div>
-            {member.role !== "Boss" && 
-                <Form action={onDeleteMember} class={style.member_delete}>
-                    <button name="remove" type="submit" value={member.id} class={style.member_deleteBtn}>
-                        Supprimer
-                    </button>
-                </Form>}
-        </div>
-    ))
+    const member = signalMembers.member.map(member=><UserRole key={member.id} {...{...member}} />)
     return (
         <main>
             <h1 class={style.member_header}>Employés</h1>
@@ -95,6 +68,42 @@ const Employees = component$(()=>{
                 {member}
             </div>
         </main>
+    )
+})
+
+const UserRole = component$<Member>(({id, name, role})=>{
+    const member = useStore({id, role, name})
+    const onChangeMemberRole = useChangeMemberRole()
+    const onDeleteMember = useDeleteMember()
+
+    const renderRoles = $(({role, memberId}:{role: string, memberId: string})=>(
+        <div key={memberId} onClick$={async ()=>{
+            await onChangeMemberRole.submit({id: memberId, role})            
+            member.role = role
+        }}>{role}</div>
+    ))
+    return (
+        <div key={member.id} class={style.member}>
+            <div class={style.member_name}>
+                <p>Nom</p>
+                <p class={style.member_name_text}>{member.name}</p>
+            </div>
+            <div class={style.member_role}>
+                <p>Role</p>
+                {member.role === "Boss" ? <p class={style.member_role_text}>{member.role} </p> : 
+                <CustomSelect 
+                    items={[{role: "Admin", memberId: member.id}, {role: "User", memberId: member.id}]}
+                    value={member.role}
+                    width={5}
+                    renderOption={renderRoles}  />}
+            </div>
+            {member.role !== "Boss" && 
+                <Form action={onDeleteMember} class={style.member_delete}>
+                    <button name="remove" type="submit" value={member.id} class={style.member_deleteBtn}>
+                        Supprimer
+                    </button>
+                </Form>}
+        </div>
     )
 })
 

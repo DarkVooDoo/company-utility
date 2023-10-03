@@ -13,8 +13,8 @@ func HolydayRoute(res http.ResponseWriter, req *http.Request) {
 
 	route.GET(func() {
 		companyId := route.GetQuery("companyId")
+		user, tokenErr := route.VerifyToken()
 		if !route.Request.URL.Query().Has("status") {
-			user, tokenErr := route.VerifyToken()
 			if tokenErr != nil {
 				route.WriteJSON(http.StatusUnauthorized, ResponseError{Msg: "unauthorized"})
 				return
@@ -27,8 +27,24 @@ func HolydayRoute(res http.ResponseWriter, req *http.Request) {
 			route.WriteJSON(http.StatusOK, holyday)
 		} else {
 			status := route.GetQuery("status")
-			log.Println(status)
-			route.WriteJSON(http.StatusOK, ResponseError{Msg: "Hello world"})
+			log.Println("status")
+			if status == "Aucun" {
+				log.Println("aucun")
+
+				holyday, err := model.GetAllHolyday(companyId)
+				if err != nil {
+					route.WriteJSON(http.StatusForbidden, ResponseError{Msg: "forbidden"})
+				}
+				route.WriteJSON(http.StatusOK, holyday)
+				return
+			} else {
+				log.Println("why here")
+				holyday, err := model.GetHolydayByStatus(companyId, status)
+				if err != nil {
+					route.WriteJSON(http.StatusForbidden, ResponseError{Msg: "forbidden"})
+				}
+				route.WriteJSON(http.StatusOK, holyday)
+			}
 		}
 	})
 

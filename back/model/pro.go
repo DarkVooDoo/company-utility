@@ -77,7 +77,7 @@ func GetSingleEntreprise(companyId string, userToken string) (util.Company, erro
 
 	db := db.DBInit()
 	result := db.QueryRow(`SELECT company_id, company_name, company_adresse, company_postal FROM Company WHERE company_id=$1 AND company_user_id=$2`, companyId, user.User_id)
-	pendingHolydays, pendingErr := GetPendingHolydays(companyId)
+	pendingHolydays, pendingErr := GetHolydayByStatus(companyId, "En Attente")
 	role := GetUserRole(user.User_id, companyId)
 	var id, name, adresse string
 	var postal uint

@@ -174,7 +174,7 @@ func GetAccumulateHoursFromTo(companyId string, from string, to string, userId s
 		}
 	}
 	if len(sumHours) == 0 {
-		return AccumulateHours{}, errors.New("error")
+		return AccumulateHours{Name: name, Seconds: 0, Shift: map[string][]DayShift{}, Total: "0H00", Salary: 0}, nil
 	}
 	for _, value := range sumHours {
 		payrolls = value

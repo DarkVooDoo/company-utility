@@ -69,7 +69,6 @@ const CompanyShift = component$(()=>{
         const buildedCalendar = GetMonthArray(new Date().getFullYear(), date.month-1)
         calendar.value = buildedCalendar.calendar
         if (data.value.company && data.value.token){
-            console.log("fetching")
             const fetchShift = await fetch(`http://localhost:5000/api/shift?companyId=${data.value.company}&from=${buildedCalendar.from}&to=${buildedCalendar.to}`,{
                 headers: [["Authorization", data.value.token]]
             }) 
@@ -79,7 +78,6 @@ const CompanyShift = component$(()=>{
                 const shift = await fetchShift.json() as {role: {role: string, id: string}, shift: ShiftTypes[]}
                 if(shift){
                     userShift.value = shift
-                    // userShift.value = [...shift.shift]
                     initial.value = [...shift.shift]
                 }
                 const calendarMonth = buildedCalendar.calendar[buildedCalendar.calendar.findIndex(calendar=>calendar.isCurrentMonth)]

@@ -12,7 +12,7 @@ interface Props<T>{
     renderOption: (item: T)=>JSXNode
 } 
 
-const CustomSelect = component$(<T extends {}>({value, clasStyle, items, height = 2, width = 7, position = "bottom", renderOption}:Props<T>)=>{
+const CustomSelect = component$(<T extends {}>({value, clasStyle, items, height = 2.5, width = 7, position = "bottom", renderOption}:Props<T>)=>{
     const isVisible = useSignal(false)
 
     useVisibleTask$(({track})=>{
@@ -34,7 +34,7 @@ const CustomSelect = component$(<T extends {}>({value, clasStyle, items, height 
     }
     return (
         <div class={[style.select, clasStyle]} style={{height: height+"rem", width: width+"rem"}}>
-            <input type="text" name="name" id="name" readOnly class={style.select_display} value={value} onClick$={()=>isVisible.value = !isVisible.value} />
+            <div class={style.select_display} onClick$={()=>isVisible.value = !isVisible.value} >{value} <span class={[style.arrow, isVisible.value ? style.downArrow : style.upArrow]}></span> </div>
             {isVisible.value && <div class={[style.select_option]} style={optionPosition()}>
                 {items.map(item=>(renderOption(item)))}
             </div>}

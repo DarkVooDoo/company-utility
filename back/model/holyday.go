@@ -24,10 +24,16 @@ func GetEmployeeHolydays(companyId string, userId string) ([]util.Holyday, error
 	WHERE holyday_company_id=$1 AND holyday_user_id=$2`, companyId, userId)
 }
 
-func GetPendingHolydays(companyId string) ([]util.Holyday, error) {
+func GetHolydayByStatus(companyId string, status string) ([]util.Holyday, error) {
 	return getHolydays(`SELECT holyday_id, TO_CHAR(AGE(NOW(), holyday_sended), 'YY-MM-DD-HH24-MI-SS'), TO_CHAR(holyday_from, 'DD-MM-YYYY'),
 	TO_CHAR(holyday_to, 'DD-MM-YYYY'), holyday_status, CONCAT(user_firstname, ' ', user_lastname), holyday_user_id FROM Holyday LEFT JOIN Users 
-	ON user_id=holyday_user_id WHERE holyday_company_id=$1 AND holyday_status='En Attente'`, companyId)
+	ON user_id=holyday_user_id WHERE holyday_company_id=$1 AND holyday_status=$2 LIMIT 10`, companyId, status)
+}
+
+func GetAllHolyday(companyId string) ([]util.Holyday, error) {
+	return getHolydays(`SELECT holyday_id, TO_CHAR(AGE(NOW(), holyday_sended), 'YY-MM-DD-HH24-MI-SS'), TO_CHAR(holyday_from, 'DD-MM-YYYY'),
+	TO_CHAR(holyday_to, 'DD-MM-YYYY'), holyday_status, CONCAT(user_firstname, ' ', user_lastname), holyday_user_id FROM Holyday LEFT JOIN Users 
+	ON user_id=holyday_user_id WHERE holyday_company_id=$1 LIMIT 10`, companyId)
 }
 
 func RejectHolyday(id string) error {

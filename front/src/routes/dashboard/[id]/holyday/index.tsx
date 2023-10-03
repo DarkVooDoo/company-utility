@@ -6,14 +6,7 @@ import { BACKEND_HOST } from "~/lib/util"
 
 export const useGetHolydays = routeLoader$(async({params, cookie})=>{
     const token = cookie.get("auth-token")?.value
-    if(token){
-        const fetchHolyday = await fetch(`${BACKEND_HOST}:5000/api/holyday?companyId=${params.id}`,{
-            headers: [["Authorization", token]]
-        })
-        const holyday = await fetchHolyday.json() as Holyday[]
-        return holyday
-    }
-    return []
+    return {token, companyId: params.id}
 })
 
 interface Test {
@@ -21,14 +14,20 @@ interface Test {
 }
 
 const Holyday = component$(()=>{
-    const holyday = useGetHolydays()
-
+    const param = useGetHolydays()
+    const holyday = useSignal<Holyday[]>([])
     const filterStatus = useStore<Test>({value: "Aucun"})
 
-    useVisibleTask$(async ({track})=>{
+    useTask$(async ({track})=>{
         track(()=>filterStatus.value)
-        console.log("Enter")
-        // const holyday = fetch(`${BACKEND_HOST}:5000/api/holyday?status=${filterStatus.value}&companyId=${}`)
+        if(param.value.token){
+            const fetchHolyday = await fetch(`${BACKEND_HOST}:5000/api/holyday?companyId=${param.value.companyId}&status=${filterStatus.value}`,{
+                headers: [["Authorization", param.value.token]]
+            })
+            const holydayPayload = await fetchHolyday.json() as Holyday[]
+            console.log(holydayPayload)
+            holyday.value = holydayPayload
+        }
     })
 
     const renderSelection = $((status: string)=>(
@@ -40,7 +39,7 @@ const Holyday = component$(()=>{
     ))
 
     const holydays = holyday.value.map(holyday=>(
-        <div>
+        <div key={holyday.id}>
             <h3>{holyday.name} </h3>
             <div style={{display: "flex", justifyContent: "space-between"}}>
                 <div>
