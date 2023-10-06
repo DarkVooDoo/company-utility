@@ -9,12 +9,13 @@ export interface Holyday{
 }
 
 export interface Profile {
-    id: string,
-    joined: string,
-    firstname: string,
-    lastname: string,
-    adresse: string,
-    postal: string,
+    id: string
+    joined: string
+    firstname: string
+    lastname: string
+    adresse: string
+    postal: string
+    photo: string
     email: string
 }
 

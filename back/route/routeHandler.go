@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"log"
+	"mime"
+	"mime/multipart"
 	"net/http"
 	"os"
 	"time"
@@ -25,10 +28,11 @@ type ResponseError struct {
 }
 
 type Route struct {
-	Response http.ResponseWriter
-	Request  *http.Request
-	Cors     string
-	Payload  []byte
+	Response      http.ResponseWriter
+	Request       *http.Request
+	Cors          string
+	Payload       []byte
+	MultipartForm util.MultipartForm
 	HandlerInterface
 }
 
@@ -53,7 +57,7 @@ func (r *Route) VerifyToken() (util.ReturnedTokenStruct, error) {
 	if tkt.Valid {
 		claim, _ := tkt.Claims.(*util.JWTokenInterface)
 		tokenPayload := util.JWTokenInterface{
-			User: util.UserJWT{User_id: claim.User.User_id, User_Name: claim.User.User_Name},
+			User: util.UserJWT{User_id: claim.User.User_id, User_Name: claim.User.User_Name, User_photo: claim.User.User_photo},
 			RegisteredClaims: jwt.RegisteredClaims{
 				// A usual scenario is to set the expiration time relative to the current time
 				ExpiresAt: jwt.NewNumericDate(time.Now().Add(model.Token_Duration)),
@@ -62,10 +66,15 @@ func (r *Route) VerifyToken() (util.ReturnedTokenStruct, error) {
 		}
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, tokenPayload)
 		tkt, _ := token.SignedString([]byte(os.Getenv("jwt_key")))
-		return util.ReturnedTokenStruct{User_id: claim.User.User_id, User_name: claim.User.User_Name, User_photo: "", Token: tkt}, nil
+		return util.ReturnedTokenStruct{User_id: claim.User.User_id, User_name: claim.User.User_Name, User_photo: claim.User.User_photo, Token: tkt}, nil
 	} else {
 		return util.ReturnedTokenStruct{}, errors.New("unathorized")
 	}
+}
+
+func (r *Route) ReadJsonPayload() {
+	body, _ := io.ReadAll(r.Request.Body)
+	r.Payload = body
 }
 
 func (r *Route) GET(handler func()) {
@@ -79,8 +88,10 @@ func (r *Route) GET(handler func()) {
 func (r *Route) POST(handler func()) {
 	util.EnableCors(r.Response, r.Cors)
 	if r.Request.Method == http.MethodPost {
-		body, _ := io.ReadAll(r.Request.Body)
-		r.Payload = body
+		if err := r.getRequestBody(); err != nil {
+			r.WriteJSON(http.StatusBadRequest, ResponseError{Msg: "error"})
+			return
+		}
 		handler()
 	}
 }
@@ -88,8 +99,10 @@ func (r *Route) POST(handler func()) {
 func (r *Route) PUT(handler func()) {
 	util.EnableCors(r.Response, r.Cors)
 	if r.Request.Method == http.MethodPut {
-		body, _ := io.ReadAll(r.Request.Body)
-		r.Payload = body
+		if err := r.getRequestBody(); err != nil {
+			r.WriteJSON(http.StatusBadRequest, ResponseError{Msg: "error"})
+			return
+		}
 		handler()
 	}
 }
@@ -97,8 +110,10 @@ func (r *Route) PUT(handler func()) {
 func (r *Route) PATCH(handler func()) {
 	util.EnableCors(r.Response, r.Cors)
 	if r.Request.Method == http.MethodPatch {
-		body, _ := io.ReadAll(r.Request.Body)
-		r.Payload = body
+		if err := r.getRequestBody(); err != nil {
+			r.WriteJSON(http.StatusBadRequest, ResponseError{Msg: "error"})
+			return
+		}
 		handler()
 	}
 }
@@ -109,5 +124,47 @@ func (r *Route) DELETE(handler func()) {
 		body, _ := io.ReadAll(r.Request.Body)
 		r.Payload = body
 		handler()
+	}
+}
+
+func (r *Route) getRequestBody() error {
+	contenType := r.Request.Header.Get("Content-Type")
+	mediaType, _, _ := mime.ParseMediaType(contenType)
+	if mediaType == "multipart/form-data" {
+		var multiPart util.MultipartForm = util.MultipartForm{Value: map[string]string{}, File: map[string]util.FileStruct{}}
+		if err := r.Request.ParseMultipartForm(0); err != nil {
+			log.Println("max bytes")
+			return errors.New("error")
+		}
+		for key, value := range r.Request.MultipartForm.Value {
+			multiPart.Value[key] = value[0]
+		}
+		for key, file := range r.Request.MultipartForm.File {
+			fileDescription := file[0]
+			myFile, fileErr := file[0].Open()
+			if fileErr != nil {
+				//Handle error
+				log.Println(fileErr)
+			}
+			multiPart.File[key] = struct {
+				Name        string
+				ContentType string
+				File        multipart.File
+			}{
+				Name:        fileDescription.Filename,
+				ContentType: fileDescription.Header.Get("Content-Type"),
+				File:        myFile,
+			}
+		}
+		r.MultipartForm = multiPart
+		return nil
+	} else {
+		body, err := io.ReadAll(r.Request.Body)
+		if err != nil {
+			log.Println("read body error")
+			return errors.New("error")
+		}
+		r.Payload = body
+		return nil
 	}
 }

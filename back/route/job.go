@@ -19,4 +19,8 @@ var NewJobRoute = func(response http.ResponseWriter, request *http.Request) {
 		log.Println(payload)
 		route.Response.Write([]byte("Hello"))
 	})
+
+	route.PUT(func() {
+
+	})
 }

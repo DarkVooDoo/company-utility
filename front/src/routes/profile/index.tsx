@@ -1,6 +1,6 @@
 import { component$, useSignal } from "@builder.io/qwik"
 import { DocumentHead, Form, routeAction$, routeLoader$ } from "@builder.io/qwik-city"
-import { BACKEND_HOST } from "~/lib/util"
+import { BACKEND_HOST, CdnPrefix } from "~/lib/util"
 
 import {Profile} from "~/lib/types"
 
@@ -15,7 +15,7 @@ export const useGeUsertProfile = routeLoader$(async (req)=>{
         })
         return await fetchProfile.json() as Profile
     }
-    return {adresse: "", email: "", firstname: "", id: "", joined: "", lastname: "", postal: ""}
+    return {adresse: "", email: "", firstname: "", id: "", joined: "", lastname: "", postal: "", photo: ""}
   })
 
 export const useModifyProfile = routeAction$(async(form, req)=>{
@@ -34,15 +34,49 @@ export const useModifyProfile = routeAction$(async(form, req)=>{
     }
 })
 
-const Special = "#" || "*"
+export const useChangeAvatar = routeAction$(async(form, req)=>{
+    const {photo, photoId} = form
+    const formData = new FormData()
+    const token = req.cookie.get("auth-token")?.value
+    formData.append("photo", photo as any)
+    formData.append("photoId", photoId as string)
+    if (token){
+        const t = await fetch(`${BACKEND_HOST}:5000/api/user`,{
+            method: "PATCH",
+            headers: [["Authorization", token]],
+            body: formData
+        })
+    }
+})
+
 const Profile = component$(()=>{
     const modifyProfile = useModifyProfile()
     const prof = useGeUsertProfile()
-    const test = useSignal("")
+    const picProfile = useSignal(CdnPrefix+prof.value.photo)
+    const changeAvatar = useChangeAvatar()
 
     return (
         <div>
             <h3 class={style.profile_header}>Personal info </h3>
+            <div class={style.profile_photo}>
+                <label for="photo" class={style.profile_photo_label} >Change Photo</label>
+                <input type="file" name="photo" id="photo" accept="image/*" class={style.profile_photo_input} onChange$={async (e)=>{
+                    const formData = new FormData()
+                    const file = e.target.files?.item(0)
+                    if (file && file.size <= 10000){
+                        const fReader = new FileReader()
+                        fReader.onload = (e)=>{
+                            const result = e.target?.result
+                            if (result) picProfile.value = result.toString()
+                        }
+                        fReader.readAsDataURL(file)
+                        formData.append("photo", file as File)
+                        formData.append("photoId", prof.value.photo)
+                        await changeAvatar.submit(formData)
+                    }
+                }}/>
+                <img class={style.profile_photo_container} src={picProfile.value} alt="test" />
+            </div>
             <Form action={modifyProfile}>
                 <div class={style.profile_input}>
                     <label class={style.profile_input_label} form="firstname">Prenom</label>

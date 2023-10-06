@@ -51,4 +51,19 @@ var UserRoute = func(res http.ResponseWriter, req *http.Request) {
 		}
 		route.WriteJSON(http.StatusOK, updateUser)
 	})
+
+	route.PATCH(func() {
+		file := route.MultipartForm.File["photo"]
+		photoId := route.MultipartForm.Value["photoId"]
+		user, err := route.VerifyToken()
+		if err != nil {
+			route.WriteJSON(http.StatusUnauthorized, ResponseError{Msg: "unauthorized"})
+			return
+		}
+		if err := model.UpdateUserPhoto(user.User_id, photoId, file); err != nil {
+			route.WriteJSON(http.StatusInternalServerError, ResponseError{Msg: "server error"})
+			return
+		}
+		route.WriteJSON(http.StatusOK, ResponseError{Msg: "Success"})
+	})
 }

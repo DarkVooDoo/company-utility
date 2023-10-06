@@ -2,7 +2,7 @@ package model
 
 import (
 	"errors"
-	"work/db"
+	"work/store"
 	"work/util"
 )
 
@@ -13,7 +13,7 @@ func GetNotifications(userToken string) []util.Notification {
 	}
 	var id, message, date string
 	var myNotification []util.Notification = []util.Notification{}
-	db := db.DBInit()
+	db := store.DBInit()
 	rows, err := db.Query(`SELECT alert_id, alert_message, TO_CHAR(AGE(NOW(), alert_date), 'YY-MM-DD-HH24-MI-SS') FROM Alert WHERE alert_user_id=$1`, user.User_id)
 	if err != nil {
 		return nil
@@ -27,7 +27,7 @@ func GetNotifications(userToken string) []util.Notification {
 }
 
 func DeleteNotification(id string) error {
-	db := db.DBInit()
+	db := store.DBInit()
 	_, err := db.Exec(`DELETE FROM Alert WHERE alert_id=$1`, id)
 	if err != nil {
 		return errors.New("error")

@@ -2,12 +2,12 @@ package model
 
 import (
 	"errors"
-	"work/db"
+	"work/store"
 	"work/util"
 )
 
 func Search(search string) (util.SearchResult, error) {
-	db := db.DBInit()
+	db := store.DBInit()
 	var user []util.SearchStruct = []util.SearchStruct{}
 	var company []util.SearchStruct = []util.SearchStruct{}
 	var id, name string

@@ -5,7 +5,7 @@ export const BACKEND_HOST = "http://localhost"
 
 export const MONTH = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"]
 
-export const userContext = createContextId<[Signal<{user_id: string, user_name: string}>, QRL<(id?: string, name?: string) => void>]>("user")
+export const userContext = createContextId<[Signal<{user_id: string, user_name: string, user_photo: string}>, QRL<(id?: string, name?: string, photo?: string) => void>]>("user")
 
 export const CreateCookie = (cookieName: string, value: string, maxAge: number, path: string = "/", secure: boolean = true)=>{
     document.cookie = `${cookieName}=${value};path=${path};max-age=${maxAge}`
@@ -109,3 +109,5 @@ export const GetYearDays = (year: number, month: number)=>{
 export const SecondsToHour = (seconds: number)=>{
     return `${Math.floor(seconds / (60*60))}:${Math.floor(seconds % (60*60) / 60)}:${seconds % 60}`
 }
+
+export const CdnPrefix = "https://test-connected.s3.eu-west-3.amazonaws.com/"

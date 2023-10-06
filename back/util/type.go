@@ -1,6 +1,8 @@
 package util
 
 import (
+	"mime/multipart"
+
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -114,8 +116,9 @@ type ReturnedTokenStruct struct {
 }
 
 type UserJWT struct {
-	User_id   string
-	User_Name string
+	User_id    string
+	User_Name  string
+	User_photo string
 }
 
 type UserProfile struct {
@@ -125,6 +128,7 @@ type UserProfile struct {
 	Lastname  string `json:"lastname"`
 	Adresse   string `json:"adresse"`
 	Postal    string `json:"postal"`
+	Photo     string `json:"photo"`
 	Email     string `json:"email"`
 }
 
@@ -199,4 +203,15 @@ type Hour struct {
 	Day     string `json:"day"`
 	Seconds uint   `json:"seconds"`
 	Hours   string `json:"hours"`
+}
+
+type FileStruct struct {
+	Name        string
+	ContentType string
+	File        multipart.File
+}
+
+type MultipartForm struct {
+	Value map[string]string
+	File  map[string]FileStruct
 }

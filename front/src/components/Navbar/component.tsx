@@ -1,7 +1,7 @@
 import { component$, useContext, useSignal, $ } from "@builder.io/qwik"
 
 import style from "./style.module.css"
-import { closeDialogOnBackdropClick, userContext } from "~/lib/util"
+import { CdnPrefix, closeDialogOnBackdropClick, userContext } from "~/lib/util"
 import { Link, useNavigate } from "@builder.io/qwik-city"
 
 import Logo from "~/media/logo.webp?jsx"
@@ -73,7 +73,6 @@ const Navbar = component$<Props>(({notif, companys})=>{
     const company = myCompanys.value.map(comp=>(
         <Link key={comp.id} href={`/dashboard/${comp.id}`} class={style.navbar_sideBar_companys_btn_more_row} onClick$={()=>dialogRef.value?.close()}>- {comp.name}</Link>
     ))
-
     return (
         <nav class={style.navbar}>
             <Link href={user.value.user_id ? "/home" : "/"}><Logo alt="home"/></Link>
@@ -98,7 +97,7 @@ const Navbar = component$<Props>(({notif, companys})=>{
                     <>
                         <button aria-label="ouvrir notification" onClick$={onOpenNotif}><Bell alt="notification" class={style.navbar_navigation_bellIcon} /> </button>
                         <button type="button" aria-label="ouvrir menu" class={style.navbar_logBtn} onClick$={onOpenSideBar} >
-                            <User alt="user" class={style.navbar_logBtn_icon} />
+                            {user.value.user_photo === "" ? <User alt="user" class={style.navbar_logBtn_icon} /> : <img src={CdnPrefix+user.value.user_photo} alt="profile" class={style.navbar_logBtn_icon} /> }
                         </button>
                     </> : 
                     <Link href="/sign" class={style.navbar_navigation_sign}>Connexion</Link>

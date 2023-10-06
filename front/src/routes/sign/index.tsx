@@ -24,7 +24,7 @@ export const useSigninAction = routeAction$(async (form, request)=>{
             request.cookie.set("auth-token", userCredential.user_token, {maxAge: 60*60*5, path: "/"})
             request.cookie.set("user_name", userCredential.user_name, {maxAge: 60*60*5, path: "/"})
             request.cookie.set("id", userCredential.user_id, {maxAge: 60*60*5, path: "/"})
-            return {success: true, id: userCredential.user_id, name: userCredential.user_name}
+            return {success: true, id: userCredential.user_id, name: userCredential.user_name, photo: userCredential.user_photo}
         }
     }
 }, zod$({firstname: z.string().optional(), lastname: z.string().optional(), email: z.string(), password: z.string(), confirmation: z.string().optional()}))
@@ -38,7 +38,7 @@ const Login = component$(()=>{
         <div class={style.sign}>
             <Form class={style.sign_form} action={signinAction} onSubmitCompleted$={(e)=>{
                 if(e.detail.status === 200){
-                    context[1](e.detail.value.id, e.detail.value.name)
+                    context[1](e.detail.value.id, e.detail.value.name, e.detail.value.photo)
                     nav("/home")
                 }
             }}>

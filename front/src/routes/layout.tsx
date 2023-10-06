@@ -12,7 +12,7 @@ export const onRequest: RequestHandler = async ({pathname, cookie, redirect, nex
         headers: [["Authorization", token]]
     })
     if(authorize.status === 200){
-        const user = await authorize.json() as {user_id: string, user_name: string, user_token: string}
+        const user = await authorize.json() as {user_id: string, user_name: string, user_token: string, user_photo: string}
         cookie.set("auth-token", user.user_token, {maxAge: 60*60*5, path: "/"})
         cookie.set("user_name", user.user_name, {maxAge: 60*60*5, path: "/"})
         cookie.set("id", user.user_id, {maxAge: 60*60*5, path: "/"})
@@ -25,7 +25,7 @@ export const onRequest: RequestHandler = async ({pathname, cookie, redirect, nex
         }else if(pathname.startsWith("/sign")){
           throw redirect(308, "/home")
         }
-        sharedMap.set("user", {user_id: user.user_id, user_name: user.user_name})
+        sharedMap.set("user", {user_id: user.user_id, user_name: user.user_name, user_photo: user.user_photo})
         return await next()
     }else{
         if(pathname !== "/" && !pathname.startsWith("/sign")){
@@ -69,19 +69,19 @@ export const useServerTimeLoader = routeLoader$(async ({sharedMap, cookie}) => {
       if (fetchNotif.status !== 200) {
         return {
           date: new Date().toISOString(),
-          user: sharedMap.get("user") as {user_id: string, user_name: string},
+          user: sharedMap.get("user") as {user_id: string, user_name: string, user_photo: string},
           notif: [],
         };
       }
       const notif = await fetchNotif.json() as {id: string, message: string, date: string}[]
       return {
         date: new Date().toISOString(),
-        user: sharedMap.get("user") as {user_id: string, user_name: string},
+        user: sharedMap.get("user") as {user_id: string, user_name: string, user_photo: string},
         notif
       };
   }
   return {
-    user: sharedMap.get("user") as {user_id: string, user_name: string},
+    user: sharedMap.get("user") as {user_id: string, user_name: string, user_photo: string},
     notif: [],
     currentCompany: cookie.get("company-id")?.value
   };
@@ -92,12 +92,13 @@ export default component$(() => {
   const loc = useLocation()
   const notif = useServerTimeLoader()
   const companys = useMyCompanys()
-  const user = useSignal(notif.value.user || {user_id: "", user_name: ""})
-  const onRemoveUser = $((id?: string, name?: string)=>{
+  console.log(notif.value.user)
+  const user = useSignal(notif.value.user || {user_id: "", user_name: "", user_photo: ""})
+  const onRemoveUser = $((id?: string, name?: string, photo?: string | undefined)=>{
     if(id && name){
-      user.value = {user_id: id, user_name: name}
+      user.value = {user_id: id, user_name: name, user_photo: photo || ""}
     }else{
-      user.value = {user_id: "", user_name: ""}
+      user.value = {user_id: "", user_name: "", user_photo: ""}
     }
   })
   useContextProvider(userContext, [user, onRemoveUser])

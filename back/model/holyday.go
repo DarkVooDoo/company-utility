@@ -3,13 +3,13 @@ package model
 import (
 	"errors"
 	"log"
-	"work/db"
+	"work/store"
 	"work/util"
 )
 
 func RequestHolyday(userId string, requestPayload util.HolydayRequestPayload) (util.Holyday, error) {
 	var id, from, to, status string
-	db := db.DBInit()
+	db := store.DBInit()
 	row := db.QueryRow(`INSERT INTO Holyday (holyday_from, holyday_to, holyday_type, holyday_user_id, holyday_company_id) VALUES($1,$2,$3,$4,$5)
 	RETURNING holyday_id, TO_CHAR(holyday_from, 'DD-MM-YYYY'), TO_CHAR(holyday_to, 'DD-MM-YYYY'), holyday_status`, requestPayload.From, requestPayload.To, requestPayload.Type, userId, requestPayload.CompanyId)
 	if err := row.Scan(&id, &from, &to, &status); err != nil {
@@ -38,7 +38,7 @@ func GetAllHolyday(companyId string) ([]util.Holyday, error) {
 
 func RejectHolyday(id string) error {
 	var userId string
-	db := db.DBInit()
+	db := store.DBInit()
 	tx, _ := db.Begin()
 	row := tx.QueryRow(`UPDATE Holyday SET holyday_status='Refusé' WHERE holyday_id=$1 RETURNING holyday_user_id`, id)
 	if err := row.Scan(&userId); err != nil {
@@ -55,7 +55,7 @@ func RejectHolyday(id string) error {
 
 func AcceptHolyday(id string) error {
 	var userId string
-	db := db.DBInit()
+	db := store.DBInit()
 	tx, _ := db.Begin()
 	row := tx.QueryRow(`UPDATE Holyday SET holyday_status='Validé' WHERE holyday_id=$1 RETURNING holyday_user_id`, id)
 	if err := row.Scan(&userId); err != nil {
@@ -73,7 +73,7 @@ func AcceptHolyday(id string) error {
 }
 
 func DeleteHolyday(id string) error {
-	db := db.DBInit()
+	db := store.DBInit()
 	_, err := db.Exec(`DELETE FROM Holyday WHERE holyday_id=$1`, id)
 	return err
 }
@@ -81,7 +81,7 @@ func DeleteHolyday(id string) error {
 func getHolydays(query string, args ...any) ([]util.Holyday, error) {
 	var id, from, to, status, time, name, user string
 	holydays := []util.Holyday{}
-	db := db.DBInit()
+	db := store.DBInit()
 	rows, err := db.Query(query, args...)
 	if err != nil {
 		log.Println(err)

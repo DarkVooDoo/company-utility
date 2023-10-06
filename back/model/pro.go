@@ -2,7 +2,7 @@ package model
 
 import (
 	"errors"
-	"work/db"
+	"work/store"
 	"work/util"
 )
 
@@ -18,7 +18,7 @@ type Pro struct {
 }
 
 func CreateCompany(company util.CreateCompany, userId string) error {
-	db := db.DBInit()
+	db := store.DBInit()
 	tx, _ := db.Begin()
 	result := tx.QueryRow(`INSERT INTO Company (company_name, company_adresse, company_postal, company_user_id) VALUES($1,$2,$3,$4) RETURNING company_id`, company.Name, company.Adresse, company.Postal, userId)
 	var companyId string
@@ -36,7 +36,7 @@ func GetEntreprises(userToken string, requestType string) ([]util.Company, error
 	if err != nil {
 		return []util.Company{}, errors.New("error token")
 	}
-	db := db.DBInit()
+	db := store.DBInit()
 	var myCompany []util.Company = []util.Company{}
 	var id, name, adresse string
 	var postal uint
@@ -75,7 +75,7 @@ func GetSingleEntreprise(companyId string, userToken string) (util.Company, erro
 		return util.Company{}, errors.New("error")
 	}
 
-	db := db.DBInit()
+	db := store.DBInit()
 	result := db.QueryRow(`SELECT company_id, company_name, company_adresse, company_postal FROM Company WHERE company_id=$1 AND company_user_id=$2`, companyId, user.User_id)
 	pendingHolydays, pendingErr := GetHolydayByStatus(companyId, "En Attente")
 	role := GetUserRole(user.User_id, companyId)
@@ -90,7 +90,7 @@ func GetSingleEntreprise(companyId string, userToken string) (util.Company, erro
 }
 
 func CompanyEmployee(companyId string) ([]util.CompanyUser, error) {
-	var db = db.DBInit()
+	var db = store.DBInit()
 	var companyUser []util.CompanyUser
 	var name, role, id string
 	result, err := db.Query(`SELECT CONCAT(user_firstname,' ', user_lastname), member_role, user_id FROM Member LEFT JOIN Users ON user_id=member_user_id WHERE member_company_id=$1`, companyId)
@@ -106,7 +106,7 @@ func CompanyEmployee(companyId string) ([]util.CompanyUser, error) {
 }
 
 func DeleteCompany(id string) error {
-	db := db.DBInit()
+	db := store.DBInit()
 	_, err := db.Exec(`DELETE FROM Company WHERE company_id=$1`, id)
 	if err != nil {
 		return errors.New("error")

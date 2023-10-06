@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
-	"work/db"
+	"work/store"
 	"work/util"
 )
 
 func GetMembers(companyId string) ([]util.Member, error) {
-	db := db.DBInit()
+	db := store.DBInit()
 	var mId, mName, mRole, userId string
 	var members []util.Member = []util.Member{}
 	member, errMember := db.Query(`SELECT member_id, CONCAT(user_firstname, ' ', user_lastname), member_role, member_user_id FROM member LEFT JOIN Users ON user_id=member_user_id WHERE member_company_id=$1`, companyId)
@@ -25,7 +25,7 @@ func GetMembers(companyId string) ([]util.Member, error) {
 }
 
 func ChangeMemberRole(member util.Role) error {
-	db := db.DBInit()
+	db := store.DBInit()
 	_, err := db.Exec(`UPDATE Member SET member_role=$1 WHERE member_id=$2`, member.Role, member.Id)
 	if err != nil {
 		log.Println(err)
@@ -36,7 +36,7 @@ func ChangeMemberRole(member util.Role) error {
 
 func AddNewMember(userId string, member util.NewMember) ([]byte, error) {
 	var role, newUserId, newUserRole, newUserName, newMemberId string
-	db := db.DBInit()
+	db := store.DBInit()
 	result := db.QueryRow(`SELECT member_role FROM Member WHERE member_user_id=$1 AND member_company_id=$2`, userId, member.CompanyId)
 	if scanErr := result.Scan(&role); scanErr != nil {
 		return nil, errors.New("error")
@@ -58,7 +58,7 @@ func AddNewMember(userId string, member util.NewMember) ([]byte, error) {
 
 func DeleteMember(userId string, member util.DeleteMember) error {
 	var role string
-	db := db.DBInit()
+	db := store.DBInit()
 	userMakingTheRequest := db.QueryRow(`SELECT member_role FROM Member WHERE member_user_id=$1`, userId)
 	if scanErro := userMakingTheRequest.Scan(&role); scanErro != nil {
 		return errors.New("err")

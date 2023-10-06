@@ -5,14 +5,14 @@ import (
 	"log"
 	"strconv"
 	"strings"
-	"work/db"
+	"work/store"
 	"work/util"
 )
 
 func GetCurrentShift(userId string, companyId string) (util.CurrentShiftStatus, error) {
 	var id, state, hourId string
 	var seconds uint
-	db := db.DBInit()
+	db := store.DBInit()
 	row := db.QueryRow(`SELECT tracker_id, tracker_state, hour_id FROM Tracker LEFT JOIN Hour 
 	ON tracker_id=hour_tracker_id WHERE tracker_state=$1 OR hour_end IS NULL OR tracker_state=$2 AND tracker_user_id=$3 AND tracker_company_id=$4`, "En Cours", "En Pause", userId, companyId)
 	if err := row.Scan(&id, &state, &hourId); err != nil {
@@ -31,7 +31,7 @@ func GetCurrentShift(userId string, companyId string) (util.CurrentShiftStatus, 
 func UpdateCurrentShift(userId string, shift util.UpdateCurrentShift) error {
 	var trackId string
 	var salary float64
-	tx, _ := db.DBInit().Begin()
+	tx, _ := store.DBInit().Begin()
 	row := tx.QueryRow(`SELECT member_worth FROM Member WHERE member_user_id=$1 AND member_company_id=$2`, userId, shift.Company)
 	if err := row.Scan(&salary); err != nil {
 		return errors.New("error")
@@ -62,7 +62,7 @@ func UpdateCurrentShift(userId string, shift util.UpdateCurrentShift) error {
 }
 
 func PauseCurrentShift(userId string, shift util.UpdateCurrentShift) error {
-	tx, _ := db.DBInit().Begin()
+	tx, _ := store.DBInit().Begin()
 	_, err := tx.Exec(`UPDATE Hour SET hour_end=NOW() WHERE hour_id=$1`, shift.Hour)
 	if err != nil {
 		return tx.Rollback()
@@ -73,7 +73,7 @@ func PauseCurrentShift(userId string, shift util.UpdateCurrentShift) error {
 }
 
 func GetDayByDayHours(companyId string) ([]util.Hour, error) {
-	db := db.DBInit()
+	db := store.DBInit()
 	var name, day string
 	var second float32
 	var eliminateDoublon map[string]util.Hour = map[string]util.Hour{}
@@ -116,7 +116,7 @@ func GetAccumulateHours(companyId string, date string, userId string) (Accumulat
 	var payrolls AccumulateHours = AccumulateHours{}
 	var shiftByDay map[string][]DayShift = map[string][]DayShift{}
 	var yearMonth = strings.Split(date, "-")
-	db := db.DBInit()
+	db := store.DBInit()
 	employees, err := db.Query(`SELECT user_id, hour_id, 
 	TO_CHAR(hour_start AT TIME ZONE 'utc' AT TIME ZONE 'Europe/Paris', 'HH24:MI'), 
 	TO_CHAR(hour_end AT TIME ZONE 'utc' AT TIME ZONE 'Europe/Paris', 'HH24:MI'), 
@@ -152,7 +152,7 @@ func GetAccumulateHoursFromTo(companyId string, from string, to string, userId s
 	var sumHours map[string]AccumulateHours = map[string]AccumulateHours{}
 	var payrolls AccumulateHours = AccumulateHours{}
 	var shiftByDay map[string][]DayShift = map[string][]DayShift{}
-	db := db.DBInit()
+	db := store.DBInit()
 	employees, err := db.Query(`SELECT user_id, hour_id, 
 	TO_CHAR(hour_start AT TIME ZONE 'utc' AT TIME ZONE 'Europe/Paris', 'HH24:MI'), 
 	TO_CHAR(hour_end AT TIME ZONE 'utc' AT TIME ZONE 'Europe/Paris', 'HH24:MI'), 
@@ -183,7 +183,7 @@ func GetAccumulateHoursFromTo(companyId string, from string, to string, userId s
 }
 
 func DeleteHour(id string) error {
-	db := db.DBInit()
+	db := store.DBInit()
 	_, err := db.Exec(`DELETE FROM Hour WHERE hour_id=$1`, id)
 	if err != nil {
 		return errors.New("error deleting")
