@@ -1,4 +1,4 @@
-import { component$, useSignal, $ } from "@builder.io/qwik"
+import { component$, useSignal, $, useStore } from "@builder.io/qwik"
 
 import style from "./style.module.css"
 import Calendar from "~/components/Calendar/component"
@@ -6,6 +6,7 @@ import { DocumentHead, routeAction$, routeLoader$ } from "@builder.io/qwik-city"
 import { Member, NewShift } from "~/lib/types"
 
 import Trash from "~/media/trash.svg?jsx"
+import CustomSelect from "~/components/CustomSelect/component"
 
 export const useSaveShift = routeAction$(async(form, req)=>{
     const {memberShift} = form
@@ -21,30 +22,36 @@ export const useSaveShift = routeAction$(async(form, req)=>{
 
 export const useGetMember = routeLoader$(async (req)=>{
     const fetchEmployees = await fetch(`http://localhost:5000/api/shift?cId=${req.cookie.get("company-id")?.value}`)
-    return await fetchEmployees.json() as Pick<Member, "id" | "name" | "role">[]
+    return await fetchEmployees.json() as Pick<Member, "id" | "name">[]
 })
 
 const NewShift = component$(()=>{
     const data = useGetMember()
     const saveShift = useSaveShift()
-    const currentMember = useSignal<NewShift>({user_name: data.value[0].name, user_id: data.value[0].id, shift_date: [], shift_start: "09:00", shift_end: "17:00", shift_pause: 0})
+    const currentMember = useStore<NewShift>({user_name: data.value[0].name, user_id: data.value[0].id, shift_date: [], shift_start: "09:00", shift_end: "17:00", shift_pause: 0})
     const memberShift = useSignal<NewShift[]>([])
     const showCalendar = useSignal(false)
 
     const onAddUser = $(async ()=>{
-        if(currentMember.value.shift_date.length < 1) return
-        const userExist = memberShift.value.findIndex(user=>user.user_id === currentMember.value.user_id && user.shift_start === currentMember.value.shift_start && user.shift_end === currentMember.value.shift_end)
-        if(userExist > -1){
-            memberShift.value[userExist] = currentMember.value
-            memberShift.value = [...memberShift.value]
-        }else{
-            memberShift.value = [...memberShift.value, {...currentMember.value}]
+        if(currentMember.shift_date.length < 1) return
+        const userExist = memberShift.value.findIndex(user=>user.user_id === currentMember.user_id && user.shift_start === currentMember.shift_start && user.shift_end === currentMember.shift_end)
+        if(userExist === -1){
+            memberShift.value = [...memberShift.value, {...currentMember, shift_date: [...currentMember.shift_date]}]
         }
     })
 
     const onDateChange = $((dates: string[])=>{
-        currentMember.value = {...currentMember.value, shift_date: dates}
+        currentMember.shift_date = dates
     })
+
+    const renderNames = $((user: Pick<Member, "id" | "name">)=>(
+        <div onClick$={()=>{
+            currentMember.user_name = user.name
+            currentMember.user_id = user.id
+        }}>
+            {user.name}
+        </div>
+    ))
 
     const shifts = memberShift.value.map((user, index)=>(
         <div key={index} class={style.shift_worker}>
@@ -87,42 +94,32 @@ const NewShift = component$(()=>{
         <main>
             <h1>Creer des plannings</h1>
             <div class={style.shift_name}>
-                {/* <SelectOption
-                    class={style.shift_name_option}
-                    items={employee}
-                    value={`${currentMember.user_name}`}
-                    render={(user)=><div key={user.user_id} class={style.dropdown} onClick={()=>{setcurrentMember(cUser=>({...cUser, ...user}))}}>{user.user_name} </div>} 
-                /> */}
-                <select name="member" id="member" onChange$={({target:{value}})=>{
-                    const user = JSON.parse(value)
-                    currentMember.value = {...currentMember.value, user_id: user.id, user_name: user.name}
-                }}>
-                    {data.value.map(member=><option key={member.id} selected={currentMember.value.user_id === member.id} value={JSON.stringify({id: member.id, name: member.name})}>{member.name}</option>)}
-                </select>
+                <CustomSelect {...{items: data.value, value: currentMember.user_name, renderOption: renderNames, width: 12}} />
+
                 <button type="button" class={style.shift_addBtn} onClick$={onAddUser}>Ajouter</button>
             </div>
             <div class={style.shift_time}>
                 <div class={style.shift_time_t}>
                     <p>Date</p>
                     <button class={style.shift_time_t_dateBtn} onClick$={()=>showCalendar.value = !showCalendar.value}>Calandrier</button>
-                    {showCalendar.value && <Calendar {...{currentUser: currentMember.value.user_id, clasStyle: style.shift_time_t_calendar, onChange: onDateChange}} />}
+                    {showCalendar.value && <Calendar {...{currentUser: currentMember.user_id, hasMin: true, clasStyle: style.shift_time_t_calendar, onChange: onDateChange}} />}
                 </div>  
                 <div class={style.shift_time_t}>
                     <label for="start">Commence</label>
-                    <input type="time" name="start" id="start" class={style.shift_time_t_input} value={currentMember.value.shift_start} onChange$={({target:{value}})=>{
-                        currentMember.value = {...currentMember.value, shift_start: value}
+                    <input type="time" name="start" id="start" class={style.shift_time_t_input} value={currentMember.shift_start} onChange$={({target:{value}})=>{
+                        currentMember.shift_start = value
                     }} />
                 </div>
                 <div class={style.shift_time_t}>
                     <label for="end">Fini</label>
-                    <input type="time" name="end" id="end" class={style.shift_time_t_input} value={currentMember.value.shift_end} onChange$={({target:{value}})=>{
-                        currentMember.value = {...currentMember.value, shift_end: value}
+                    <input type="time" name="end" id="end" class={style.shift_time_t_input} value={currentMember.shift_end} onChange$={({target:{value}})=>{
+                        currentMember.shift_end = value
                     }} />
                 </div>
                 <div class={style.shift_time_t}>
                     <label for="pause">Pause</label>
-                    <input type="number" name="pause" id="pause" class={style.shift_time_t_input} value={currentMember.value.shift_pause.toString()} onChange$={({target:{value}})=>{
-                        currentMember.value = {...currentMember.value, shift_pause: parseInt(value)}
+                    <input type="number" name="pause" id="pause" class={style.shift_time_t_input} value={currentMember.shift_pause.toString()} onChange$={({target:{value}})=>{
+                        currentMember.shift_pause = parseInt(value)
                     }} />
                     
                 </div>

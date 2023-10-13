@@ -13,8 +13,8 @@ func GetCurrentShift(userId string, companyId string) (util.CurrentShiftStatus, 
 	var id, state, hourId string
 	var seconds uint
 	db := store.DBInit()
-	row := db.QueryRow(`SELECT tracker_id, tracker_state, hour_id FROM Tracker LEFT JOIN Hour 
-	ON tracker_id=hour_tracker_id WHERE tracker_state=$1 OR hour_end IS NULL OR tracker_state=$2 AND tracker_user_id=$3 AND tracker_company_id=$4`, "En Cours", "En Pause", userId, companyId)
+	row := db.QueryRow(`SELECT tracker_id, tracker_state, hour_id FROM Tracker RIGHT JOIN Hour 
+	ON tracker_id=hour_tracker_id AND hour_end IS NULL WHERE tracker_user_id=$1 AND tracker_company_id=$2`, userId, companyId)
 	if err := row.Scan(&id, &state, &hourId); err != nil {
 		log.Println(err)
 		return util.CurrentShiftStatus{}, errors.New("error")
@@ -36,14 +36,11 @@ func UpdateCurrentShift(userId string, shift util.UpdateCurrentShift) error {
 	if err := row.Scan(&salary); err != nil {
 		return errors.New("error")
 	}
-	if shift.Shift != "" {
-		if shift.State == "En Pause" {
-			tx.Exec(`UPDATE Tracker SET tracker_state=$1 WHERE tracker_id=$2`, "En Cours", shift.Shift)
-			tx.Exec(`INSERT INTO Hour (hour_start, hour_worth, hour_tracker_id) VALUES(NOW(),$1, $2)`, salary, shift.Shift)
-			tx.Commit()
-			return nil
-		}
-		_, err := tx.Exec(`UPDATE Hour SET hour_end=NOW() WHERE hour_id=$1`, shift.Hour)
+
+	switch shift.Type {
+	case "Stopped":
+		log.Println(shift)
+		_, err := tx.Exec(`UPDATE Hour SET hour_end=$2 WHERE hour_id=$1`, shift.Hour, "NOW()")
 		if err != nil {
 			log.Println(err)
 			return tx.Rollback()
@@ -51,18 +48,26 @@ func UpdateCurrentShift(userId string, shift util.UpdateCurrentShift) error {
 		tx.Exec(`UPDATE Tracker SET tracker_state=$1 WHERE tracker_id=$2`, "Finis", shift.Shift)
 		tx.Commit()
 		return nil
+	case "Started":
+		track := tx.QueryRow(`INSERT INTO Tracker (tracker_state, tracker_company_id, tracker_user_id) VALUES($1,$2,$3) RETURNING tracker_id`, "En Cours", shift.Company, userId)
+		if err := track.Scan(&trackId); err != nil {
+			return tx.Rollback()
+		}
+		tx.Exec(`INSERT INTO Hour (hour_start, hour_worth, hour_tracker_id) VALUES(NOW(),$1, $2)`, salary, trackId)
+		tx.Commit()
+		return nil
+	default:
+		tx.Exec(`UPDATE Tracker SET tracker_state=$1 WHERE tracker_id=$2`, "En Cours", shift.Shift)
+		tx.Exec(`INSERT INTO Hour (hour_start, hour_worth, hour_tracker_id) VALUES(NOW(),$1, $2) RETURNING hour_id`, salary, shift.Shift)
+		tx.Commit()
+		return nil
 	}
-	track := tx.QueryRow(`INSERT INTO Tracker (tracker_state, tracker_company_id, tracker_user_id) VALUES($1,$2,$3) RETURNING tracker_id`, "En Cours", shift.Company, userId)
-	if err := track.Scan(&trackId); err != nil {
-		return tx.Rollback()
-	}
-	tx.Exec(`INSERT INTO Hour (hour_start, hour_worth, hour_tracker_id) VALUES(NOW(),$1, $2)`, salary, trackId)
-	tx.Commit()
-	return nil
 }
 
 func PauseCurrentShift(userId string, shift util.UpdateCurrentShift) error {
 	tx, _ := store.DBInit().Begin()
+	log.Println(shift.Hour)
+
 	_, err := tx.Exec(`UPDATE Hour SET hour_end=NOW() WHERE hour_id=$1`, shift.Hour)
 	if err != nil {
 		return tx.Rollback()

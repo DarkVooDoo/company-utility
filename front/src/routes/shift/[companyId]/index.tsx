@@ -5,7 +5,7 @@ import { GetMonthArray, MONTH, hasChanged, userContext } from "~/lib/util"
 import style from "./style.module.css"
 import { Calendar, ShiftTypes } from "~/lib/types"
 
-import Trash from "~/media/trash.svg?jsx"
+import Close from "~/media/close.svg?jsx"
 import Edit from "~/media/edit.svg?jsx"
 import CustomSelect from "~/components/CustomSelect/component"
 
@@ -18,6 +18,7 @@ export const useGetShift = routeLoader$(async(req)=>{
 const CompanyShift = component$(()=>{
     const [user] = useContext(userContext)
     const data = useGetShift()
+    const displayRef = useSignal<HTMLDivElement>()
     const company = useSignal({token: data.value.token, company: data.value.company})
     const selectedCell = useSignal<number>()
     const userShift = useSignal<{role: {role: string, id: string}, shift: ShiftTypes[]}>({role: {role: "User", id: ""}, shift: []})
@@ -80,12 +81,11 @@ const CompanyShift = component$(()=>{
                     userShift.value = shift
                     initial.value = [...shift.shift]
                 }
-                const calendarMonth = buildedCalendar.calendar[buildedCalendar.calendar.findIndex(calendar=>calendar.isCurrentMonth)]
-                if (calendarMonth.month === new Date().getMonth()){
-                    const date = new Date()
-                    const showShift = shift.shift.filter(shift=>shift.shift_day === date.getDate() && shift.shift_month === calendarMonth.month+1)
+                if (date.month - 1 === new Date().getMonth()){
+                    const currentDate = new Date()
+                    const showShift = shift.shift.filter(shift=>shift.shift_day === currentDate.getDate() && shift.shift_month === date.month)
                     displayedShift.value = showShift
-                    selectedCell.value = buildedCalendar.calendar.findIndex(calendar=> calendar.isCurrentMonth && calendar.dayNumber === date.getDate())
+                    selectedCell.value = buildedCalendar.calendar.findIndex(calendar=> calendar.isCurrentMonth && calendar.dayNumber === currentDate.getDate())
                 }else{selectedCell.value = undefined}
             }
         }
@@ -108,6 +108,7 @@ const CompanyShift = component$(()=>{
                     const shifts = userShift.value.shift.filter(shift=>shift.shift_day === day.dayNumber && day.month === shift.shift_month-1)
                     displayedShift.value = shifts
                     selectedCell.value = index
+                    displayRef.value?.scrollIntoView(true)
                 }} >{day.dayNumber} </button>
             )
         }
@@ -116,6 +117,7 @@ const CompanyShift = component$(()=>{
                 const shifts = userShift.value.shift.filter(shift=>shift.shift_day===day.dayNumber && day.month === shift.shift_month-1)
                 displayedShift.value = shifts
                 selectedCell.value = index
+                displayRef.value?.scrollIntoView(true)
             }} >{day.dayNumber} </button>
         )
     })
@@ -123,16 +125,20 @@ const CompanyShift = component$(()=>{
     const displayDayShift = displayedShift.value && displayedShift.value.map(shift=><DisplayShift key={shift.shift_id} {...{shift, isAdmin, onDeleteShift, onShiftChange}} />)
     return (
         <div class={style.shift}>
-            <div class={style.shift_header}>
-                {isAdmin && <Link href={`/shift/${company.value.company}/new`} class={style.header_planningBtn} >Creer un planning</Link>}
-                <CustomSelect items={month} value={date.label} renderOption={renderMonths} />
-            </div>
-            <div class={style.shift_calendar}>
-                {["Lu", "Ma", "Me", "Je", "Ve", "Sa", "Di"].map(name=>(<p key={name} class={style.shift_calendar_dayName}>{name} </p>))}
-                {days}
+            <div>
+                <div class={style.shift_header}>
+                    {isAdmin && <Link href={`/shift/${company.value.company}/new`} class={style.header_planningBtn} >Creer un planning</Link>}
+                    <CustomSelect items={month} value={date.label} renderOption={renderMonths} />
+                </div>
+                <div class={style.shift_calendar}>
+                    {["Lu", "Ma", "Me", "Je", "Ve", "Sa", "Di"].map(name=>(<p key={name} class={style.shift_calendar_dayName}>{name} </p>))}
+                    {days}
+                </div>
             </div>
             {hasChanged(initial.value, userShift.value.shift, ["shift_start", "shift_end", "shift_pause"])[0] ? <button type="button" class={style.shift_date_editBtn} onClick$={onEditShift}><Edit alt="edit" class={style.shift_date_editBtn_icon} /></button> : null}
-            {displayDayShift}
+            <div ref={displayRef}>
+                {displayDayShift}
+            </div>
         </div>
     )
 })
@@ -147,9 +153,11 @@ const DisplayShift = component$<DisplayShiftProps>(({isAdmin, onDeleteShift, onS
         <div key={shift.shift_id} class={style.shift_display_shift}>
             <div class={style.shift_display_shift_name}>
                 <h3>{shift.user_name} </h3>
-                {isAdmin && <Trash alt="supprimer" class={style.shift_display_shift_name_supprimer} onClick$={()=>onDeleteShift(shift.shift_id)} />}
+                {isAdmin && <button class={style.shift_display_shift_name_supprimer} onClick$={()=>onDeleteShift(shift.shift_id)} type="button">
+                    <Close alt="supprimer" class={style.shift_display_shift_name_supprimer_icon} />
+                </button>}
             </div>
-            <div>  
+            <div class={style.shift_display_shift_start}>  
                 <p class={style.shift_display_label}>Commence</p>
                 <input type="time" name="start" value={start.value} class={style.shift_display_content} readOnly={isAdmin ? false : true}
                 onChange$={({target: {value}})=>{
@@ -157,7 +165,7 @@ const DisplayShift = component$<DisplayShiftProps>(({isAdmin, onDeleteShift, onS
                     onShiftChange({...shift, shift_start: value, shift_end: end.value, shift_pause: pause.value})
                 }}/>
             </div>
-            <div>
+            <div class={style.shift_display_shift_end}>
                 <p class={style.shift_display_label}>Finis</p>
                 <input type="time" value={end.value} class={style.shift_display_content} readOnly={isAdmin ? false : true}
                 onChange$={({target: {value}})=>{
@@ -165,9 +173,9 @@ const DisplayShift = component$<DisplayShiftProps>(({isAdmin, onDeleteShift, onS
                     onShiftChange({...shift, shift_start: start.value, shift_end: value, shift_pause: pause.value})
                 }}/>
             </div>
-            <div>
+            <div class={style.shift_display_shift_pause}>
                 <p class={style.shift_display_label}>Pause</p>
-                <input type="number" name="pause" id="pause" value={pause.value.toString()} class={style.shift_display_content} readOnly={isAdmin ? false : true}
+                <input type="text" name="pause" id="pause" value={pause.value.toString()} class={style.shift_display_content} readOnly={isAdmin ? false : true}
                 onChange$={({target: {value}})=>{
                     pause.value = parseInt(value)
                     onShiftChange({...shift, shift_start: start.value, shift_end: end.value, shift_pause: parseInt(value)})

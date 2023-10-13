@@ -1,4 +1,7 @@
 .navbar{
+    position: sticky;
+    position: -webkit-sticky;
+    top: 1px;
     padding: 0 var(--Mobile-Padding);
     height: var(--Navbar-Height);
     -webkit-box-shadow: 0px 2px 4px 0px var(--Primary-Color); 
@@ -7,7 +10,13 @@
     gap: .5rem;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--Row-Margin);
+    background-color: white;
+    z-index: 10;
+}
+
+.navbar_logo{
+    width: calc(var(--Navbar-Height) - .5rem);
+    height: calc(var(--Navbar-Height) - .5rem);;
 }
 
 .navbar_search{
@@ -150,20 +159,62 @@
 }
 
 .navbar_sideBar{
-    width: 25ch;
-    height: 100%;
-    margin-top: 0px;
-    margin-bottom: 0px;
-    margin-left: calc(100% - 25ch) !important;
-    border: none;
-    max-height: 100%;
+    position: absolute;
+    top: var(--Navbar-Height);
+    left: -.5rem;
+    width: calc(100% + .5rem);
+    background-color: white;
+    padding: 0 var(--Mobile-Padding);
+    transform: scaleY(0);
+    transform-origin: top;
+    opacity: 0;
+    overflow: hidden;
 }
+
+.navbar_sideBar_open{
+    animation: openMenu .5s linear forwards;
+}
+
+.navbar_sideBar_close{
+    animation: closeMenu .5s linear forwards;
+}
+
+@keyframes openMenu{
+    50%{
+        transform: scaleY(1);
+        opacity: 0;
+    }100%{
+        transform: scaleY(1);
+        opacity: 1;
+    }
+}
+
+@keyframes closeMenu{
+    0%{
+        transform: scaleY(1);
+        opacity: 1;
+    }
+    50%{
+        transform: scaleY(1);
+        opacity: 0;
+    }100%{
+        transform: scaleY(0);
+        opacity: 0;
+    }
+}
+
 
 .navbar_sideBar_user{
     display: flex;
     align-items: center;
-    gap: .3rem;
+    justify-content: space-between;
     padding: .3rem;
+}
+
+.navbar_sideBar_user_info{
+    display: flex;
+    gap: .5rem;
+    align-items: center;
 }
 
 .navbar_sideBar_user_photo{
@@ -174,6 +225,17 @@
 
 .navbar_sideBar_user_name{
     font-size: 1.1rem;
+}
+
+.navbar_sideBar_user_logoffBtn{
+    border: 1px solid black;
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .navbar_sideBar_link{
@@ -220,10 +282,9 @@
     align-items: center;
 }
 
-.navbar_sideBar_logoffBtn{
-    width: 100%;
-    height: 2.5rem;
-    border-bottom: 1px solid black;
+.navbar_sideBar_logoffBtn_icon{
+    height: 1.7rem;
+    width: 1.7rem;
 }
 
 @keyframes showNotificationPopup{
@@ -236,9 +297,7 @@
 
 /* Medium devices (tablets, 768px and up) */
 @media screen and (min-width: 768px) { 
-    .navbar{
-        padding: 0 var(--Tablet-Padding);
-    } 
+    
   }
   
   /* Large devices (desktops, 992px and up) */

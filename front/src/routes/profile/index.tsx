@@ -52,7 +52,7 @@ export const useChangeAvatar = routeAction$(async(form, req)=>{
 const Profile = component$(()=>{
     const modifyProfile = useModifyProfile()
     const prof = useGeUsertProfile()
-    const picProfile = useSignal(CdnPrefix+prof.value.photo)
+    const picProfile = useSignal(CdnPrefix+"profile/"+prof.value.photo)
     const changeAvatar = useChangeAvatar()
 
     return (

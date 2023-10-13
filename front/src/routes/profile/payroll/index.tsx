@@ -2,8 +2,8 @@ import { component$, useSignal, useTask$, $, useStore } from "@builder.io/qwik"
 import { type DocumentHead, routeLoader$ } from "@builder.io/qwik-city"
 
 import style from "./style.module.css"
-import { BACKEND_HOST, MONTH } from "~/lib/util"
-import { Payroll } from "~/lib/types"
+import { BACKEND_HOST, GetMonthArray, MONTH } from "~/lib/util"
+import { DayShift, Payroll } from "~/lib/types"
 import CustomSelect from "~/components/CustomSelect/component"
 
 export const useGetMyGains = routeLoader$((req)=>{
@@ -12,7 +12,7 @@ export const useGetMyGains = routeLoader$((req)=>{
     return {company: companyId, user: userId}
 })
 
-interface KEKW {
+interface MONTH {
     month: number
 }
 
@@ -20,7 +20,9 @@ const MyPayroll = component$(()=>{
     // const date = useSignal<string[]>([])
     const vars = useGetMyGains()
     const gain = useSignal<Payroll>()
-    const monthSignal = useStore<KEKW>({month: new Date().getMonth()+1})
+    const monthSignal = useStore<MONTH>({month: new Date().getMonth()+1})
+    const selectedDayShift = useSignal<DayShift[]>()
+    const currentDay = useSignal<string>()
     useTask$(async ({track})=>{
         track(()=>monthSignal.month)
         // userId et date
@@ -58,13 +60,54 @@ const MyPayroll = component$(()=>{
         return (
             <details key={day} class={style.payroll_day}>
                 <summary>{day} </summary>
-                <div class={style.payroll_shift}>
-                    {shifts}
+                <div>
+                    <div class={style.payroll_shift}>
+                        {shifts}
+                    </div>
                 </div>
             </details>
         )
     }) : []
     const months = new Array(12).fill(0).map((_,month)=>month)
+    const calendar = GetMonthArray(2023, monthSignal.month - 1).calendar.map(day=>{
+
+        const hasShift = Object.keys(gain.value?.shift || []).findIndex(shift=>{
+            const date = shift.split("-")
+            return parseInt(date[0]) === day.dayNumber && parseInt(date[1]) - 1 === day.month 
+        })
+        const onDayClick = $(()=>{
+            currentDay.value = `${day.dayNumber}-${day.month}`
+            const key = Object.keys(gain.value?.shift || []).find(shift=>{
+                const date = shift.split("-")
+                return parseInt(date[0]) === day.dayNumber && parseInt(date[1]) - 1 === day.month 
+            })
+            if (!key)return selectedDayShift.value = undefined
+            selectedDayShift.value = gain.value?.shift[key]
+        })
+        return (
+            <button key={Math.random()} class={[
+                style.payroll_calendar_day, 
+                hasShift !== -1 && style.payroll_calendar_dayShift,
+                currentDay.value === `${day.dayNumber}-${day.month}` && style.payroll_calendar_daySelected]} disabled={!day.isCurrentMonth ? true : false} onClick$={onDayClick}>
+                {day.dayNumber}
+            </button>
+        )
+    })
+    const displayShift = selectedDayShift.value?.map((shift, index)=>(
+        <div key={shift.id}>
+            <div class={style.payroll_calendar_day_shift_times}>
+                <div>
+                    <b>{index === 0 ? "Start" : "Repris"} </b>
+                    <p>{shift.start} </p>
+                </div>
+                <div>
+                    <b>Finis</b>
+                    <p>{shift.end} </p>
+
+                </div>
+            </div>
+        </div>
+    ))
     return (
         <div class={style.payroll}>
             <p style={{display: "none"}} onClick$={()=>{monthSignal.month = 1}}>{monthSignal.month} </p>
@@ -82,12 +125,33 @@ const MyPayroll = component$(()=>{
                     </div>
                 </div>
             </div>
-            <div class={style.payroll_shift}>
-                {shift}
+            <div class={style.payroll_calendar}>
+                {calendar}
             </div>
+            <div class={[style.payroll_calendar_day_shift]}>
+                {displayShift}
+            </div>
+            {/* <div class={style.payroll_shift}>
+                {shift}
+            </div> */}
         </div>
     )
 })
+
+// const CalendarDay = component$(()=>{
+//     const hasShift = Object.keys(gain.value?.shift || []).findIndex(shift=>{
+//         const date = shift.split("-")
+//         return parseInt(date[0]) === day.dayNumber && parseInt(date[1]) === day.month
+//     })
+//     return (
+//         <button key={Math.random()} class={[style.payroll_calendar_day, hasShift !== -1 && style.payroll_calendar_dayShift]} disabled={!day.isCurrentMonth ? true : false}>
+//             {day.dayNumber}
+//             <div class={style.payroll_calendar_day_shift}>
+//                 <p>Shift</p>
+//             </div>
+//         </button>
+//     )
+// })
 
 export const head:DocumentHead = {
     title: "Mes Revenues"

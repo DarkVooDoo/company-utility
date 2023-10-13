@@ -25,12 +25,19 @@ export interface Entreprise {
     holyday_pending: Holyday[]
 }
 
+export interface DayShift {
+    id: string;
+    start: string;
+    end: string;
+    day: string;
+}
+
 export interface Payroll{
     name: string
     total: string
     seconds: number
     salary: number
-    shift: {[key: string]: {id: string, start: string, end: string, day: string}[]}
+    shift: {[key: string]: DayShift[]}
 }
 
 export interface ShiftTypes {

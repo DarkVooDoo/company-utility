@@ -1,5 +1,10 @@
-.payroll_top > *, .payroll_top_hours > *, .payroll_day > *, .payroll_card > *, .payroll > *{
+.payroll_top > *, .payroll_top_hours > *, .payroll_day > *, .payroll_card > *, .payroll > *, .payroll_top_selection > *{
     margin-bottom: var(--Row-Margin);
+}
+
+.payroll_card_selection_resume{
+    display: flex;
+    justify-content: space-between;
 }
 
 .payroll_top_names{
@@ -16,15 +21,17 @@
     transition: all .2s linear;
 }
 
+.payroll_calendar{
+    width: 100% !important;
+}
+
 .payroll_shift{
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: .5rem;
 }
 
-.payroll_card{
-    display: flex;
-    justify-content: space-between;
+.payroll_shift_card{
     border-radius: 10px;
     border: 1px solid black;
     padding: .5rem;
@@ -32,10 +39,6 @@
 
 .payroll_card_resume > *{
     margin-bottom: var(--Row-Margin);
-}
-
-.payroll_card_resume_select{
-    width: 10rem;
 }
 
 .payroll_card_name{
@@ -70,6 +73,15 @@
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 1rem;
+    }
+
+    .payroll_card_selection_resume{
+        height: calc(20rem - 2.5rem);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-size: 2rem;
     }
 
     .payroll_container{

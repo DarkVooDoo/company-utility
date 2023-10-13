@@ -30,17 +30,17 @@ const MyCompanys = component$<Props>(({companys, type})=>{
     const company = companys.map(company=>(
         <div key={company.id} onClick$={()=>onCompanyClick(company.id)}
         style={{boxShadow: selectedCompany.value === company.id ? "0px 0px 10px 0px var(--Primary-Color)" : "0px 0px 5px 0px black"}} 
-        class={style.shift_company_box}>
-            {/* <Image src={Company} alt="entreprise" className={style.shift_company_box_icon} /> */}
+        class={style.companys_box}>
+            {/* <Image src={Company} alt="entreprise" className={style.companys_box_icon} /> */}
             <h3>{company.name} </h3>
             <p>{company.adresse}, {company.postal} </p>
         </div>
     ))
     return (
-        <div class={style.shift}>
+        <div class={style.companys}>
             <h1>Entreprises</h1>
-            <div class={style.shift_company} style={company.length === 0 ? {justifyContent: "center"} : {}}>
-                {company.length > 0 ? <div class={style.shift_company_inner}>
+            <div class={style.companys_outer} style={company.length === 0 ? {justifyContent: "center"} : {}}>
+                {company.length > 0 ? <div class={style.companys_inner}>
                     {company}
                 </div> : <h3>Aucune entreprise enregistrer</h3>}
             </div>

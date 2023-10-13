@@ -17,6 +17,7 @@ import (
 )
 
 const (
+	Profile_Bucket         = "cdn-connected"
 	Token_Duration         = 5 * time.Hour
 	Refresh_Token_Duration = (24 * 10) * time.Hour
 )
@@ -121,8 +122,8 @@ func UpdateUserPhoto(userId string, photoId string, file util.FileStruct) error 
 		Body:        file.File,
 		ContentType: aws.String(file.ContentType),
 		Metadata:    aws.StringMap(aws.StringValueMap(map[string]*string{})),
-		Key:         aws.String(key),
-		Bucket:      aws.String("test-connected"),
+		Key:         aws.String("profile/" + key),
+		Bucket:      aws.String(Profile_Bucket),
 	})
 
 	if err != nil {

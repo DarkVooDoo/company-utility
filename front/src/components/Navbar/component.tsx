@@ -1,13 +1,14 @@
 import { component$, useContext, useSignal, $ } from "@builder.io/qwik"
 
 import style from "./style.module.css"
-import { CdnPrefix, closeDialogOnBackdropClick, userContext } from "~/lib/util"
+import { CdnPrefix, userContext } from "~/lib/util"
 import { Link, useNavigate } from "@builder.io/qwik-city"
 
 import Logo from "~/media/logo.webp?jsx"
 import Bell from "~/media/bell.svg?jsx"
 import User from "~/media/user.svg?jsx"
 import LeftArrow from "~/media/left-arrow.webp?jsx"
+import Signout from "~/media/signout.webp?jsx"
 
 interface Props{
     companys: {id: string, name: string, adresse: string, postal: number}[]
@@ -20,17 +21,16 @@ const Navbar = component$<Props>(({notif, companys})=>{
 
     const myNotif = useSignal(notif)
     const myCompanys = useSignal(companys)
-    const dialogRef = useSignal<HTMLDialogElement>()
     const showNotif = useSignal(false)
+    const isMenuOpen = useSignal(false)
     const isEntrepriseDropdownOpen = useSignal(false)
     
     const onOpenSideBar = $(()=>{
-        dialogRef.value?.showModal()
-        if(dialogRef.value) closeDialogOnBackdropClick(dialogRef.value)
+        isMenuOpen.value = !isMenuOpen.value
     })
 
     const onCloseSideBar = $(()=>{
-        dialogRef.value?.close()
+        isMenuOpen.value = false
     })
     
     const onOpenNotif = $(()=>{
@@ -59,7 +59,7 @@ const Navbar = component$<Props>(({notif, companys})=>{
         document.cookie = "user_name=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
         document.cookie = "auth-token=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
         document.cookie = "company-id=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
-        dialogRef.value?.close()
+        isMenuOpen.value = false
         nav("/sign")
     })
     const notifs = myNotif.value.map(notification=>(
@@ -71,11 +71,11 @@ const Navbar = component$<Props>(({notif, companys})=>{
     ))
 
     const company = myCompanys.value.map(comp=>(
-        <Link key={comp.id} href={`/dashboard/${comp.id}`} class={style.navbar_sideBar_companys_btn_more_row} onClick$={()=>dialogRef.value?.close()}>- {comp.name}</Link>
+        <Link key={comp.id} href={`/dashboard/${comp.id}`} class={style.navbar_sideBar_companys_btn_more_row} onClick$={onCloseSideBar}>- {comp.name}</Link>
     ))
     return (
         <nav class={style.navbar}>
-            <Link href={user.value.user_id ? "/home" : "/"}><Logo alt="home"/></Link>
+            <Link href={user.value.user_id ? "/home" : "/"}><Logo class={style.navbar_logo} alt="home"/></Link>
             <div class={`${style.navbar_search}`}>
                 {/* <div class={`${style.navbar_search_box}`}>
                     <input type="text" ref={inputRef}
@@ -97,19 +97,27 @@ const Navbar = component$<Props>(({notif, companys})=>{
                     <>
                         <button aria-label="ouvrir notification" onClick$={onOpenNotif}><Bell alt="notification" class={style.navbar_navigation_bellIcon} /> </button>
                         <button type="button" aria-label="ouvrir menu" class={style.navbar_logBtn} onClick$={onOpenSideBar} >
-                            {user.value.user_photo === "" ? <User alt="user" class={style.navbar_logBtn_icon} /> : <img src={CdnPrefix+user.value.user_photo} alt="profile" class={style.navbar_logBtn_icon} /> }
+                            {user.value.user_photo === "" ? <User alt="user" class={style.navbar_logBtn_icon} /> : <img src={CdnPrefix+"profile/"+user.value.user_photo} width={64} height={64} alt="profile" class={style.navbar_logBtn_icon} /> }
                         </button>
                     </> : 
                     <Link href="/sign" class={style.navbar_navigation_sign}>Connexion</Link>
                 }
             </div>
-            <dialog ref={dialogRef} class={style.navbar_sideBar}>
+            <div class={[style.navbar_sideBar, isMenuOpen.value ? style.navbar_sideBar_open : style.navbar_sideBar_close]}>
                 <div class={style.navbar_sideBar_user}>
-                    <User alt="user photo" class={style.navbar_sideBar_user_photo} />
-                    <h2 class={style.navbar_sideBar_user_name}>{user.value.user_name} </h2>
+                    <div class={style.navbar_sideBar_user_info}>
+                        {user.value.user_photo === "" ? <User alt="user" class={style.navbar_sideBar_user_photo} /> : <img src={CdnPrefix+"profile/"+user.value.user_photo} width={64} height={64} alt="profile" class={style.navbar_sideBar_user_photo} /> }
+                        <h2 class={style.navbar_sideBar_user_name}>{user.value.user_name} </h2>
+                    </div>
+                    <button type="button" aria-label="Log off" class={style.navbar_sideBar_user_logoffBtn} onClick$={onLogOff}>
+                        <Signout class={style.navbar_sideBar_logoffBtn_icon} />
+                    </button>
                 </div>
-                <Link href="/shift" class={style.navbar_sideBar_link} onClick$={onCloseSideBar} >Planning</Link>
-                <Link href="/profile" class={style.navbar_sideBar_link} onClick$={onCloseSideBar} >Profile</Link>
+                <div>
+
+                    <Link href="/shift" class={style.navbar_sideBar_link} onClick$={onCloseSideBar}>Planning</Link>
+                </div>
+                <Link href="/profile" class={style.navbar_sideBar_link} onClick$={onCloseSideBar}>Profile</Link>
                 <div class={style.navbar_sideBar_companys}>
                     <button class={style.navbar_sideBar_companys_btn} onClick$={(e)=>{
                         e.stopPropagation()
@@ -123,8 +131,11 @@ const Navbar = component$<Props>(({notif, companys})=>{
                     </div>
                 </div>
                 {/* <Link href={`/message`} class={style.navbar_sideBar_link} onClick$={onCloseSideBar}>Message</Link> */}
-                <button type="button" aria-label="Log off" class={style.navbar_sideBar_logoffBtn} onClick$={onLogOff} >Log Off</button>
-            </dialog>
+                {/* <button type="button" aria-label="Log off" class={style.navbar_sideBar_logoffBtn} onClick$={onLogOff}>
+                    <Signout class={style.navbar_sideBar_logoffBtn_icon} />
+                    <p>Log Off</p>
+                </button> */}
+            </div>
             <div class={[style.navbar_notifPopup, showNotif.value ? style.open : style.close]}>
                 <div class={style.navbar_notifPopup_header}>
                     <button type="button" aria-label="fermer les notif" onClick$={onCloseNotif}><LeftArrow alt="close" class={style.navbar_notifPopup_closeBtn} /></button>

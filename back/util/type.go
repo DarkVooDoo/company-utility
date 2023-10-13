@@ -189,6 +189,7 @@ type UpdateCurrentShift struct {
 	Shift   string `json:"shiftId"`
 	Hour    string `json:"hourId"`
 	State   string `json:"state"`
+	Type    string `json:"type"`
 }
 
 type NewJob struct {

@@ -61,7 +61,7 @@ func cronJob(minute string, hour string, monthDay string, month string, weekDay 
 	}
 }
 
-// func tcpTest() {
+// func socket() {
 // 	conn, err := net.Listen("tcp", ":4500")
 // 	if err != nil {
 // 		log.Fatal("server error")
@@ -70,19 +70,31 @@ func cronJob(minute string, hour string, monthDay string, month string, weekDay 
 // 	for {
 // 		log.Println("Here")
 // 		userConn, err := conn.Accept()
+// 		buf := make([]byte, 1024)
+// 		len, _ := userConn.Read(buf)
+// 		headers := strings.Split(string(buf[:len]), "\r\n")
+// 		var connHeaders map[string]string = map[string]string{}
+// 		for _, header := range headers {
+// 			valueKey := strings.Split(header, ":")
+// 			if cap(valueKey) > 1 {
+// 				connHeaders[valueKey[0]] = strings.Join(valueKey[1:], ":")[1:]
+// 			}
+// 		}
 // 		if err != nil {
 // 			log.Println("user couldnt connect")
 // 			continue
 // 		}
-
-// 		userConn.Write([]byte("HTTP/1.1 101 Switching Protocols \nUpgrade: WebSocket\nConnection: Upgrade\n"))
+// 		magicString := "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
+// 		swa := sha1.New()
+// 		io.WriteString(swa, connHeaders["Sec-WebSocket-Key"]+magicString)
+// 		swaSum := swa.Sum(nil)
+// 		acceptWebsocket := base64.StdEncoding.EncodeToString(swaSum)
+// 		userConn.Write([]byte("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: " + acceptWebsocket + "\r\n\r\n"))
 // 		conns = append(conns, userConn)
-// 		break
+// 		time.Sleep(time.Second * 40)
+// 		for _, user := range conns {
+// 			user.Write([]byte("1000000107hellowo"))
+// 		}
 // 	}
 
-// 	time.Sleep(time.Second * 40)
-// 	for _, user := range conns {
-// 		log.Println("sending")
-// 		user.Write([]byte("data: Hello"))
-// 	}
 // }

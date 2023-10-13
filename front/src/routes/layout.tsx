@@ -92,7 +92,6 @@ export default component$(() => {
   const loc = useLocation()
   const notif = useServerTimeLoader()
   const companys = useMyCompanys()
-  console.log(notif.value.user)
   const user = useSignal(notif.value.user || {user_id: "", user_name: "", user_photo: ""})
   const onRemoveUser = $((id?: string, name?: string, photo?: string | undefined)=>{
     if(id && name){

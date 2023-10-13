@@ -1,5 +1,5 @@
 import { component$, useSignal, $, useVisibleTask$ } from "@builder.io/qwik"
-import { Form, Link, routeAction$, routeLoader$} from "@builder.io/qwik-city"
+import { Form, Link, routeAction$, routeLoader$, z, zod$} from "@builder.io/qwik-city"
 import { BACKEND_HOST, MONTH, SecondsToHour, closeDialogOnBackdropClick } from "~/lib/util"
 
 import Left from "~/media/left-arrow.webp?jsx"
@@ -64,13 +64,12 @@ export const useGetCurrentShift = routeLoader$(async(req):Promise<CurrentShift |
 export const useStartShift = routeAction$(async (form, req)=>{
     const companyId = req.cookie.get("company-id")?.value
     const token = req.cookie.get("auth-token")?.value
-    const {shift, id: shiftId, state, hourId} = form
-    console.log(shiftId, shift, state, hourId)
+    const {shift, id: shiftId, state, hourId, type} = form
     if(token){
         await fetch(`http://localhost:5000/api/tracker`,{
             method: "POST",
             headers: [["Content-Type", "application/json"], ["Authorization", token]],
-            body: JSON.stringify({companyId, state: shift ?  undefined : state, shiftId: shift ? undefined : shiftId, hourId: shift ? undefined : hourId})
+            body: JSON.stringify({companyId, state: shift ?  undefined : state, shiftId: shift ? undefined : shiftId, hourId: shift ? undefined : hourId, type})
         })
     }
 })
@@ -78,12 +77,12 @@ export const useStartShift = routeAction$(async (form, req)=>{
 export const useEndShift = routeAction$(async(form, req)=>{
     const companyId = req.cookie.get("company-id")?.value
     const token = req.cookie.get("auth-token")?.value
-    const {id: shiftId, state, hourId} = form
+    const {id: shiftId, state, hourId, type} = form
     if(token){
         await fetch(`http://localhost:5000/api/tracker`,{
             method: "POST",
             headers: [["Content-Type", "application/json"], ["Authorization", token]],
-            body: JSON.stringify({companyId, shiftId, hourId, state})
+            body: JSON.stringify({companyId, shiftId, hourId, state, type})
         })
     }
 })
@@ -117,14 +116,16 @@ const Home = component$(()=>{
         dates.value = date
     })
 
-    useVisibleTask$(()=>{
-        if(currentShift.value?.seconds){
-            seconds.value =  currentShift.value.seconds
-            const t = setInterval(()=>{
+    console.log(currentShift.value)
+    useVisibleTask$(({track})=>{
+        track(()=>currentShift.value)
+        seconds.value = currentShift.value?.seconds || 0
+        if(currentShift.value?.seconds && currentShift.value.state === "En Cours"){
+            const timer = setInterval(()=>{
                 seconds.value = seconds.value + 1 
             },1000)
             return ()=>{
-                clearInterval(t)
+                clearInterval(timer)
             }
         }
         
@@ -132,103 +133,109 @@ const Home = component$(()=>{
 
     const dayOff = holyday.value.map(holyday=><UserHolydayCard key={holyday.id} {...{holyday, role: {id: "0", role: "User"}}} />)
     return (
-        <div> 
-            <div class={style.landpage_shiftHeader}>
-                <h1 class={style.landpage_shiftHeader_text}>Aujourd'hui</h1>
-                <Link href="/shift" class={style.landpage_shiftHeader_link}>Mon Planning <Left alt="arrow" class={style.landpage_shiftHeader_link_arrow} /></Link>
-            </div>
+        <div class={style.landpage}> 
             <div class={style.landpage_shift}>
-                <div class={style.landpage_shift_date}>
-                    <svg
-                        width="16.933332mm"
-                        height="13.962574mm"
-                        viewBox="0 0 16.933332 13.962574"
-                        version="1.1">
-                        <defs
-                        id="defs2" />
-                        <g
-                        id="layer1"
-                        transform="translate(-64.276115,-113.03731)">
-                        <rect
-                            style={{opacity: 1, fill: "#d7d7d7", fillOpacity: 1, strokeWidth: "0.53198", strokeLinecap: "round", strokeLinejoin: "round"}}
-                            id="rect184"
-                            width="16.933332"
-                            height="13.962574"
-                            x="64.276115"
-                            y="113.03731"
-                            ry="1.5596498" />
-                        <path
-                            id="rect2763"
-                            style={{opacity: 1, fill: "#000000", fillOpacity: 1, strokeWidth: "0.53198", strokeLinecap: "round", strokeLinejoin: "round"}}
-                            d="m 65.835715,113.03735 c -0.864046,0 -1.559587,0.69555 -1.559587,1.55959 v 1.11408 h 16.933318 v -1.11408 c 0,-0.86404 -0.695644,-1.55959 -1.559691,-1.55959 z" />
-                        <text
-                            style={{fontWeight: "bold", fontSize: "10.2134px", fontFamily: "sans-serif", opacity: 1, fill: "#000000", fillOpacity: 1, strokeWidth: "0.53198",strokeLinecap:"round",strokeLinejoin: "round"}}
-                            x="67"
-                            y="124.91429"
-                            id="text2871"><tspan
-                            id="tspan2869"
-                            style={{fontSize: "10.2134px", fill: "#000000", fillOpacity: 1, strokeWidth: "0.531982"}}
-                            x="67"
-                            y="124.91429">{new Date().getDate() < 10 ? "0"+new Date().getDate() : new Date().getDate()} </tspan></text>
-                        </g>
-                    </svg>
-                    <div> 
-                        <h2 class={style.landpage_shift_date_day}>{MONTH[new Date().getMonth()]} </h2>
-                        {todayShift.value ? <div class={style.landpage_shift_time}>
-                            <div>
-                                {/* <Image src={s} alt="start" class={style.shift_time_content_icon} /> */}
-                                <h3>{todayShift.value.start} </h3>
-                            </div>
-                            <div>
-                                {/* <Image src={exit} alt="exit" class={style.shift_time_content_icon} /> */}
-                                <h3>{todayShift.value.end} </h3>
-                            </div>
-                            <div class={style.shift_time_content}>
-                                {/* <Image src={pause} alt="pause" class={style.shift_time_content_icon} /> */}
-                                <h3>{todayShift.value.pause} mins</h3>
-                            </div>
-                        </div> : <h3>Vous etes libre</h3>}
-                    </div>
+                <div class={style.landpage_shiftHeader}>
+                    <h1 class={style.landpage_shiftHeader_text}>Aujourd'hui</h1>
+                    <Link href="/shift" class={style.landpage_shiftHeader_link}>Mon Planning <Left alt="arrow" class={style.landpage_shiftHeader_link_arrow} /></Link>
                 </div>
-                <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-                    <h1>{SecondsToHour(seconds.value || 0)}</h1>
-                    {!currentShift.value ?
-                        <Form action={startShift}>
-                            <button type="submit" name="shift" 
-                                value={undefined} 
-                                class={style.landpage_shift_date_startShift}>
-                                    <h4>Start</h4>
-                                    <Start alt="commencer" class={style.landpage_shift_date_startShift_icon} />
-                            </button>
-                        </Form> : <div style={{display: "flex", gap: "1rem"}}>
-                            {currentShift.value.state == "En Pause" ? <>
-                                    <button name="shift" class={style.landpage_shift_date_startShift} onClick$={ ()=>{
-                                         startShift.submit({...currentShift.value})
-                                    }}>
-                                        <h4>Reprendre</h4>
+                <div class={style.landpage_shift_card}>
+                    <div class={style.landpage_shift_date}>
+                        <svg
+                            width="16.933332mm"
+                            height="13.962574mm"
+                            viewBox="0 0 16.933332 13.962574"
+                            version="1.1">
+                            <defs
+                            id="defs2" />
+                            <g
+                            id="layer1"
+                            transform="translate(-64.276115,-113.03731)">
+                            <rect
+                                style={{opacity: 1, fill: "#d7d7d7", fillOpacity: 1, strokeWidth: "0.53198", strokeLinecap: "round", strokeLinejoin: "round"}}
+                                id="rect184"
+                                width="16.933332"
+                                height="13.962574"
+                                x="64.276115"
+                                y="113.03731"
+                                ry="1.5596498" />
+                            <path
+                                id="rect2763"
+                                style={{opacity: 1, fill: "#000000", fillOpacity: 1, strokeWidth: "0.53198", strokeLinecap: "round", strokeLinejoin: "round"}}
+                                d="m 65.835715,113.03735 c -0.864046,0 -1.559587,0.69555 -1.559587,1.55959 v 1.11408 h 16.933318 v -1.11408 c 0,-0.86404 -0.695644,-1.55959 -1.559691,-1.55959 z" />
+                            <text
+                                style={{fontWeight: "bold", fontSize: "10.2134px", fontFamily: "sans-serif", opacity: 1, fill: "#000000", fillOpacity: 1, strokeWidth: "0.53198",strokeLinecap:"round",strokeLinejoin: "round"}}
+                                x="67"
+                                y="124.91429"
+                                id="text2871"><tspan
+                                id="tspan2869"
+                                style={{fontSize: "10.2134px", fill: "#000000", fillOpacity: 1, strokeWidth: "0.531982"}}
+                                x="67"
+                                y="124.91429">{new Date().getDate() < 10 ? "0"+new Date().getDate() : new Date().getDate()} </tspan></text>
+                            </g>
+                        </svg>
+                        <div> 
+                            <h2 class={style.landpage_shift_date_day}>{MONTH[new Date().getMonth()]} </h2>
+                            {todayShift.value ? <div class={style.landpage_shift_time}>
+                                <div>
+                                    {/* <Image src={s} alt="start" class={style.shift_time_content_icon} /> */}
+                                    <h3>{todayShift.value.start} </h3>
+                                </div>
+                                <div>
+                                    {/* <Image src={exit} alt="exit" class={style.shift_time_content_icon} /> */}
+                                    <h3>{todayShift.value.end} </h3>
+                                </div>
+                                <div class={style.shift_time_content}>
+                                    {/* <Image src={pause} alt="pause" class={style.shift_time_content_icon} /> */}
+                                    <h3>{todayShift.value.pause} mins</h3>
+                                </div>
+                            </div> : <h3>Vous etes libre</h3>}
+                        </div>
+                    </div>
+                    <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                        <h1>{SecondsToHour(seconds.value || 0)}</h1>
+                        {!currentShift.value ?
+                                <button disabled={startShift.isRunning ? true : false}
+                                    onClick$={async ()=>{
+                                        await startShift.submit({shift: undefined, type: "Started"})
+                                        // navigator.geolocation.getCurrentPosition(async (e)=>{
+                                        //     console.log(e)
+                                        // }, null, {enableHighAccuracy: true})
+                                    }}
+                                    class={style.landpage_shift_date_startShift}>
+                                        <h4>Start</h4>
                                         <Start alt="commencer" class={style.landpage_shift_date_startShift_icon} />
+                                </button>
+                            : <div style={{display: "flex", gap: "1rem"}}>
+                                {currentShift.value.state == "En Pause" ? <>
+                                        <button disabled={startShift.isRunning ? true : false} name="shift" class={style.landpage_shift_date_startShift} onClick$={ ()=>{
+                                            startShift.submit({...currentShift.value, type: "Return"})
+                                        }}>
+                                            <h4>Reprendre</h4>
+                                            <Start alt="commencer" class={style.landpage_shift_date_startShift_icon} />
+                                        </button>
+                                        <button disabled={endShift.isRunning ? true : false} name="shift" class={style.landpage_shift_date_startShift} onClick$={()=>{
+                                            endShift.submit({...currentShift.value, type: "Stopped"})
+                                        }}>
+                                            <h4>Finir</h4>
+                                        </button>
+                                    </>
+                                : <>
+                                    <button disabled={pauseShift.isRunning ? true : false} name="shift" class={style.landpage_shift_date_startShift} onClick$={async ()=>{
+                                            await pauseShift.submit({...currentShift.value})
+                                        }}>
+                                        <h4>Pause</h4>
+                                        <Pause alt="pause" class={style.landpage_shift_date_startShift_icon} />
                                     </button>
-                                    <button name="shift" class={style.landpage_shift_date_startShift} onClick$={()=>{
-                                        endShift.submit({...currentShift.value})
-                                    }}>
+                                    <button disabled={endShift.isRunning ? true : false} name="shift" class={style.landpage_shift_date_startShift} onClick$={async()=>{
+                                            await endShift.submit({...currentShift.value, type: "Stopped"})
+                                        }}>
                                         <h4>Finir</h4>
+                                        {/* <Image src={stop} alt="commencer" class={style.landpage_shift_date_startShift_icon} /> */}
                                     </button>
-                                </>
-                            : <>
-                                <button name="shift" class={style.landpage_shift_date_startShift} onClick$={async ()=>{
-                                        await pauseShift.submit({...currentShift.value})
-                                    }}>
-                                    <h4>Pause</h4>
-                                    <Pause alt="pause" class={style.landpage_shift_date_startShift_icon} />
-                                </button>
-                                <button name="shift" class={style.landpage_shift_date_startShift} onClick$={async()=>{
-                                        await endShift.submit({...currentShift.value})
-                                    }}>
-                                    <h4>Finir</h4>
-                                    {/* <Image src={stop} alt="commencer" class={style.landpage_shift_date_startShift_icon} /> */}
-                                </button>
-                        </> }
-                    </div>}
+                            </> }
+                        </div>}
+                    </div>
                 </div>
             </div> 
             <div class={style.holyday}>
@@ -246,7 +253,7 @@ const Home = component$(()=>{
                 </div>}
                 <dialog ref={dialogRef} class={style.holyday_dialog}> 
                     <div class={style.holyday_dialog_form}>
-                        <Calendar {...{currentUser: "",type: "between", onChange, hasMin: true}} />
+                        <Calendar {...{currentUser: "",type: "between", onChange, hasMin: true, clasStyle: style.holyday_dialog_form_calendar}} />
                         <div class={style.holyday_type}>
                             <div class={style.holyday_dialog_radio}>
                                 <p>Congé Payé <button class={style.holyday_dialog_radio_infoBtn} data-title={INFOS.paye}>!</button></p>

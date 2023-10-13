@@ -78,7 +78,6 @@ func (r *Route) ReadJsonPayload() {
 }
 
 func (r *Route) GET(handler func()) {
-
 	util.EnableCors(r.Response, r.Cors)
 	if r.Request.Method == http.MethodGet {
 		handler()

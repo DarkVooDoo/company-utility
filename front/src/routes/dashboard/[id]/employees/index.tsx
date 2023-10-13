@@ -1,5 +1,5 @@
 import { component$, $, useStore } from "@builder.io/qwik"
-import { Form, routeAction$, routeLoader$ } from "@builder.io/qwik-city"
+import { DocumentHead, Form, routeAction$, routeLoader$, z, zod$ } from "@builder.io/qwik-city"
 import type { Member } from "~/lib/types"
 import { BACKEND_HOST } from "~/lib/util"
 
@@ -40,7 +40,10 @@ export const useAddMember = routeAction$(async(form, req)=>{
             body: JSON.stringify({email, companyId, role: "User", worth: salary})
         })
     }
-})
+}, zod$({
+    email: z.string(),
+    salary: z.number()
+}))
 
 export const useChangeMemberRole = routeAction$(async(form)=>{
     await fetch(`${BACKEND_HOST}:5000/api/member`,{
@@ -54,15 +57,30 @@ const Employees = component$(()=>{
     const members = useGetEmployees()
     const signalMembers = useStore({member: members.value})
     const onNewMember = useAddMember()
+    const renderRoles = $((role: string)=>(
+        <div key={role}>{role} </div>
+    ))
     const member = signalMembers.member.map(member=><UserRole key={member.id} {...{...member}} />)
     return (
         <main>
-            <h1 class={style.member_header}>Employés</h1>
-
-            <Form action={onNewMember} class={style.member_newEmail}>
-                <input type="text" name="email" id="email" autoComplete="off" placeholder="Nouveau employé email" class={style.member_newInput_input} />
-                <input type="number" name="salary" id="salary" step={".01"} class={style.member_newInput_input} placeholder="Salaire horaire brut" />
-                <button type="submit" style={{display: "none"}}></button>
+            <Form action={onNewMember} class={style.member_newEmployee}>
+                <fieldset class={style.member_newEmployee_fieldset}>
+                    <legend class={style.member_newEmployee_fieldset_legend}>Ajouter un employé</legend>
+                    <div>
+                        <label for="email">Email</label>
+                        <input type="text" name="email" id="email" autoComplete="off" placeholder="Nouveau employé email" class={style.member_newInput_input} />
+                    </div>
+                    <div>
+                        <label for="salary">Salaire</label>
+                        <input type="number" name="salary" id="salary" step={".01"} class={style.member_newInput_input} placeholder="12,22" />
+                    </div>
+                    <div>
+                        <p>Role</p>
+                        <CustomSelect items={["Admin", "User"]} value="User" renderOption={renderRoles} width={5} height={2} />
+                    </div>
+                    <button type="submit" style={{display: "none"}}></button>
+                
+                </fieldset>
             </Form>
             <div class={style.member_container}>
                 {member}
@@ -106,5 +124,9 @@ const UserRole = component$<Member>(({id, name, role})=>{
         </div>
     )
 })
+
+export const head: DocumentHead = {
+    title: "Employés"
+}
 
 export default Employees

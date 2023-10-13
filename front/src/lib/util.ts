@@ -110,4 +110,4 @@ export const SecondsToHour = (seconds: number)=>{
     return `${Math.floor(seconds / (60*60))}:${Math.floor(seconds % (60*60) / 60)}:${seconds % 60}`
 }
 
-export const CdnPrefix = "https://test-connected.s3.eu-west-3.amazonaws.com/"
+export const CdnPrefix = "https://cdn-connected.s3.eu-west-3.amazonaws.com/"

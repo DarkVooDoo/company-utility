@@ -88,6 +88,7 @@ const Calendar = component$<Props>(({onChange, clasStyle: className, type = "sin
                     const firstChoice = between.value[0] === calendarDay
                     if (type === "single"){
                         isDayDisable = day.isCurrentMonth && shift && shift.value.shift.findIndex(myShift=>myShift.shift_day === day.dayNumber && myShift.user_id === currentUser) === -1 ? false : true
+                        if (hasMin) isDayDisable = calendarDay < `${year}-${month}-${tDay}` || !day.isCurrentMonth ? true : false
                     }else{
                         if (hasMin) isDayDisable = calendarDay < `${year}-${month}-${tDay}` || !day.isCurrentMonth ? true : false
                         else isDayDisable = !day.isCurrentMonth

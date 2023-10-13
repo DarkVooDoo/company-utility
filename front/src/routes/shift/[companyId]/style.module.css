@@ -19,7 +19,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--Primary-Color);
+    border: 2px solid var(--Primary-Color);
     border-radius: 10px;
 }
 
@@ -37,11 +37,14 @@
 .shift_header{
     display: flex;
     justify-content: space-between;
+    margin-bottom: var(--Row-Margin);
 }
 
 .shift_calendar{
     display: grid;
     grid-template-columns: repeat(7, 1fr);
+    border: 1px solid black;
+    border-radius: 10px;
 }
 
 .shift_calendar_day{
@@ -52,6 +55,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.shift_calendar_day:disabled{
+    color: darkgray;    
 }
 
 .shift_calendar_dayName{
@@ -102,29 +109,20 @@
     z-index: -1;
 }
 
-.shift_display_day{
-    position: relative;
-    height: 4rem;
-    padding: 0 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
 .shift_display_shift{
     display: grid;
     grid-template-areas: 
-        "name name name"
-        "start end pause";
-    align-items: center;
+                    "name name name"
+                    "s e p";
     gap: .5rem;
-    height: 7rem;
-    padding: 0 1rem;
+    padding: 1rem;
     border-radius: 10px;
     -webkit-box-shadow: 0px 0px 10px 0px var(--Primary-Color); 
     box-shadow: 0px 0px 10px 0px var(--Primary-Color);
     margin-bottom: calc(var(--Row-Margin) * 2) !important;
 }
+
+
 
 .shift_display_shift_name{
     grid-area: name;
@@ -133,9 +131,31 @@
     align-items: center;
 }
 
+.shift_display_shift_start{
+    grid-area: s;
+}
+
+.shift_display_shift_end{
+    grid-area: e;
+}
+
+.shift_display_shift_pause{
+    grid-area: p;
+}
+
 .shift_display_shift_name_supprimer{
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 50%;
+    border: 2px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shift_display_shift_name_supprimer_icon{
+    height: 50%;
+    width: 50%;
 }
 
 .shift_display_label{
@@ -143,7 +163,7 @@
 }
 
 .shift_display_content{
-    font-size: 1.5rem;
+    font-size: 1.1rem;
     font-weight: bold;
     background-color: transparent;
     padding: 0;
@@ -169,6 +189,11 @@
 
 /* Medium devices (tablets, 768px and up) */
 @media screen and (min-width: 768px) { 
+    .shift{
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1rem;
+    }
     .shift_calendar_day{
         height: 4rem;
         width: 100%;
@@ -198,12 +223,12 @@
   
   /* Large devices (desktops, 992px and up) */
   @media (min-width: 992px) { 
-  
+ 
   }
   
   /* X-Large devices (large desktops, 1200px and up) */
   @media (min-width: 1200px) { 
-  
+    
   }
   
   /* XX-Large devices (larger desktops, 1400px and up) */

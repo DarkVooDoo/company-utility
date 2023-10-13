@@ -35,11 +35,13 @@ func GetS3() (*s3.S3, error) {
 	creds := credentials.NewStaticCredentials(os.Getenv("AWS_ACCESS"), os.Getenv("AWS_SECRET_ACCESS"), "")
 	_, err := creds.Get()
 	if err != nil {
+		log.Println(err)
 		return nil, errors.New("credential error")
 	}
 	cfg := aws.NewConfig().WithRegion("eu-west-3").WithCredentials(creds)
 	session, sessionErr := session.NewSession(cfg)
 	if sessionErr != nil {
+		log.Println(sessionErr)
 		return nil, errors.New("session error")
 	}
 	return s3.New(session), nil

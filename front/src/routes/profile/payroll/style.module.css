@@ -1,4 +1,4 @@
-.payroll > *, .payroll_day > *, .payroll_shift > *, .payroll_resume > *, .payroll_resume_gain > *{
+.payroll > *, .payroll_day > *, .payroll_resume > *, .payroll_resume_gain > *{
     margin-bottom: var(--Row-Margin);
 }
 
@@ -10,9 +10,7 @@
     padding: .5rem;
 }
 
-
 .payroll_resume{
-    height: calc(100vw / 2);
     width: 100%;
     display: flex;
     padding: 25px;
@@ -45,4 +43,66 @@
 
 .select_option{
     font-size: .9rem;
+}
+
+.payroll_calendar{
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+.payroll_calendar_day{
+    position: relative;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    transition: all .3s linear;
+}
+
+.payroll_calendar_dayShift{
+    -webkit-box-shadow: inset 0px 0px 15px 0px var(--Primary-Color); 
+    box-shadow: inset 0px 0px 15px 0px var(--Primary-Color);
+}
+
+.payroll_calendar_daySelected{
+    -webkit-box-shadow: inset 0px 0px 50px 50px var(--Primary-Color); 
+    box-shadow: inset 0px 0px 50px 50px var(--Primary-Color);
+}
+
+.payroll_calendar_day:disabled{
+    color: gray
+}
+
+.payroll_calendar_day_shift_times{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--Row-Margin);
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media screen and (min-width: 768px) { 
+    .payroll_calendar_day_shift{
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+}
+  
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) { 
+
+}
+
+/* X-Large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) { 
+
+}
+
+/* XX-Large devices (larger desktops, 1400px and up) */
+@media (min-width: 1400px) { 
+
 }

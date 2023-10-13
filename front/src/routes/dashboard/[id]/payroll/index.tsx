@@ -2,7 +2,7 @@ import { component$, useSignal, useVisibleTask$, $ } from "@builder.io/qwik"
 
 import style from "./style.module.css"
 import { type Member, type Payroll } from "~/lib/types"
-import { routeLoader$, useLocation } from "@builder.io/qwik-city"
+import { DocumentHead, routeLoader$, useLocation } from "@builder.io/qwik-city"
 import { BACKEND_HOST, GetCookie } from "~/lib/util"
 
 import Trash from "~/media/trash.svg?jsx"
@@ -62,14 +62,16 @@ const Payroll = component$(()=>{
     const myEmployees = employees.value ? Object.entries(employees.value.shift).map(([day, shift])=>{
         const shifts = shift.map(hour=>{
             return (
-                <div key={hour.id} class={style.payroll_card}>
+                <div key={hour.id} class={style.payroll_shift_card}>
                     <div>
-                        <label for="start">Commence</label>
-                        <input type="time" name="start" id="start" value={hour.start} />
-                    </div>
-                    <div>
-                        <label for="end">Termine</label>
-                        <input type="time" name="end" id="end" value={hour.end} />
+                        <div>
+                            <label for="start">Commence</label>
+                            <input type="time" name="start" id="start" value={hour.start} />
+                        </div>
+                        <div>
+                            <label for="end">Termine</label>
+                            <input type="time" name="end" id="end" value={hour.end} />
+                        </div>
                     </div>
                     <div class={style.payroll_card_action}>
                         <button type="button" value={hour.id} name="id" class={style.payroll_card_action_btn}><Trash  alt="trash" class={style.payroll_card_action_btn_icon} /> </button>
@@ -82,7 +84,7 @@ const Payroll = component$(()=>{
             <details key={day} class={style.payroll_day}>
                 <summary>{day} </summary>
                 <div class={style.payroll_shift}>
-                    {shifts}
+                    {shifts} 
                 </div>
             </details>
         )
@@ -90,16 +92,14 @@ const Payroll = component$(()=>{
     return (
         <div>
             <div class={style.payroll_top}>
-                <div class={style.payroll_card}>
-                    <div class={style.payroll_card_resume}>
-                        <p><b>Heures travaillé: </b>{employees.value?.total} </p>
-                        <p><b>Salaire:</b> {employees.value?.salary} £</p>
+                <div class={style.payroll_top_selection}>
+                    <CustomSelect width={15} value={selectedMember.value?.name || "Choisir un employees"} items={members.value} position="bottom" renderOption={renderOptions}/>
+                    <div class={style.payroll_card_selection_resume}>
+                        <p><b>Heures travaillé: </b>{employees.value?.total || 0} </p>
+                        <p class={style.payroll_card_selection_resume_salary}><b class={style.payroll_card_selection_resume_salary_label}>Salaire:</b> {employees.value?.salary || 0}£ </p>
                     </div>
-                    <CustomSelect width={10} value={selectedMember.value?.name || "Choisir un employees"} items={members.value} position="bottom" renderOption={renderOptions}/>
                 </div>
-                <div style={{display: "flex", justifyContent: "center"}}>
-                    <Calendar  type="between" hasMin={false} onChange={onDateChange} />
-                </div>
+                <Calendar  type="between" hasMin={false} onChange={onDateChange} clasStyle={style.payroll_calendar} />
             </div>
             <div class={style.payroll_top_hours}>
                 {myEmployees}
@@ -107,5 +107,9 @@ const Payroll = component$(()=>{
         </div>
     )
 })
+
+export const head:DocumentHead = {
+    title: "Paie"
+}
 
 export default Payroll

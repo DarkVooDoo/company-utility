@@ -24,7 +24,7 @@
     transform: rotate(180deg);
 }
 
-.landpage_shift{
+.landpage_shift_card{
     padding: 1rem;
     border-radius: 10px;
     background-color: var(--Primary-Color);
@@ -150,6 +150,10 @@
     margin-bottom: var(--Row-Margin);
 }
 
+.holyday_dialog_form_calendar{
+    width: 18rem !important;
+}
+
 .holyday_type{
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -209,4 +213,36 @@
     background-color: var(--Primary-Color);
     border-radius: 5px;
     float: right;
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media screen and (min-width: 768px) { 
+  .landpage{
+    display: grid;
+    grid-template-areas: 
+                    "company company"
+                    "shift conges";
+    gap: .5rem;
+  }
+  .landpage_shift{
+    grid-area: shift;
+  }
+  .holyday{
+    grid-area: conges;
+  }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) { 
+
+}
+
+/* X-Large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) { 
+
+}
+
+/* XX-Large devices (larger desktops, 1400px and up) */
+@media (min-width: 1400px) { 
+
 }

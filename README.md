@@ -5,6 +5,7 @@
     - Tracker les jours travaillées
     - les hours travaillées par mois
     - Calculer les heures de travail en temps reel
+    - Seulement un shift par jour par company
     - signer a la fin des chaque shift et au commencement
     - Les Entreprise peuvent mettre des annonces
     - Team talk

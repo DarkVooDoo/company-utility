@@ -1,22 +1,22 @@
-.shift > *{
+.companys > *, .companys_inner > *, .companys{
     margin-bottom: var(--Row-Margin);
 }
 
-.shift_company{
+.companys{
     width: 100%;
     overflow-x: scroll;
 }
 
-.shift_company_inner{
+.companys_inner{
     display: flex;
     gap: 2rem;
     padding: .5rem;
     width: fit-content;
 }
 
-.shift_company_box{
+.companys_box{
     width: 30ch;
-    height: 15vh;
+    height: 10vh;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
@@ -26,7 +26,7 @@
 
 }
 
-.shift_company_box_icon{
+.companys_box_icon{
     height: 3rem;
     width: 3rem;
 }
