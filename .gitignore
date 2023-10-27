@@ -7,6 +7,8 @@
 Dockerfile
 *.yml
 
+pg-docker-config
+
 #Qwik
 
 # Build

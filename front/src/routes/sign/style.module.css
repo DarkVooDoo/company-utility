@@ -46,6 +46,7 @@
     width: 100%;
     display: flex;
     justify-content: flex-end;
+    gap: 1rem;
 }
 
 .sign_button_sign{

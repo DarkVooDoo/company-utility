@@ -1,0 +1,153 @@
+.curriculum > *{
+    margin-bottom: var(--Row-Margin);
+}
+
+.curriculum_topContent{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--Row-Margin);
+}
+
+.curriculum_topContent_header{
+    font-size: 1.2rem;
+}
+
+.curriculum_topContent_btn{
+    padding:  0 .5rem;
+    height: 2rem; 
+    background-color: var(--Primary-Color);
+    border-radius: 10px;
+}
+
+.curriculum_photo{
+    position: relative;
+    height: 5rem;
+    width: 5rem;
+    border-radius: 50%;
+    border: 1px solid black;
+}
+
+.curriculum_photo_label{
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    border-radius: 50%;
+}
+
+#userPhoto{
+    display: none;
+}
+
+.curriculum_form_langueSkill{
+    display: grid;
+    grid-template-columns: 1fr .7fr .2fr;
+    align-items: center;
+    gap: .5rem;
+}
+
+.curriculum_form_container{
+    border: 1px solid black;
+    padding: .5rem;
+    border-radius: 5px;
+}
+
+.curriculum_form_container > *{
+    margin-bottom: var(--Row-Margin);
+}
+
+.curriculum_form_input{
+    display: block;
+    height: 2.5rem;
+    width: 100%;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+.curriculum_form_langueSkill_field_input{
+    border-color: transparent;
+    border-radius: 0px;
+    height: 1.5rem;
+    border-bottom: 1px solid black;
+}
+
+.curriculum_form_profil{
+    display: block;
+    height: 5rem;
+    width: 100%;
+    resize: none;
+    border-radius: 5px;
+    padding: .3rem;
+}
+
+.curriculum_form_langueSkill_field{
+    width: 100%;
+}
+
+.curriculum_form_langueSkill_removeBtn{
+    height: 2rem;
+    width: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.curriculum_form_langueSkill_removeBtn_icon{
+    height: 50%;
+    width: 50%;
+}
+
+.newFieldBtn{
+    width: 100%;
+    height: 2rem;
+    border: 1px solid black;
+}
+
+.curriculum_step{
+    display: flex;
+    justify-content: space-between;
+}
+
+.curriculum_step_nextBtn, .curriculum_step_backBtn{
+    padding: 0 .5rem;
+    height: 2.5rem;
+    border-radius: 10px;
+}
+
+.curriculum_step_nextBtn{
+    background-color: var(--Primary-Color);
+}
+
+.curriculum_step_backBtn{
+    border: 2px solid var(--Primary-Color);
+}
+
+.curriculum_work{
+    border: 1px solid black;
+    padding: .3rem;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+}
+
+.curriculum_date{
+    display: flex;
+    justify-content: space-between;
+}
+
+.curriculum_detail{
+    margin-bottom: var(--Row-Margin);
+}
+
+.curriculum_detailBtn{
+    width: 100%;
+    height: 2rem;
+    border: 2px solid var(--Primary-Color);
+    border-radius: 5px;
+}

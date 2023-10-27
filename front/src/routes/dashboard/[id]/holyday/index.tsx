@@ -1,6 +1,8 @@
-import { $, QRL, component$, useSignal, useStore, useTask$, useVisibleTask$ } from "@builder.io/qwik"
+import { $, component$, useSignal, useStore, useTask$ } from "@builder.io/qwik"
 import { routeLoader$ } from "@builder.io/qwik-city"
 import CustomSelect from "~/components/CustomSelect/component"
+
+import style from "./style.module.css"
 import { Holyday } from "~/lib/types"
 import { BACKEND_HOST } from "~/lib/util"
 
@@ -25,7 +27,6 @@ const Holyday = component$(()=>{
                 headers: [["Authorization", param.value.token]]
             })
             const holydayPayload = await fetchHolyday.json() as Holyday[]
-            console.log(holydayPayload)
             holyday.value = holydayPayload
         }
     })
@@ -39,9 +40,12 @@ const Holyday = component$(()=>{
     ))
 
     const holydays = holyday.value.map(holyday=>(
-        <div key={holyday.id}>
-            <h3>{holyday.name} </h3>
-            <div style={{display: "flex", justifyContent: "space-between"}}>
+        <div key={holyday.id} class={style.holyday_card}>
+            <div class={style.holyday_card_name}>
+                <h3>{holyday.name} </h3>
+                <p class={style.holyday_card_name_status} style={holyday.status === "Validé" ? {backgroundColor: "green"} : holyday.status === "Refusé" ? {backgroundColor: "red"} : {backgroundColor: "orange"}} >{holyday.status} </p>
+            </div>
+            <div class={style.holyday_card_time}>
                 <div>
                     <p>Du</p>
                     <p>{holyday.from} </p>
@@ -51,7 +55,6 @@ const Holyday = component$(()=>{
                     <p>{holyday.to} </p>
                 </div>
             </div>
-            <p>{holyday.status} </p>
         </div>
     ))
     return (

@@ -17,3 +17,15 @@
 
 # TODO
     - Possible error quand tu cherche le dernier mois de l'année dans la database
+    Curriculum
+        - Ameliorer le ui dans la page
+        - Enregistrer les donnees du utilisateur dans la DB quand il cree un curriculum
+        - pour le moment seul jpg image marchent
+
+# Fiche de paie a l'utilisateur de renseigner
+    - Primes (si il y a)
+    - Complémentaire - Incap. Inval. Décès
+    - Complémentaire - Santé 
+    - Accidents du travail & mal. professionnelles
+    Retraite
+        - Complémentaire Tranche 1

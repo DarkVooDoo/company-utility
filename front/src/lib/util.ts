@@ -110,4 +110,9 @@ export const SecondsToHour = (seconds: number)=>{
     return `${Math.floor(seconds / (60*60))}:${Math.floor(seconds % (60*60) / 60)}:${seconds % 60}`
 }
 
+export const Interpolate = (minMax: number[], offsetValues: number[], value: number):number=>{
+    const interpolation = minMax[1] + ((minMax[0] - minMax[1]) / (offsetValues[0] - offsetValues[1]) * (value - offsetValues[1]) )
+    return interpolation > minMax[1] ? minMax[1] : interpolation < minMax[0] ? minMax[0] : interpolation
+}
+
 export const CdnPrefix = "https://cdn-connected.s3.eu-west-3.amazonaws.com/"

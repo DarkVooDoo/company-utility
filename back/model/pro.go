@@ -2,6 +2,7 @@ package model
 
 import (
 	"errors"
+	"log"
 	"work/store"
 	"work/util"
 )
@@ -103,6 +104,27 @@ func CompanyEmployee(companyId string) ([]util.CompanyUser, error) {
 		companyUser = append(companyUser, util.CompanyUser{User_id: id, User_name: name, User_role: role})
 	}
 	return companyUser, nil
+}
+
+func GetCompanySetting(companyId string) (util.UpdateCompany, error) {
+	var setting util.UpdateCompany
+	db := store.DBInit()
+	company := db.QueryRow(`SELECT company_id, company_adresse, company_postal, COALESCE(company_urssaf, ''), COALESCE(company_ape, ''), COALESCE(company_siret, '') FROM Company WHERE company_id=$1`, companyId)
+	if err := company.Scan(&setting.Id, &setting.Adresse, &setting.Postal, &setting.Urssaf, &setting.Ape, &setting.Siret); err != nil {
+		log.Println(err)
+		return util.UpdateCompany{}, errors.New("error")
+	}
+	return setting, nil
+}
+
+func UpdateCompany(company util.UpdateCompany) error {
+	db := store.DBInit()
+	_, err := db.Exec(`UPDATE Company SET company_adresse=$1, company_postal=$2, company_urssaf=$3, company_siret=$4, company_ape=$5 WHERE company_id=$6`, company.Adresse, company.Postal, company.Urssaf, company.Siret, company.Ape, company.Id)
+	if err != nil {
+		log.Println("error")
+		return errors.New("error")
+	}
+	return nil
 }
 
 func DeleteCompany(id string) error {

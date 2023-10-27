@@ -71,10 +71,6 @@ const Employees = component$(()=>{
                         <input type="text" name="email" id="email" autoComplete="off" placeholder="Nouveau employé email" class={style.member_newInput_input} />
                     </div>
                     <div>
-                        <label for="salary">Salaire</label>
-                        <input type="number" name="salary" id="salary" step={".01"} class={style.member_newInput_input} placeholder="12,22" />
-                    </div>
-                    <div>
                         <p>Role</p>
                         <CustomSelect items={["Admin", "User"]} value="User" renderOption={renderRoles} width={5} height={2} />
                     </div>

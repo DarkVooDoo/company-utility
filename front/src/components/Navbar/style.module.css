@@ -1,22 +1,30 @@
 .navbar{
     position: sticky;
     position: -webkit-sticky;
-    top: 1px;
+    top: 0px;
     padding: 0 var(--Mobile-Padding);
     height: var(--Navbar-Height);
-    -webkit-box-shadow: 0px 2px 4px 0px var(--Primary-Color); 
-    box-shadow: 0px 2px 4px 0px var(--Primary-Color);
     display: flex;
     gap: .5rem;
     justify-content: space-between;
     align-items: center;
-    background-color: white;
+    background-color: transparent;
     z-index: 10;
+} 
+
+.backtest{
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: white;
+    opacity: 0;
 }
 
 .navbar_logo{
     width: calc(var(--Navbar-Height) - .5rem);
-    height: calc(var(--Navbar-Height) - .5rem);;
+    height: calc(var(--Navbar-Height) - .5rem);
 }
 
 .navbar_search{
@@ -65,6 +73,10 @@
     gap: .5rem;
 }
 
+.navbar_navigation_bell{
+    position: relative;
+}
+
 .navbar_navigation_bellIcon{
     height: calc(var(--Navbar-Height) - 1rem);
     width: calc(var(--Navbar-Height) - 1rem);
@@ -88,32 +100,34 @@
 .navbar_notifPopup{
     position: absolute;
     right: 0;
-    top: 0;
+    top: calc(var(--Navbar-Height) - .5rem);
     width: 100%;
-    height: 100vh;
+    height: 30vh;
     background-color: white;
     z-index: 10;
-    transition: all .1s ease-in-out;
+    opacity: 0;
+    transition: opacity .1s ease-in-out;
     overflow: hidden;
+    -webkit-box-shadow: 0px 0px 15px 0px #A6A6A6; 
+    box-shadow: 0px 0px 15px 0px #A6A6A6;
+    border-radius: 10px;
 }
 
 .open{
-    width: 100%;
+    width: 80vw;
+    opacity: 1;
     padding: calc(var(--Mobile-Padding) * 2);
 }
 
 .close{
     width: 0%;
+    opacity: 0;
 }
 
 .navbar_notifPopup_header{
     display: flex;
     justify-content: space-between;
-}
-
-.navbar_notifPopup_closeBtn{
-    height: 2rem;
-    width: 2rem;
+    margin-bottom: var(--Row-Margin);
 }
 
 .navbar_notifPopup_notif{
@@ -136,10 +150,22 @@
     height: 1.5rem;
     background-color: var(--Primary-Color);
     border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navbar_notifPopup_notif_deleteBtn_icon{
+    height: 1rem;
+    width: 1rem;
 }
 
 .navbar_notifPopup_notif_date{
     text-align: end;
+}
+
+.navbar_notifPopup_notif_msg{
+    text-align: start;
 }
 
 .navbar_logBtn{
@@ -297,7 +323,9 @@
 
 /* Medium devices (tablets, 768px and up) */
 @media screen and (min-width: 768px) { 
-    
+    .open{
+        width: 65vw;
+    }
   }
   
   /* Large devices (desktops, 992px and up) */

@@ -5,6 +5,22 @@
     justify-content: center;
 }
 
+.shift_test{
+    height: 2.5rem;
+    width: calc(3em + .6rem);
+    font-size: 1.1rem;
+    background-color: gray;
+    overflow: hidden;
+}
+
+.shift_test_number{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.5rem;
+    width: calc(3em + .6rem);
+}
+
 .shift_name{
     display: flex;
     justify-content: space-between;

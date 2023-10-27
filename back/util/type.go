@@ -62,6 +62,15 @@ type CreateCompany struct {
 	Postal  uint   `json:"postal"`
 }
 
+type UpdateCompany struct {
+	Id      string `json:"id"`
+	Adresse string `json:"adresse"`
+	Postal  string `json:"postal"`
+	Ape     string `json:"ape"`
+	Urssaf  string `json:"urssaf"`
+	Siret   string `json:"siret"`
+}
+
 type CompanyUser struct {
 	User_id   string `json:"id"`
 	User_name string `json:"name"`
@@ -129,6 +138,7 @@ type UserProfile struct {
 	Adresse   string `json:"adresse"`
 	Postal    string `json:"postal"`
 	Photo     string `json:"photo"`
+	Birth     string `json:"birth"`
 	Email     string `json:"email"`
 }
 
@@ -216,3 +226,45 @@ type MultipartForm struct {
 	Value map[string]string
 	File  map[string]FileStruct
 }
+
+type ValueLevel struct {
+	Value string `json:"value"`
+	Level int    `json:"level"`
+}
+
+type PersonPath struct {
+	Title         string   `json:"title"`
+	Establishment string   `json:"establishment"`
+	Location      string   `json:"location"`
+	Date          string   `json:"date"`
+	Description   []string `json:"description"`
+}
+
+type Curriculum struct {
+	Photo   string       `json:"photo"`
+	Name    string       `json:"name"`
+	Email   string       `json:"email"`
+	Tel     int          `json:"tel"`
+	Age     uint16       `json:"age"`
+	Adresse string       `json:"adresse"`
+	Color   [3]string    `json:"color"`
+	Poste   string       `json:"poste"`
+	Profil  string       `json:"profil"`
+	Skill   []ValueLevel `json:"skill"`
+	Langue  []ValueLevel `json:"langue"`
+	School  []PersonPath `json:"school"`
+	Work    []PersonPath `json:"work"`
+}
+
+// type EmployéTaxe struct{
+// 	Sante1 float32
+// 	Sante2 float32
+// 	Mutuelle float32
+// 	SSDeplafond float32
+// 	SSPlanfond float32
+
+// }
+
+// type FichePaie struct{
+
+// }

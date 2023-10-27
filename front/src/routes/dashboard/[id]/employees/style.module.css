@@ -33,6 +33,7 @@
 }
 
 .member{
+    --Bottom-Content-Height: 2.5rem;
     display: grid;
     grid-template-areas: 
     "name name name role"
@@ -65,6 +66,12 @@
 .member_role_text{
     font-weight: bold;
     font-size: 1.1rem;
+}
+
+.member_role_text, .member_name_text{
+    height: var(--Bottom-Content-Height);
+    display: flex;
+    align-items: center;
 }
 
 .member_role_select{

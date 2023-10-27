@@ -18,6 +18,11 @@ const LINKS = [
         path: "/profile/company",
         text: "Entreprise",
         index: 2
+    },
+    {
+        path: "/profile/curriculum",
+        text: "Curriculum",
+        index: 3
     }
 ]
 

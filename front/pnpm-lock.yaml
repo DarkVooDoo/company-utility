@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+dependencies:
+  '@types/google.accounts':
+    specifier: ^0.0.12
+    version: 0.0.12
+
 devDependencies:
   '@builder.io/qwik':
     specifier: ^1.2.12
@@ -426,6 +431,10 @@ packages:
   /@types/estree@1.0.1:
     resolution: {integrity: sha512-LG4opVs2ANWZ1TJoKc937iMmNstM/d0ae1vNbnBvBhqCSezgVUOzcLCqbI5elV8Vy6WKwKjaqR+zO9VKirBBCA==}
     dev: true
+
+  /@types/google.accounts@0.0.12:
+    resolution: {integrity: sha512-7KUPorZEiX+gzuFyUY4jReQrgzjJlXMdL5JtGwg4GgSkGGvU4k0aoVqKK6Mp01WLaDuNK85fiRuecIP7JeJeFA==}
+    dev: false
 
   /@types/hast@2.3.6:
     resolution: {integrity: sha512-47rJE80oqPmFdVDCD7IheXBrVdwuBgsYwoczFvKmwfo2Mzsnt+V9OONsYauFmICb6lQPpCuXYJWejBNs4pDJRg==}

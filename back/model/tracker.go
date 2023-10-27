@@ -14,7 +14,7 @@ func GetCurrentShift(userId string, companyId string) (util.CurrentShiftStatus, 
 	var seconds uint
 	db := store.DBInit()
 	row := db.QueryRow(`SELECT tracker_id, tracker_state, hour_id FROM Tracker RIGHT JOIN Hour 
-	ON tracker_id=hour_tracker_id AND hour_end IS NULL WHERE tracker_user_id=$1 AND tracker_company_id=$2`, userId, companyId)
+	ON tracker_id=hour_tracker_id AND hour_end IS NULL OR tracker_state='En Pause' WHERE tracker_user_id=$1 AND tracker_company_id=$2`, userId, companyId)
 	if err := row.Scan(&id, &state, &hourId); err != nil {
 		log.Println(err)
 		return util.CurrentShiftStatus{}, errors.New("error")
@@ -110,6 +110,7 @@ type AccumulateHours struct {
 	Name    string                `json:"name"`
 	Seconds uint                  `json:"seconds"`
 	Total   string                `json:"total"`
+	Hour    string                `json:"hour"`
 	Shift   map[string][]DayShift `json:"shift"`
 	Salary  float64               `json:"salary"`
 }
@@ -182,6 +183,7 @@ func GetAccumulateHoursFromTo(companyId string, from string, to string, userId s
 		return AccumulateHours{Name: name, Seconds: 0, Shift: map[string][]DayShift{}, Total: "0H00", Salary: 0}, nil
 	}
 	for _, value := range sumHours {
+		value.Hour = SecondsFormatted(value.Seconds)
 		payrolls = value
 	}
 	return payrolls, nil

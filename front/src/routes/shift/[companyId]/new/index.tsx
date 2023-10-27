@@ -109,6 +109,12 @@ const NewShift = component$(()=>{
                     <input type="time" name="start" id="start" class={style.shift_time_t_input} value={currentMember.shift_start} onChange$={({target:{value}})=>{
                         currentMember.shift_start = value
                     }} />
+                        {/* <button class={style.shift_test} autoFocus type="button" onKeyDown$={(e, ele)=>{
+                            console.log("test")
+                        }}>
+                            <div class={style.shift_test_number}>11</div>
+                            <div class={style.shift_test_number}>12</div>
+                        </button> */}
                 </div>
                 <div class={style.shift_time_t}>
                     <label for="end">Fini</label>

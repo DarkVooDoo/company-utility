@@ -22,6 +22,7 @@ export default component$(() => {
       <head>
         <meta charSet="utf-8" />
         <link rel="manifest" href="/manifest.json" />
+        <script src="https://accounts.google.com/gsi/client" async defer></script>
         <RouterHead />
         <ServiceWorkerRegister />
       </head>

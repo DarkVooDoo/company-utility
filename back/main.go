@@ -13,18 +13,19 @@ const (
 )
 
 var Routes map[string]func(http.ResponseWriter, *http.Request) = map[string]func(http.ResponseWriter, *http.Request){
-	"/api/user":    route.UserRoute,
-	"/api/pro":     route.ProRoute,
-	"/api/member":  route.MemberRoute,
-	"/api/auth":    route.AuthRoute,
-	"/api/shift":   route.ShiftRoute,
-	"/api/notif":   route.NotificationRoute,
-	"/api/holyday": route.HolydayRoute,
-	"/api/search":  route.SearchRoute,
-	"/api/tracker": route.TrackerRoute,
-	"/api/job":     route.NewJobRoute,
-	"/api/payroll": route.PayrollRoute,
-	"/ws":          route.WebsocketRoute,
+	"/api/user":       route.UserRoute,
+	"/api/pro":        route.ProRoute,
+	"/api/member":     route.MemberRoute,
+	"/api/auth":       route.AuthRoute,
+	"/api/shift":      route.ShiftRoute,
+	"/api/notif":      route.NotificationRoute,
+	"/api/holyday":    route.HolydayRoute,
+	"/api/search":     route.SearchRoute,
+	"/api/tracker":    route.TrackerRoute,
+	"/api/job":        route.NewJobRoute,
+	"/api/payroll":    route.PayrollRoute,
+	"/api/curriculum": route.CurriculumRoute,
+	"/ws":             route.WebsocketRoute,
 }
 
 func main() {
@@ -41,6 +42,7 @@ func main() {
 	if err := s.ListenAndServe(); err != nil {
 		log.Fatal("server crash")
 	}
+
 }
 
 func cronJob(minute string, hour string, monthDay string, month string, weekDay string) {
@@ -93,8 +95,32 @@ func cronJob(minute string, hour string, monthDay string, month string, weekDay 
 // 		conns = append(conns, userConn)
 // 		time.Sleep(time.Second * 40)
 // 		for _, user := range conns {
-// 			user.Write([]byte("1000000107hellowo"))
+// 			user.Write([]byte("05HELLO"))
 // 		}
 // 	}
 
 // }
+
+// smicAnnuel = 20814.73
+// salary := 1989.71
+// // plafond := 3666
+// csgCrds := (salary * 98.25) / 100
+// log.Println(csgCrds)
+// allocationFamilial := salary * 3.45 / 100
+// log.SetPrefix("Allocation Familial (Patronale)")
+// log.Println(allocationFamilial)
+// if salary > 3666 {
+// 	ssd := salary * 6.9 / 100
+// 	log.SetPrefix("Securité social déplaflonnée (Salarial)")
+// 	log.Println(ssd)
+// } else {
+// 	ssd := salary * 0.40 / 100
+// 	log.SetPrefix("Securité social déplaflonnée (Salarial)")
+// 	log.Println(ssd)
+// }
+// securiteSocial := salary * 7 / 100
+// log.SetPrefix("Sécurité sociale - Maladie, maternité, invalidité, décès: ")
+// log.Println(util.ToFixed(securiteSocial, 2))
+// mutuelle := salary * 50 / 100
+// log.SetPrefix("Mutuelle l'entreprise doit prendre en charge au moins 50 pourcent de la mutuelle ")
+// log.Println(util.ToFixed(mutuelle, 2))

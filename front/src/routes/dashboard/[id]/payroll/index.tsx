@@ -82,7 +82,7 @@ const Payroll = component$(()=>{
         })
         return (
             <details key={day} class={style.payroll_day}>
-                <summary>{day} </summary>
+                <summary>{day} ({employees.value?.hour}) </summary>
                 <div class={style.payroll_shift}>
                     {shifts} 
                 </div>

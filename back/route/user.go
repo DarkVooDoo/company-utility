@@ -22,7 +22,6 @@ var UserRoute = func(res http.ResponseWriter, req *http.Request) {
 			return
 		}
 		route.WriteJSON(http.StatusOK, profile)
-
 	})
 
 	route.POST(func() {

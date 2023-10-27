@@ -15,18 +15,16 @@ export const useGeUsertProfile = routeLoader$(async (req)=>{
         })
         return await fetchProfile.json() as Profile
     }
-    return {adresse: "", email: "", firstname: "", id: "", joined: "", lastname: "", postal: "", photo: ""}
+    return {adresse: "", email: "", firstname: "", id: "", joined: "", lastname: "", birth: "", postal: "", photo: ""}
   })
 
 export const useModifyProfile = routeAction$(async(form, req)=>{
     const token = req.cookie.get("auth-token")?.value
-    const {firstname, lastname, adresse, postal} = form
-    const user = {firstname, lastname, adresse, postal}
     if (token){
         const modifyUser = await fetch(`${BACKEND_HOST}:5000/api/user`,{
             method: "PUT",
             headers: [["Content-Type", "application/json"], ["Authorization", token]],
-            body: JSON.stringify({...user})
+            body: JSON.stringify({...form})
         })
         if (modifyUser.status === 200){
             return await modifyUser.json() as Profile
@@ -52,9 +50,8 @@ export const useChangeAvatar = routeAction$(async(form, req)=>{
 const Profile = component$(()=>{
     const modifyProfile = useModifyProfile()
     const prof = useGeUsertProfile()
-    const picProfile = useSignal(CdnPrefix+"profile/"+prof.value.photo)
+    const picProfile = useSignal(prof.value.photo !== "" ? CdnPrefix+"profile/"+prof.value.photo : undefined)
     const changeAvatar = useChangeAvatar()
-
     return (
         <div>
             <h3 class={style.profile_header}>Personal info </h3>
@@ -75,7 +72,7 @@ const Profile = component$(()=>{
                         await changeAvatar.submit(formData)
                     }
                 }}/>
-                <img class={style.profile_photo_container} src={picProfile.value} alt="test" />
+                {picProfile.value ? <img class={style.profile_photo_container} src={picProfile.value} alt="test" /> : null }
             </div>
             <Form action={modifyProfile}>
                 <div class={style.profile_input}>
@@ -93,6 +90,10 @@ const Profile = component$(()=>{
                 <div class={style.profile_input}>
                     <label class={style.profile_input_label} form="postal">Postal</label>
                     <input class={style.profile_input_ele} required type="number" name="postal" id="postal" autoComplete="off" value={prof.value.postal} />
+                </div>
+                <div class={style.profile_input}>
+                    <label class={style.profile_input_label} form="birth">Date de naissance</label>
+                    <input class={style.profile_input_ele} required type="date" name="birth" id="birth" value={prof.value.birth} />
                 </div>
                 {/* <button class={style.button} type="submit" disabled={modifyProfile.isRunning ? true : false}>Modifier {modifyProfile.isRunning && <Loading alt="loading" class={style.btn_loading} />}</button> */}
                 <ButtonWithState {...{clasStyle: style.button, state: modifyProfile.isRunning, text: "Modifier", type: "submit"}} />

@@ -1,14 +1,14 @@
-import { component$, useContext, useSignal, $ } from "@builder.io/qwik"
+import { component$, useContext, useSignal, $, QwikMouseEvent } from "@builder.io/qwik"
 
 import style from "./style.module.css"
-import { CdnPrefix, userContext } from "~/lib/util"
+import { CdnPrefix, Interpolate, userContext } from "~/lib/util"
 import { Link, useNavigate } from "@builder.io/qwik-city"
 
 import Logo from "~/media/logo.webp?jsx"
 import Bell from "~/media/bell.svg?jsx"
 import User from "~/media/user.svg?jsx"
-import LeftArrow from "~/media/left-arrow.webp?jsx"
 import Signout from "~/media/signout.webp?jsx"
+import Close from "~/media/close.svg?jsx"
 
 interface Props{
     companys: {id: string, name: string, adresse: string, postal: number}[]
@@ -34,7 +34,7 @@ const Navbar = component$<Props>(({notif, companys})=>{
     })
     
     const onOpenNotif = $(()=>{
-        if (notif) showNotif.value = true
+        if (notif) showNotif.value = !showNotif.value
     })
 
     const onCloseNotif = $(()=>{
@@ -64,9 +64,9 @@ const Navbar = component$<Props>(({notif, companys})=>{
     })
     const notifs = myNotif.value.map(notification=>(
         <div class={style.navbar_notifPopup_notif} key={notification.id}>
-            <button type="button" aria-label="delete notif" class={style.navbar_notifPopup_notif_deleteBtn} onClick$={()=>onDeleteNotif(notification.id)}>X</button>
+            <div class={style.navbar_notifPopup_notif_deleteBtn} onClick$={()=>onDeleteNotif(notification.id)}><Close alt="close" class={style.navbar_notifPopup_notif_deleteBtn_icon} /></div>
             <p class={style.navbar_notifPopup_notif_date}>{notification.date} </p>
-            <p>{notification.message} </p>
+            <p class={style.navbar_notifPopup_notif_msg}>{notification.message} </p>
         </div>
     ))
 
@@ -74,7 +74,11 @@ const Navbar = component$<Props>(({notif, companys})=>{
         <Link key={comp.id} href={`/dashboard/${comp.id}`} class={style.navbar_sideBar_companys_btn_more_row} onClick$={onCloseSideBar}>- {comp.name}</Link>
     ))
     return (
-        <nav class={style.navbar}>
+        <nav class={style.navbar} document:onScroll$={(e, ele)=>{
+            const opacity = Interpolate([0, 1], [0, 50], window.scrollY)
+            ele.style.backgroundColor = `rgba(255, 255, 255, ${opacity})`
+            ele.style.boxShadow = `0px 2px 4px 0px rgba(130, 130, 240, ${opacity})`
+            }}>
             <Link href={user.value.user_id ? "/home" : "/"}><Logo class={style.navbar_logo} alt="home"/></Link>
             <div class={`${style.navbar_search}`}>
                 {/* <div class={`${style.navbar_search_box}`}>
@@ -95,7 +99,17 @@ const Navbar = component$<Props>(({notif, companys})=>{
             <div class={style.navbar_navigation}>
                 {user.value.user_id !== "" ? 
                     <>
-                        <button aria-label="ouvrir notification" onClick$={onOpenNotif}><Bell alt="notification" class={style.navbar_navigation_bellIcon} /> </button>
+                        <button aria-label="ouvrir notification" class={style.navbar_navigation_bell} onClick$={onOpenNotif} >
+                            <Bell alt="notification" class={style.navbar_navigation_bellIcon} />
+                            <div class={[style.navbar_notifPopup, showNotif.value ? style.open : style.close]} onClick$={(e)=>e.stopPropagation()}>
+                                <div class={style.navbar_notifPopup_header}>
+                                    <h1>Notification</h1>
+                                </div>
+                                {myNotif.value.length > 0 ? <>
+                                    {notifs}
+                                </> : <h1>Il y a pas de notification</h1>}
+                            </div> 
+                        </button>
                         <button type="button" aria-label="ouvrir menu" class={style.navbar_logBtn} onClick$={onOpenSideBar} >
                             {user.value.user_photo === "" ? <User alt="user" class={style.navbar_logBtn_icon} /> : <img src={CdnPrefix+"profile/"+user.value.user_photo} width={64} height={64} alt="profile" class={style.navbar_logBtn_icon} /> }
                         </button>
@@ -110,7 +124,7 @@ const Navbar = component$<Props>(({notif, companys})=>{
                         <h2 class={style.navbar_sideBar_user_name}>{user.value.user_name} </h2>
                     </div>
                     <button type="button" aria-label="Log off" class={style.navbar_sideBar_user_logoffBtn} onClick$={onLogOff}>
-                        <Signout class={style.navbar_sideBar_logoffBtn_icon} />
+                        <Signout class={style.navbar_sideBar_logoffBtn_icon} alt="se déconnecter" />
                     </button>
                 </div>
                 <div>
@@ -135,15 +149,6 @@ const Navbar = component$<Props>(({notif, companys})=>{
                     <Signout class={style.navbar_sideBar_logoffBtn_icon} />
                     <p>Log Off</p>
                 </button> */}
-            </div>
-            <div class={[style.navbar_notifPopup, showNotif.value ? style.open : style.close]}>
-                <div class={style.navbar_notifPopup_header}>
-                    <button type="button" aria-label="fermer les notif" onClick$={onCloseNotif}><LeftArrow alt="close" class={style.navbar_notifPopup_closeBtn} /></button>
-                    <h1>Notification</h1>
-                </div>
-                {myNotif.value.length > 0 ? <>
-                    {notifs}
-                </> : <h1>Il y a pas de notification</h1>}
             </div>
         </nav>
     )

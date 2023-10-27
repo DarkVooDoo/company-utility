@@ -82,21 +82,22 @@ func CreateUser(newAccount util.CreateUserStruct) error {
 
 func GetUserProfile(userId string) (util.UserProfile, error) {
 	db := store.DBInit()
-	var id, firstname, lastname, adresse, postal, email, joined, photo string
-	row := db.QueryRow(`SELECT user_id, TO_CHAR(user_joined, 'TMMonth-YYYY'), user_lastname, user_firstname, user_email, user_adresse, user_postal, user_photo FROM Users WHERE user_id=$1`, userId)
-	row.Scan(&id, &joined, &lastname, &firstname, &email, &adresse, &postal, &photo)
-	return util.UserProfile{Id: id, Joined: joined, Firstname: firstname, Lastname: lastname, Adresse: adresse, Postal: postal, Email: email, Photo: photo}, nil
+	var id, firstname, lastname, adresse, postal, email, joined, photo, birth string
+	row := db.QueryRow(`SELECT user_id, TO_CHAR(user_joined, 'TMMonth-YYYY'), user_lastname, user_firstname, user_email, user_adresse, user_postal, user_photo, TO_CHAR(user_birth, 'YYYY-MM-DD') FROM Users WHERE user_id=$1`, userId)
+	row.Scan(&id, &joined, &lastname, &firstname, &email, &adresse, &postal, &photo, &birth)
+	log.Println(photo)
+	return util.UserProfile{Id: id, Joined: joined, Firstname: firstname, Lastname: lastname, Adresse: adresse, Postal: postal, Email: email, Photo: photo, Birth: birth}, nil
 }
 
 func ModifyProfile(profile util.UserProfile, userId string) (util.UserProfile, error) {
-	var id, firstname, lastname, adresse, postal, email, joined string
+	var id, firstname, lastname, adresse, postal, email, joined, birth string
 	db := store.DBInit()
-	row := db.QueryRow(`UPDATE Users SET user_firstname=$1, user_lastname=$2, user_adresse=$3, user_postal=$4 WHERE user_id=$5 
-	RETURNING user_id, TO_CHAR(user_joined, 'Month-YYYY'), user_lastname, user_firstname, user_email, user_adresse, user_postal`, profile.Firstname, profile.Lastname, profile.Adresse, profile.Postal, userId)
-	if err := row.Scan(&id, &joined, &lastname, &firstname, &email, &adresse, &postal); err != nil {
+	row := db.QueryRow(`UPDATE Users SET user_firstname=$1, user_lastname=$2, user_adresse=$3, user_postal=$4, user_birth=$5 WHERE user_id=$6 
+	RETURNING user_id, TO_CHAR(user_joined, 'Month-YYYY'), user_lastname, user_firstname, user_email, user_adresse, user_postal, user_birth`, profile.Firstname, profile.Lastname, profile.Adresse, profile.Postal, profile.Birth, userId)
+	if err := row.Scan(&id, &joined, &lastname, &firstname, &email, &adresse, &postal, &birth); err != nil {
 		return util.UserProfile{}, errors.New("error happends")
 	}
-	return util.UserProfile{Id: id, Joined: joined, Firstname: firstname, Lastname: lastname, Adresse: adresse, Postal: postal, Email: email}, nil
+	return util.UserProfile{Id: id, Joined: joined, Firstname: firstname, Lastname: lastname, Adresse: adresse, Postal: postal, Email: email, Birth: birth}, nil
 }
 
 func GetUserRole(userId string, companyId string) util.Role {

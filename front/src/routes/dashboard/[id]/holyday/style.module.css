@@ -1,0 +1,15 @@
+
+.holyday_card{
+    margin-bottom: var(--Row-Margin);
+    border-bottom: 1px solid black;
+}
+
+.holyday_card_name, .holyday_card_time{
+    display: grid;
+    grid-template-columns: 1fr .4fr;
+}
+
+.holyday_card_name_status{
+    text-align: center;
+    border-radius: 20px;
+}

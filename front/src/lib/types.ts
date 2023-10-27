@@ -16,6 +16,7 @@ export interface Profile {
     adresse: string
     postal: string
     photo: string
+    birth: string
     email: string
 }
 
@@ -36,6 +37,7 @@ export interface Payroll{
     name: string
     total: string
     seconds: number
+    hour: string
     salary: number
     shift: {[key: string]: DayShift[]}
 }
@@ -89,3 +91,29 @@ export interface CalendarArray{
     to: string
     from: string
 } 
+
+export interface CompanySetting{
+    adresse: string
+    siret: string
+    ape: string
+    postal: number
+    urssaf: string
+}
+
+export interface WorkSchool {
+    title: string
+    location: string
+    establishment: string
+    from: string
+    to: string
+    description: string[]
+}
+
+export interface Curriculum{
+    poste: string,
+    profil: string,
+    langue: {value: string, level: number}[]
+    skill: {value: string, level: number}[]
+    work: WorkSchool[]
+    education: WorkSchool[]
+}

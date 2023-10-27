@@ -13,7 +13,6 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-image: url("../public/metting.png");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -37,13 +36,29 @@
     }
 }
 
+.landpage_header_content{
+    height: 50vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 .landpage_header_title{ 
     font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 3rem;
 }
 
 .landpage_header_sub{
     padding: 0 var(--Mobile-Padding);
     text-align: center;
+}
+
+.landpage_header_image{
+    height: 50vh;
+    width: 100%;
 }
 
 .container{

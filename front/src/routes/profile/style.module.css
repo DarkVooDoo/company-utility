@@ -51,7 +51,7 @@
     position: absolute;
     left: 0;
     bottom: 0;
-    width: calc(100% / 3);
+    width: calc(100% / 4);
     border: 3px solid var(--Primary-Color);
     height: 100%;
     transition: all .2s ease-in-out;

@@ -2,7 +2,6 @@ package route
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"work/model"
 	"work/util"
@@ -27,10 +26,7 @@ func HolydayRoute(res http.ResponseWriter, req *http.Request) {
 			route.WriteJSON(http.StatusOK, holyday)
 		} else {
 			status := route.GetQuery("status")
-			log.Println("status")
 			if status == "Aucun" {
-				log.Println("aucun")
-
 				holyday, err := model.GetAllHolyday(companyId)
 				if err != nil {
 					route.WriteJSON(http.StatusForbidden, ResponseError{Msg: "forbidden"})
@@ -38,7 +34,6 @@ func HolydayRoute(res http.ResponseWriter, req *http.Request) {
 				route.WriteJSON(http.StatusOK, holyday)
 				return
 			} else {
-				log.Println("why here")
 				holyday, err := model.GetHolydayByStatus(companyId, status)
 				if err != nil {
 					route.WriteJSON(http.StatusForbidden, ResponseError{Msg: "forbidden"})

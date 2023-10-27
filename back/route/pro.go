@@ -33,7 +33,13 @@ func ProRoute(res http.ResponseWriter, req *http.Request) {
 				return
 			}
 			route.WriteJSON(http.StatusOK, company)
-
+		} else if req.Header.Get("x-path") == "setting" {
+			setting, err := model.GetCompanySetting(route.GetQuery("cId"))
+			if err != nil {
+				route.WriteJSON(http.StatusForbidden, ResponseError{Msg: "Forbidden"})
+				return
+			}
+			route.WriteJSON(http.StatusOK, setting)
 		}
 	})
 
@@ -53,6 +59,21 @@ func ProRoute(res http.ResponseWriter, req *http.Request) {
 			route.WriteJSON(http.StatusOK, ResponseError{Msg: "Success"})
 
 		}
+	})
+
+	route.PATCH(func() {
+		var updateCompany util.UpdateCompany
+		json.Unmarshal(route.Payload, &updateCompany)
+		_, err := route.VerifyToken()
+		if err != nil {
+			route.WriteJSON(http.StatusUnauthorized, ResponseError{Msg: "unauthorized"})
+			return
+		}
+		if err := model.UpdateCompany(updateCompany); err != nil {
+			route.WriteJSON(http.StatusBadRequest, ResponseError{Msg: "bad request"})
+			return
+		}
+		route.WriteJSON(http.StatusOK, ResponseError{Msg: "Success"})
 	})
 
 	route.DELETE(func() {

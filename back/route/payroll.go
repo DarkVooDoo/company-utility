@@ -2,8 +2,11 @@ package route
 
 import (
 	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
 	"work/model"
+	"work/util"
 )
 
 var PayrollRoute = func(res http.ResponseWriter, req *http.Request) {
@@ -30,6 +33,25 @@ var PayrollRoute = func(res http.ResponseWriter, req *http.Request) {
 			}
 			route.WriteJSON(http.StatusOK, hours)
 		}
+
+	})
+
+	route.POST(func() {
+		var payload struct {
+			Salary float64 `json:"salary"`
+		}
+		json.Unmarshal(route.Payload, &payload)
+		log.Println(payload.Salary)
+		// allocationFamiliale := util.RoundFloat(payload.Salaire * 3.45, 2)
+		// fmt.Printf("Allocation Familiale: ", allocationFamiliale)
+		securitePlafonee := util.RoundFloat(payload.Salary*6.9/100, 2)
+		fmt.Println("Sécurité Sociale plafonnée: ", securitePlafonee)
+		securiteDeplafonee := util.RoundFloat(payload.Salary*0.4/100, 2)
+		fmt.Println("Sécurité Sociale déplafonnée: ", securiteDeplafonee)
+		csgCRDS := util.RoundFloat(payload.Salary*2.9/100, 2)
+		fmt.Println("CSG/CRDS: ", csgCRDS)
+		csg := util.RoundFloat(payload.Salary*6.8/100, 2)
+		fmt.Println("CSG déduct. de l'impôt sur le revenu: ", csg)
 
 	})
 

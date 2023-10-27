@@ -4,6 +4,7 @@ import { DocumentHead, Link, routeAction$, routeLoader$, useLocation, useNavigat
 import LeftArrow from "~/media/left-arrow.webp?jsx"
 import Dollar from "~/media/dollar.webp?jsx"
 import Company from "~/media/companie.webp?jsx"
+import Edit from "~/media/edit.svg?jsx"
 
 import style from "./style.module.css"
 import UserHolydayCard from "~/components/UserHolydayCard/component"
@@ -60,9 +61,10 @@ const Dashboard = component$(()=>{
             <div class={style.dashboard_company}>
                 {/* <Image src={user} alt="photo" /> */}
                 <div>
-                    <h1 >{company.value.name}</h1>
+                    <h1 >{company.value.name}</h1> 
                     <p>Adresse {company.value.adresse}</p>
                 </div>
+                <Link href={`/dashboard/${params.id}/setting`}><Edit class={style.dashboard_company_parametres} /></Link>
             </div>
             <div class={style.dashboard_links}>
                 <Link href={`/dashboard/${params.id}/employees`} class={style.dashboard_links_btn} >

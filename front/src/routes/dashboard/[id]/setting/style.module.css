@@ -1,0 +1,10 @@
+
+.setting_field{
+    display: flex;
+    flex-direction: column;
+}
+
+.setting_field_input{
+    height: 2rem;
+    border: 1px solid black;
+}

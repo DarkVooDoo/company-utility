@@ -115,8 +115,7 @@ const Home = component$(()=>{
     const onChange = $((date: string[])=>{
         dates.value = date
     })
-
-    console.log(currentShift.value)
+    
     useVisibleTask$(({track})=>{
         track(()=>currentShift.value)
         seconds.value = currentShift.value?.seconds || 0

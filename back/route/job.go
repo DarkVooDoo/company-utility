@@ -1,10 +1,8 @@
 package route
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
-	"work/util"
 )
 
 var NewJobRoute = func(response http.ResponseWriter, request *http.Request) {
@@ -14,9 +12,10 @@ var NewJobRoute = func(response http.ResponseWriter, request *http.Request) {
 	})
 
 	route.POST(func() {
-		var payload util.NewJob
-		json.Unmarshal(route.Payload, &payload)
-		log.Println(payload)
+		// var payload util.NewJob
+		// json.Unmarshal(route.Payload, &payload)
+		// log.Println(payload)
+		log.Println("Got a request")
 		route.Response.Write([]byte("Hello"))
 	})
 
